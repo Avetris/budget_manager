@@ -1,0 +1,22 @@
+plugins {
+    id 'application'
+}
+
+mainClassName = 'com.avetris.App'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Add your project dependencies here
+    implementation("com.google.code.gson:gson:2.7")
+    implementation("org.codehaus.jackson:jackson-core-asl:1.1.0")
+    implementation("com.itextpdf:itextpdf:5.0.6")
+}
+
+application {
+    // Define the application properties
+    applicationName = 'Generador de Facturas'
+    version = '1.0.0'
+}
