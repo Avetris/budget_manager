@@ -1,10 +1,14 @@
 package com.avetris.managers;
 
+import javax.swing.JTextField;
+
 import com.avetris.models.Config;
 import com.avetris.utils.FileManager;
 import com.google.gson.Gson;
 
 public class ConfigManager {
+
+    private final String CONFIG_PATH = FileManager.getFilePath("config.json");
 
     private static ConfigManager _instance;
 
@@ -26,7 +30,7 @@ public class ConfigManager {
         String content = "";
         boolean exists = false;
         try {
-            content = FileManager.readFile("config.json");
+            content = FileManager.readFile(CONFIG_PATH, "{}");
             exists = true; 
         } catch (Exception exception) {
             exists = false;
@@ -44,10 +48,11 @@ public class ConfigManager {
 
     public void saveConfig() {        
         String content = new Gson().toJson(config);
-        FileManager.saveFile("config.json", content);
+        FileManager.saveFile(CONFIG_PATH, content);
     }    
 
     public void setConfig(Config config) {
         this.config = config;
+        saveConfig();
     }
 }

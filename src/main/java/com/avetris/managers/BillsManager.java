@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 
 public class BillsManager {
 
-    private final String BILLS_PATH = "bills"; 
+    private final String BILLS_PATH = FileManager.getFilePath("bills");
 
     private static BillsManager _instance;
 
@@ -29,7 +29,7 @@ public class BillsManager {
         for (String fileName : FileManager.getFilesInDirectory(BILLS_PATH)) 
         {
             try {
-                String content = FileManager.readFile(fileName);
+                String content = FileManager.readFile(fileName, "{}");
                 Gson gson = new Gson();  
                 Bill bill = gson.fromJson(content, Bill.class);
                 bills.put(bill.getId(), bill);                

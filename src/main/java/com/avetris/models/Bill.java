@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import com.avetris.pdf.PdfManager;
 import com.avetris.utils.PropertyNames;
 
-public class Bill extends AbstractModel{
+public class Bill {
 
     @JsonProperty("id")
     private String id;
@@ -48,33 +48,23 @@ public class Bill extends AbstractModel{
 
     // Setters
     public void setId(String id) {
-        String oldId = this.id;
         this.id = id;
-        firePropertyChange(PropertyNames.Bill.ID, oldId, id);
     }
 
     public void setProject(String project) {
-        String oldProject = this.project;
         this.project = project;
-        firePropertyChange(PropertyNames.Bill.PROJECT, oldProject, project);
     }
 
     public void setClient(Client client) {
-        Client oldClient = this.client;
         this.client = client;
-        firePropertyChange(PropertyNames.Bill.CLIENT, oldClient, client);
     }
 
     public void setDate(Date date) {
-        Date oldDate = this.date;
         this.date = date;
-        firePropertyChange(PropertyNames.Bill.DATE, oldDate, date);
     }
 
     public void setTasks(ArrayList<Task> tasks) {
-        ArrayList<Task> oldTasks = this.tasks;
         this.tasks = tasks;
-        firePropertyChange(PropertyNames.Bill.TASKS, oldTasks, tasks);
     }
 
     public void generatePDF(String path) {

@@ -2,9 +2,7 @@ package com.avetris.models;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import com.avetris.utils.PropertyNames;
-
-public class Task extends AbstractModel {
+public class Task {
     @JsonProperty("id")
     private int id = 0;
 
@@ -15,7 +13,22 @@ public class Task extends AbstractModel {
     private String description;
 
     @JsonProperty("price")
-    private float price;    
+    private double price;    
+
+    public Task(){}
+
+    public Task(String title, String description, double price) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+    }
+
+    public Task(int id, String title, String description, double price) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+    }
     
     // Getters
     public int getId() {
@@ -30,7 +43,7 @@ public class Task extends AbstractModel {
         return description;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -40,20 +53,20 @@ public class Task extends AbstractModel {
     }
 
     public void setTitle(String title) {
-        String oldTitle = this.title;
         this.title = title;
-        firePropertyChange(PropertyNames.Task.TITLE, oldTitle, title);
     }
 
     public void setDescription(String description) {
-        String oldDescription = this.description;
         this.description = description;
-        firePropertyChange(PropertyNames.Task.DESCRIPTION, oldDescription, description);
     }
 
-    public void setPrice(float price) {
-        float oldPrice = this.price;
+    public void setPrice(double price) {
         this.price = price;
-        firePropertyChange(PropertyNames.Task.PRICE, oldPrice, price);
+    }
+
+    public void copy(Task newTask) {
+        this.title = newTask.getTitle();
+        this.description = newTask.getDescription();
+        this.price = newTask.getPrice();
     }
 }

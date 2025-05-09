@@ -4,7 +4,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.avetris.utils.PropertyNames;
 
-public class Client extends AbstractModel {
+public class Client {
     @JsonProperty("name")
     private String name;
 
@@ -42,32 +42,22 @@ public class Client extends AbstractModel {
 
     // Setters
     public void setName(String name) {
-        String oldName = this.name;
         this.name = name;
-        firePropertyChange(PropertyNames.Client.NAME, oldName, name);
     }
 
     public void setAddress(String address) {
-        String oldAddress = this.address;
         this.address = address;
-        firePropertyChange(PropertyNames.Client.ADDRESS, oldAddress, address);
     }
 
     public void setPhone(String phone) {
-        String oldPhone = this.phone;
         this.phone = phone;
-        firePropertyChange(PropertyNames.Client.PHONE, oldPhone, phone);
     }
 
     public void setNif(String nif) {
-        String oldNif = this.nif;
         this.nif = nif;
-        firePropertyChange(PropertyNames.Client.NIF, oldNif, nif);
     }
 
     public void setEmail(String email) {
-        String oldEmail = this.email;
         this.email = email;
-        firePropertyChange(PropertyNames.Client.EMAIL, oldEmail, email);
     }
 }

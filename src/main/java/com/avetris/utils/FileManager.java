@@ -5,20 +5,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import com.avetris.models.Config;
-import com.avetris.models.Task;
-import com.google.gson.Gson;
-
 public class FileManager {
-    public static Task[] readTasks() throws Exception {
-        String content = readFile("tasks.json");
-        Gson gson = new Gson();  
-        return gson.fromJson(content, Task[].class);
-    }
+    static final String PATH = "data/";
 
-    public static void saveTasks(Task[] tasks) {
-        String content = new Gson().toJson(tasks);
-        saveFile("tasks.json", content);
+    public static String getFilePath(String filePath) {
+        return PATH + filePath;
     }
 
     public static String[] getFilesInDirectory(String directoryPath) {
@@ -39,7 +30,7 @@ public class FileManager {
 
     public static void saveFile(String filePath, String content) {
         File file = new File(filePath);
-        if(!file.exists()) {
+        if(!file.exists() && file.getParentFile() != null) {
             file.getParentFile().mkdirs();
         } else {
             file.delete();
@@ -53,10 +44,11 @@ public class FileManager {
         }
     }
 
-    public static String readFile(String filePath) throws Exception {
+    public static String readFile(String filePath, String emptyContent) throws IOException {
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new Exception("File not found: " + filePath);
+            saveFile(filePath, emptyContent);
+            return emptyContent;
         }
         return new String(Files.readAllBytes(file.toPath()));
     }

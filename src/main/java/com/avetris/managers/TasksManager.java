@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.avetris.listeners.ITaskListener;
 import com.avetris.models.Task;
 import com.avetris.utils.FileManager;
 import com.google.gson.Gson;
 
 public class TasksManager {
 
-    private final String TASK_PATH = "tasks.json";
+    private final String TASK_PATH = FileManager.getFilePath("tasks.json");
 
     private static TasksManager _instance;
+
+    private ITaskListener listener;
 
     private List<Task> tasks = new ArrayList<Task>();
 
@@ -21,21 +24,25 @@ public class TasksManager {
             _instance = new TasksManager();
         }
         return _instance;
-    }
-    
+    }    
 
-    private TasksManager() {
-        readTasks();
+    private TasksManager() {}
+
+    public void attach(ITaskListener listener) {
+        this.listener = listener;
     }
 
-    private void readTasks() {
+    public void readTasks() {
         try {
-            String content = FileManager.readFile(TASK_PATH);
+            String content = FileManager.readFile(TASK_PATH, "[]");
             Gson gson = new Gson();
-            tasks = Arrays.asList(gson.fromJson(content, Task[].class)); 
-        } catch (Exception exception) {
+            tasks = new ArrayList<Task>(Arrays.asList(gson.fromJson(content, Task[].class))); 
+            if(listener != null) {
+                listener.onTaskListUpdate();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
         }
-        
     }
 
     public List<Task> getTasks() {
@@ -45,7 +52,7 @@ public class TasksManager {
     public List<Task> filterTask(String filter) {
         List<Task> filtered = new ArrayList<>();
         for(Task task : tasks) {
-            if(task.getTitle().contains(filter) || task.getDescription().contains(filter)) {
+            if(task.getTitle().toLowerCase().contains(filter.toLowerCase())) {
                 filtered.add(task);
             }
         }
@@ -64,6 +71,9 @@ public class TasksManager {
     public void saveTasks() {        
         String content = new Gson().toJson(tasks);
         FileManager.saveFile(TASK_PATH, content);
+        if(listener != null) {
+            listener.onTaskListUpdate();
+        }
     }
 
     private int getLastId() {
@@ -91,8 +101,17 @@ public class TasksManager {
         saveTasks();
     }
 
-    public void removeTask(Task task) {
-        tasks.remove(task);
-        saveTasks();
+    public void removeTask(int taskId) {
+        boolean removed = false;
+        for(int i = 0; i < tasks.size(); i++) {
+            if(tasks.get(i).getId() == taskId) {
+                tasks.remove(i);
+                removed = true;
+                break;
+            }
+        }
+        if(removed) {
+            saveTasks();
+        }
     }
 }

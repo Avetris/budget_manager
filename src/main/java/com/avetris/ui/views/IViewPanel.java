@@ -1,4 +1,4 @@
-package com.avetris.views;
+package com.avetris.ui.views;
 
 import java.beans.PropertyChangeEvent;
 

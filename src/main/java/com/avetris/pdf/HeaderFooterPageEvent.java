@@ -19,7 +19,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
         Config config = ConfigManager.getInstance().getConfig();
 
         try {
-            Image image = Image.getInstance(config.getIcon());
+            Image image = Image.getInstance(config.getLogo());
             image.setAlignment(Element.ALIGN_RIGHT);
             image.setAbsolutePosition(20, 790);
             image.scalePercent(7.5f, 7.5f);

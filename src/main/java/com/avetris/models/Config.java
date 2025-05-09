@@ -4,12 +4,12 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.avetris.utils.PropertyNames;
 
-public class Config extends AbstractModel {
+public class Config {
     @JsonProperty("web")
     private String web;
     
-    @JsonProperty("icon")
-    private String icon;
+    @JsonProperty("logo")
+    private String logo;
 
     @JsonProperty("name")
     private String name;
@@ -40,8 +40,8 @@ public class Config extends AbstractModel {
         return web;
     }
     
-    public String getIcon() {
-        return icon;
+    public String getLogo() {
+        return logo;
     }
 
     public String getName() {
@@ -78,62 +78,42 @@ public class Config extends AbstractModel {
 
     // Setters    
     public void setWeb(String web) {
-        String oldWeb = this.web;
         this.web = web;
-        firePropertyChange(PropertyNames.Config.WEB, oldWeb, web);
     }
 
-    public void setIcon(String icon) {
-        String oldIcon = this.icon;
-        this.icon = icon;
-        firePropertyChange(PropertyNames.Config.Icon, oldIcon, icon);
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     public void setName(String name) {
-        String oldName = this.name;
         this.name = name;
-        firePropertyChange(PropertyNames.Config.NAME, oldName, name);
     }
 
     public void setAddress(String address) {
-        String oldAddress = this.address;
         this.address = address;
-        firePropertyChange(PropertyNames.Config.ADDRESS, oldAddress, address);
     }
 
     public void setPhone(String phone) {
-        String oldPhone = this.phone;
         this.phone = phone;
-        firePropertyChange(PropertyNames.Config.PHONE, oldPhone, phone);
     }
 
     public void setNif(String nif) {
-        String oldNif = this.nif;
         this.nif = nif;
-        firePropertyChange(PropertyNames.Config.NIF, oldNif, nif);
     }
 
     public void setEmail(String email) {
-        String oldEmail = this.email;
         this.email = email;
-        firePropertyChange(PropertyNames.Config.EMAIL, oldEmail, email);
     }
 
     public void setInfo(String[] info) {
-        String[] oldInfo = this.info;
         this.info = info;
-        firePropertyChange(PropertyNames.Config.INFO, oldInfo, info);
     }
 
     public void setConditions(String conditions) {
-        String oldConditions = this.conditions;
         this.conditions = conditions;
-        firePropertyChange(PropertyNames.Config.CONDITIONS, oldConditions, conditions);
     }
 
     public void setGaranty(String garanty) {
-        String oldGaranty = this.garanty;
         this.garanty = garanty;
-        firePropertyChange(PropertyNames.Config.GARANTY, oldGaranty, garanty);
     }
 }

@@ -2,7 +2,7 @@ package com.avetris;
 
 import javax.swing.SwingUtilities;
 
-import com.avetris.views.MainWindow;
+import com.avetris.ui.views.MainWindow;
 
 public class App {
     public static void main(String[] args) {
