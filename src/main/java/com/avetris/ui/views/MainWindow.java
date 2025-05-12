@@ -8,8 +8,8 @@ import com.avetris.controllers.TaskController;
 
 public class MainWindow extends JFrame {
 
-    static final int WIDTH = 800;
-    static final int HEIGHT = 600;
+    static final int WIDTH = 1680;
+    static final int HEIGHT = 1050;
 
     TasksTab taskTab;
     TaskController taskController;

@@ -22,4 +22,8 @@ public class ConfigController implements IConfigListener {
     public Config getConfig() {
         return ConfigManager.getInstance().getConfig();
     }
+
+    public String GetIcon() {
+        return ConfigManager.getInstance().getLogoPath();
+    }
 }

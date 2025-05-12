@@ -55,4 +55,8 @@ public class ConfigManager {
         this.config = config;
         saveConfig();
     }
+
+    public String getLogoPath() {
+        return FileManager.getFilePath("icon.png");
+    }
 }

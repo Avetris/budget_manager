@@ -2,14 +2,9 @@ package com.avetris.models;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import com.avetris.utils.PropertyNames;
-
 public class Config {
     @JsonProperty("web")
     private String web;
-    
-    @JsonProperty("logo")
-    private String logo;
 
     @JsonProperty("name")
     private String name;
@@ -34,14 +29,24 @@ public class Config {
 
     @JsonProperty("garanty")
     private String garanty;
-    
+    public Config() {}
+
+    public Config(String name, String address, String web, String phone, String nif, String email, String[] info, String conditions, String garanty) {
+        this.name = name;
+        this.address = address;
+        this.web = web;
+        this.phone = phone;
+        this.nif = nif;
+        this.email = email;
+        this.info = info;
+        this.conditions = conditions;
+        this.garanty = garanty;
+    }
+
+
     // Getters
     public String getWeb() {
         return web;
-    }
-    
-    public String getLogo() {
-        return logo;
     }
 
     public String getName() {
@@ -65,6 +70,9 @@ public class Config {
     }
 
     public String[] getInfo() {
+        if(info == null) {
+            return new String[0];
+        }
         return info;
     }
 
@@ -79,10 +87,6 @@ public class Config {
     // Setters    
     public void setWeb(String web) {
         this.web = web;
-    }
-
-    public void setLogo(String logo) {
-        this.logo = logo;
     }
 
     public void setName(String name) {
