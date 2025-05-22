@@ -6,7 +6,6 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.avetris.pdf.PdfManager;
-import com.avetris.utils.PropertyNames;
 
 public class Bill {
 
@@ -24,6 +23,18 @@ public class Bill {
 
     @JsonProperty("tasks")
     private ArrayList<Task> tasks = new ArrayList<Task>();
+
+    
+    public Bill() {
+        this.date = new Date();
+    }
+
+    public Bill(String id, String project, Client client, Date date) {
+        this.id = id;
+        this.project = project;
+        this.client = client;
+        this.date = date;
+    }
 
     // Getters
     public String getId() {
@@ -69,5 +80,13 @@ public class Bill {
 
     public void generatePDF(String path) {
         PdfManager.createPDF(path, this);
+    }
+
+    public void copy(Bill newBill) {
+        this.id = newBill.getId();
+        this.project = newBill.getProject();
+        this.client.copy(client);
+        this.date = newBill.getDate();
+        this.tasks = newBill.getTasks();
     }
 }

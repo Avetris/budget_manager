@@ -3,6 +3,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.*;
 
+import com.avetris.controllers.BillsController;
 import com.avetris.controllers.ConfigController;
 import com.avetris.controllers.TaskController;
 
@@ -13,6 +14,9 @@ public class MainWindow extends JFrame {
 
     TasksTab taskTab;
     TaskController taskController;
+    
+    BillsTab billsTab;
+    BillsController billController;
     
     ConfigTab configTab;
     ConfigController configController;
@@ -29,11 +33,17 @@ public class MainWindow extends JFrame {
 
     private void initializeUI() {
         JTabbedPane tabsPanel = new JTabbedPane();
-        tabsPanel.addTab("Facturas", new JPanel());
+        tabsPanel.addTab("Facturas", initBills());
         tabsPanel.addTab("Trabajos", initTasks());
-        tabsPanel.addTab("Clientes", new JPanel());
         tabsPanel.addTab("Configuración", initConfig());
         add(tabsPanel, BorderLayout.CENTER);        
+    }
+    
+    private JPanel initBills() {
+        billsTab = new BillsTab();
+        billController = new BillsController(billsTab);
+        add(billsTab);
+        return billsTab;
     }
 
     private JPanel initTasks() {

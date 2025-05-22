@@ -28,11 +28,7 @@ public class TaskController implements ITaskListener {
     @Override
     public void onSubmit(Task newTask) {
         model.copy(newTask);
-        TasksManager.getInstance().addTask((Task)getModel());
-    }
-
-    public Task[] getModelList() {
-        return (Task[]) TasksManager.getInstance().getTasks().toArray();
+        TasksManager.getInstance().addTask(getModel());
     }
 
     public Task getModel() {

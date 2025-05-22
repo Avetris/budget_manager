@@ -23,20 +23,24 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.text.NumberFormatter;
 
-import com.avetris.controllers.TaskController;
+import com.avetris.controllers.BillsController;
 import com.avetris.models.Task;
 import com.avetris.ui.views.IViewPanel;
 import com.avetris.utils.PropertyNames;
 
-public class ModifyTaskDialog extends JDialog implements IViewPanel, WindowListener {
+public class ModifyBillDialog extends JDialog implements IViewPanel, WindowListener {
 
-    TaskController controller;
+    BillsController controller;
 
-    JTextField taskTitle;
-    JTextArea taskDescription;
-    JFormattedTextField taskPrice;
+    JTextField billIdField;
+    JTextField billProjectField;
+    JTextField billDateField;
+    JTextField billClientNifField;
+    JTextField billClientDniField;
+    JTextField billClientNameField;   
+    JTextField billClientAddressField;
 
-    public ModifyTaskDialog(JFrame parent, String title, TaskController controller, boolean modal) {
+    public ModifyBillDialog(JFrame parent, String title, BillsController controller, boolean modal) {
         super(parent, title, modal);
 
         this.controller = controller;
@@ -125,7 +129,8 @@ public class ModifyTaskDialog extends JDialog implements IViewPanel, WindowListe
     private void setupSaveButton() {
         JButton submitButton = new JButton("Guardar");
         submitButton.addActionListener(e -> {
-            controller.onSubmit(new Task(
+            Client c = new Client();
+            controller.onSubmit(new Bill(
                 taskTitle.getText(),
                 taskDescription.getText(),
                 (double) taskPrice.getValue()
