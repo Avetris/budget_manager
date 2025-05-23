@@ -17,7 +17,6 @@ import javax.swing.ListSelectionModel;
 
 import com.avetris.listeners.IBillListener;
 import com.avetris.models.Bill;
-import com.avetris.models.Task;
 import com.avetris.ui.components.ButtonColumn;
 import com.avetris.ui.dialogs.ConfirmDialog;
 
@@ -69,13 +68,12 @@ public class BillsTab extends JPanel   {
         Arrays.sort(bills, (a,b) -> {
             return a.getDate().compareTo(b.getDate());
         });
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         Object[][] data = new Object[bills.length][6];
         for(int i = 0; i < bills.length; i++) {
             data[i][0] = bills[i].getId();
             data[i][1] = bills[i].getProject();
             data[i][2] = bills[i].getClient().getName();
-            data[i][2] = dateFormat.format(bills[i].getDate());
+            data[i][2] = bills[i].getDate();
             data[i][4] = "Editar";
             data[i][5] = "Eliminar";
         }

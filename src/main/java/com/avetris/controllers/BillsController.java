@@ -4,11 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.avetris.listeners.IBillListener;
-import com.avetris.listeners.ITaskListener;
 import com.avetris.managers.BillsManager;
-import com.avetris.managers.TasksManager;
 import com.avetris.models.Bill;
-import com.avetris.models.Task;
 import com.avetris.ui.dialogs.ModifyBillDialog;
 import com.avetris.ui.views.BillsTab;
 

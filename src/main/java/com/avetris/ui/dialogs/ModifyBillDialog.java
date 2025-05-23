@@ -21,14 +21,12 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.text.NumberFormatter;
 
 import com.avetris.controllers.BillsController;
-import com.avetris.models.Task;
-import com.avetris.ui.views.IViewPanel;
-import com.avetris.utils.PropertyNames;
+import com.avetris.models.Bill;
+import com.avetris.models.Client;
 
-public class ModifyBillDialog extends JDialog implements IViewPanel, WindowListener {
+public class ModifyBillDialog extends JDialog implements WindowListener {
 
     BillsController controller;
 
@@ -50,9 +48,9 @@ public class ModifyBillDialog extends JDialog implements IViewPanel, WindowListe
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         setLayout(new GridBagLayout());
-        setupTitle();
-        setupDescription();
-        setupPrice();
+        setupId();
+        setupDate();
+        setupProject();
 
         setupSaveButton();
 
@@ -61,11 +59,13 @@ public class ModifyBillDialog extends JDialog implements IViewPanel, WindowListe
         setVisible(true);
     }
 
-    public void setupTitle() {
+    public void setupId() {
+        String id = controller.getModel().getId();
         JLabel label = new JLabel();
-        label.setText("Titulo");
-        taskTitle = new JTextField(controller.getModel().getTitle());
-        label.setLabelFor(taskTitle);
+        label.setText("Id");
+        billIdField = new JTextField(id);
+        label.setLabelFor(billIdField);
+        billIdField.setEditable(id != null && !id.isEmpty());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -74,66 +74,56 @@ public class ModifyBillDialog extends JDialog implements IViewPanel, WindowListe
         c.insets = getCommonInsets();
         add(label, c);
         c.gridx = 1;
-        c.weightx = 0.9;
-        add(taskTitle, c);        
+        c.weightx = 0.45;
+        add(billIdField, c);
     }
 
-    public void setupDescription() {
+    public void setupDate() {
+        JLabel label = new JLabel();
+        label.setText("Fecha");
+        billDateField = new JTextField(controller.getModel().getDate());
+        label.setLabelFor(billDateField);
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 1;
+        c.gridy = 0;
+        c.weighty = 0.05f;
+        c.insets = getCommonInsets();
+        add(label, c);
+        c.gridx = 2;
+        c.weightx = 0.45;
+        add(billIdField, c); 
+    }
+    public void setupProject() {
+        JLabel label = new JLabel();
+        label.setText("Proyecto");
+        billProjectField = new JTextField(controller.getModel().getProject());
+        label.setLabelFor(billProjectField);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 1;
-        c.weighty = 0.85f;
-        c.insets = getCommonInsets();
-
-        
-        JLabel label = new JLabel();
-        label.setText("Descipción");
-        taskDescription = new JTextArea(controller.getModel().getDescription());
-        label.setLabelFor(taskDescription);
-        Set<AWTKeyStroke> forward = new HashSet<AWTKeyStroke>(label.getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
-        forward.add(KeyStroke.getKeyStroke("TAB"));
-        taskDescription.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forward);        
-        add(label, c);
-        c.gridx = 1;
-        c.weightx = 0.8;
-        add(taskDescription, c);   
-    }
-
-
-    public void setupPrice() {
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-        c.gridx = 0;
-        c.gridy = 2;
         c.weighty = 0.05f;
         c.insets = getCommonInsets();
-
-        
-        JLabel label = new JLabel();
-        label.setText("Precio");
-        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.getDefault());
-        NumberFormatter formatter = new NumberFormatter(format);
-        formatter.setMinimum(0.0);
-        formatter.setMaximum(10000000.0);
-        formatter.setAllowsInvalid(false);
-        taskPrice = new JFormattedTextField(formatter);
-        taskPrice.setValue(controller.getModel().getPrice());
-        label.setLabelFor(taskPrice);
         add(label, c);
         c.gridx = 1;
-        c.weightx = 0.8;
-        add(taskPrice, c);
+        c.weightx = 0.9;
+        add(billIdField, c); 
     }
 
     private void setupSaveButton() {
         JButton submitButton = new JButton("Guardar");
         submitButton.addActionListener(e -> {
-            Client c = new Client();
-            controller.onSubmit(new Bill(
-                taskTitle.getText(),
-                taskDescription.getText(),
-                (double) taskPrice.getValue()
+            controller.onSubmit(
+                new Bill(
+                    billIdField.getText(),
+                    billProjectField.getText(),
+                    billDateField.getText(),
+                    new Client(
+                        billClientNifField.getText(), 
+                        billClientDniField.getText(), 
+                        billClientNameField.getText(), 
+                        billClientAddressField.getText())
             ));
             dispose();
         });
@@ -149,23 +139,6 @@ public class ModifyBillDialog extends JDialog implements IViewPanel, WindowListe
 
     private Insets getCommonInsets() {
         return new Insets(3,3,3,3);
-    }
-
-    @Override
-    public void modelPropertyChange(PropertyChangeEvent evt) {
-        switch (evt.getPropertyName()) {
-            case PropertyNames.Task.TITLE:
-                taskTitle.setText(evt.getNewValue().toString());            
-                break;
-            case PropertyNames.Task.DESCRIPTION:
-                taskDescription.setText(evt.getNewValue().toString());
-                break;
-            case PropertyNames.Task.PRICE:
-                taskPrice.setText(evt.getNewValue().toString());                
-                break;
-            default:
-                break;
-        }
     }
 
     @Override

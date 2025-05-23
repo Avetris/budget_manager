@@ -7,7 +7,6 @@ import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.beans.PropertyChangeEvent;
 import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Locale;
@@ -25,10 +24,8 @@ import javax.swing.text.NumberFormatter;
 
 import com.avetris.controllers.TaskController;
 import com.avetris.models.Task;
-import com.avetris.ui.views.IViewPanel;
-import com.avetris.utils.PropertyNames;
 
-public class ModifyTaskDialog extends JDialog implements IViewPanel, WindowListener {
+public class ModifyTaskDialog extends JDialog implements WindowListener {
 
     TaskController controller;
 
@@ -144,23 +141,6 @@ public class ModifyTaskDialog extends JDialog implements IViewPanel, WindowListe
 
     private Insets getCommonInsets() {
         return new Insets(3,3,3,3);
-    }
-
-    @Override
-    public void modelPropertyChange(PropertyChangeEvent evt) {
-        switch (evt.getPropertyName()) {
-            case PropertyNames.Task.TITLE:
-                taskTitle.setText(evt.getNewValue().toString());            
-                break;
-            case PropertyNames.Task.DESCRIPTION:
-                taskDescription.setText(evt.getNewValue().toString());
-                break;
-            case PropertyNames.Task.PRICE:
-                taskPrice.setText(evt.getNewValue().toString());                
-                break;
-            default:
-                break;
-        }
     }
 
     @Override

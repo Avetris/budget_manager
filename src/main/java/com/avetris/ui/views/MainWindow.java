@@ -21,7 +21,7 @@ public class MainWindow extends JFrame {
     ConfigTab configTab;
     ConfigController configController;
     
-
+    
     public MainWindow() {
         setTitle("Facturas");
         setSize(WIDTH, HEIGHT);
