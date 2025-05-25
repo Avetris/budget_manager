@@ -6,6 +6,8 @@ import java.awt.Insets;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.List;
+
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -16,9 +18,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 
 import com.avetris.controllers.BillsController;
 import com.avetris.models.Bill;
@@ -39,6 +44,11 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
     JComboBox<String> billClientTypeField;
     JTextField billClientNameField;   
     JTextField billClientAddressField;
+    
+    JTextField billIvaField;
+    JLabel billTotal;
+    JLabel billTotalIva;
+    JLabel billTotalWithIva;
 
     JComponent taskComponent;
     AutoRowHeightTable taskTable;
@@ -70,6 +80,8 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
 
         setupAddTaskButton();
         setupAddTaskTable();
+
+        setupIvaTotal();
         setupSaveButton();
         setupGeneratePdf();
 
@@ -215,6 +227,26 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         add(billClientAddressField, c);
     }
 
+    public void setupIvaTotal() {
+      /*   JLabel label = new JLabel();
+        label.setText("Dirección Cliente");
+        billClientAddressField = new JTextField(controller.getModel().getClient().getAddress());
+        label.setLabelFor(billClientAddressField);
+        billClientAddressField.getDocument().addDocumentListener(this);
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 4;
+        c.weighty = 0.05f;
+        c.weightx = 0.05;
+        c.insets = getCommonInsets();
+        add(label, c);
+        c.gridx = 1;
+        c.weightx = 0.95;
+        c.gridwidth = 3;
+        add(billClientAddressField, c);*/
+    }
+
     private void setupSaveButton() {
         submitButton = new JButton("Guardar");
         submitButton.addActionListener(e -> {
@@ -238,7 +270,7 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
-        c.gridy = 7;
+        c.gridy = 8;
         c.gridwidth = 2;
         c.weighty = 0.05f;
         c.insets = getCommonInsets();
@@ -255,7 +287,7 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 2;
-        c.gridy = 7;
+        c.gridy = 8;
         c.gridwidth = 2;
         c.weighty = 0.05f;
         c.insets = getCommonInsets();
@@ -281,7 +313,6 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         if(taskComponent != null) {
             remove(taskComponent);
         }
-        Object[][] data = new Object[tasks.size()][5];
         DefaultTableModel defaultModel = new DefaultTableModel();
         defaultModel.addColumn("Título");
         defaultModel.addColumn("Descripción");
@@ -309,6 +340,19 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         taskTable.getColumnModel().getColumn(4).setMinWidth(100);
         taskTable.getColumnModel().getColumn(4).setMaxWidth(100);
         taskTable.setDefaultRenderer(Object.class, new JTextAreaCellRenderer());
+        
+        TableCellEditor editor = taskTable.getDefaultEditor(Object.class);
+        editor.addCellEditorListener(new CellEditorListener() {
+            @Override 
+            public void editingCanceled(ChangeEvent e) {
+            }
+         
+            @Override
+            public void editingStopped(ChangeEvent e) {
+                validateChanges();
+            }
+         });
+        taskTable.setDefaultEditor(Object.class, editor);
         taskTable.setRowSelectionAllowed(true);
         
         JScrollPane scrollPane = new  JScrollPane(taskTable);
@@ -380,11 +424,28 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
             boolean modified = !id.equals(controller.getModel().getId()) || 
                                 !date.equals(controller.getModel().getDate()) || 
                                 !project.equals(controller.getModel().getProject());
+            if(!modified) {
+                modified = hasDifferentTasks();
+            }
             canSave = modified;
             canGenerate = !modified;
         }
         submitButton.setEnabled(canSave);
         generatePdfButton.setEnabled(canGenerate);
+    }
+
+    boolean hasDifferentTasks () {
+        List<Task> tasks = controller.getModel().getTasks();
+        if(tasks.size() != taskTable.getModel().getRowCount()) {
+            return true;
+        }
+        boolean equal = true;
+        for(int i = 0; i < tasks.size() && equal; i++) {
+            equal &= tasks.get(i).getTitle().equals(taskTable.getValueAt(i, 0));
+            equal &= tasks.get(i).getDescription().equals(taskTable.getValueAt(i, 1));
+            equal &= tasks.get(i).getPrice() == (double) taskTable.getValueAt(i, 2);
+        }
+        return !equal;
     }
 
     @Override

@@ -19,6 +19,12 @@ public class Bill {
     @JsonProperty("client")
     private Client client = new Client();
 
+    @JsonProperty("iva")
+    private int iva = 21;
+    
+    @JsonProperty("total")
+    private double total;
+
     @JsonProperty("tasks")
     private ArrayList<Task> tasks = new ArrayList<Task>();
 
@@ -51,6 +57,22 @@ public class Bill {
         return date;
     }
 
+    public int getIva() {
+        return iva;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public double getTotalIva() {
+        return total * (iva / 100.0);
+    }
+
+    public double getTotalWithIva() {
+        return getTotal() + getTotalIva(); 
+    }
+
     public ArrayList<Task> getTasks() {
         return tasks;
     }
@@ -68,8 +90,16 @@ public class Bill {
         this.date = date;
     }
 
+    public void setIva(int iva) {
+        this.iva = iva;
+    }
+
     public void setTasks(ArrayList<Task> tasks) {
         this.tasks = tasks;
+        this.total = 0;
+        for(Task t : tasks) {
+            this.total += t.getPrice();
+        }
     }
 
     public void copy(Bill newBill) {
