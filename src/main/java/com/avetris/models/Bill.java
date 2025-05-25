@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import com.avetris.pdf.PdfManager;
-
 public class Bill {
 
     @JsonProperty("id")
@@ -72,10 +70,6 @@ public class Bill {
 
     public void setTasks(ArrayList<Task> tasks) {
         this.tasks = tasks;
-    }
-
-    public void generatePDF(String path) {
-        PdfManager.createPDF(path, this);
     }
 
     public void copy(Bill newBill) {

@@ -6,8 +6,8 @@ public class Client {
     @JsonProperty("nif")
     private String nif;
 
-    @JsonProperty("dni")
-    private String dni;
+    @JsonProperty("isCompany")
+    private boolean isCompany;
 
     @JsonProperty("name")
     private String name;
@@ -19,8 +19,8 @@ public class Client {
         return nif;
     }
     
-    public String getDni() {
-        return dni;
+    public boolean isCompany() {
+        return isCompany;
     }
 
     public String getName() {
@@ -34,9 +34,9 @@ public class Client {
     public Client() {
     }
 
-    public Client(String nif, String dni, String name, String address){
+    public Client(String nif, boolean isCompany, String name, String address){
         this.nif = nif;
-        this.dni = dni;
+        this.isCompany = isCompany;
         this.name = name;
         this.address = address;
     }
@@ -45,8 +45,8 @@ public class Client {
     public void setNif(String nif) {
         this.nif = nif;
     }
-    public void setDni(String dni) {
-        this.dni = dni;
+    public void setCompany(boolean isCompany) {
+        this.isCompany = isCompany;
     }
 
     public void setName(String name) {
@@ -58,12 +58,12 @@ public class Client {
     }
     public void copy(Client newClient) {
         this.nif = newClient.getNif();
-        this.dni = newClient.getDni();
+        this.isCompany = newClient.isCompany();
         this.name = newClient.getName();
         this.address = newClient.getAddress();
     }
 
     public boolean containsFilter(String filter) {
-        return getName().contains(filter) || getDni().contains(filter) || getNif().contains(filter);
+        return getName().contains(filter) ||  getNif().contains(filter);
     }
 }

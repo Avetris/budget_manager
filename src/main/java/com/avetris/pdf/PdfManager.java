@@ -6,14 +6,16 @@ import java.io.File;
 import com.avetris.managers.ConfigManager;
 import com.avetris.models.Bill;
 import com.avetris.models.Config;
+import com.avetris.utils.FileManager;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class PdfManager {
-    public static void createPDF(String path, Bill bill) {
+    public static void createPDF(Bill bill) {
         try {
+            String path = FileManager.getFilePath("facturas/" + bill.getId() + ".pdf");
             File f = new File(path);
             if(!f.exists()) {
                 f.getParentFile().mkdirs();

@@ -34,7 +34,7 @@ public class MainWindow extends JFrame {
     private void initializeUI() {
         JTabbedPane tabsPanel = new JTabbedPane();
         tabsPanel.addTab("Facturas", initBills());
-        tabsPanel.addTab("Trabajos", initTasks());
+        tabsPanel.addTab("Tareas", initTasks());
         tabsPanel.addTab("Configuración", initConfig());
         add(tabsPanel, BorderLayout.CENTER);        
     }

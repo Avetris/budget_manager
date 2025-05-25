@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 import com.avetris.listeners.IBillListener;
 import com.avetris.managers.BillsManager;
 import com.avetris.models.Bill;
+import com.avetris.pdf.PdfManager;
 import com.avetris.ui.dialogs.ModifyBillDialog;
 import com.avetris.ui.views.BillsTab;
 
@@ -29,6 +30,13 @@ public class BillsController implements IBillListener {
     public void onSubmit(Bill newBill) {
         model.copy(newBill);
         BillsManager.getInstance().addBill(getModel());
+    }
+
+    @Override
+    public void onGeneratePdf() {
+        if (model != null) {
+            PdfManager.createPDF(model);            
+        }
     }
 
     public Bill getModel() {

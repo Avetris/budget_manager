@@ -1,32 +1,34 @@
 package com.avetris.ui.dialogs;
 
-import java.awt.AWTKeyStroke;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.beans.PropertyChangeEvent;
-import java.text.NumberFormat;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-
+import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 
 import com.avetris.controllers.BillsController;
 import com.avetris.models.Bill;
 import com.avetris.models.Client;
+import com.avetris.models.Task;
+import com.avetris.ui.components.AutoRowHeightTable;
+import com.avetris.ui.components.ButtonColumn;
+import com.avetris.ui.components.JTextAreaCellRenderer;
 
-public class ModifyBillDialog extends JDialog implements WindowListener {
+public class ModifyBillDialog extends JDialog implements WindowListener, DocumentListener {
 
     BillsController controller;
 
@@ -34,9 +36,18 @@ public class ModifyBillDialog extends JDialog implements WindowListener {
     JTextField billProjectField;
     JTextField billDateField;
     JTextField billClientNifField;
-    JTextField billClientDniField;
+    JComboBox<String> billClientTypeField;
     JTextField billClientNameField;   
     JTextField billClientAddressField;
+
+    JComponent taskComponent;
+    AutoRowHeightTable taskTable;
+
+    JButton submitButton;
+    JButton generatePdfButton;
+
+    boolean canGenerate = false;
+    boolean canSave = false;
 
     public ModifyBillDialog(JFrame parent, String title, BillsController controller, boolean modal) {
         super(parent, title, modal);
@@ -52,7 +63,15 @@ public class ModifyBillDialog extends JDialog implements WindowListener {
         setupDate();
         setupProject();
 
+        setupClientNif();
+        setupClientType();
+        setupClientName();
+        setupClientAddress();
+
+        setupAddTaskButton();
+        setupAddTaskTable();
         setupSaveButton();
+        setupGeneratePdf();
 
         addWindowListener(this);
 
@@ -65,17 +84,20 @@ public class ModifyBillDialog extends JDialog implements WindowListener {
         label.setText("Id");
         billIdField = new JTextField(id);
         label.setLabelFor(billIdField);
-        billIdField.setEditable(id != null && !id.isEmpty());
+        billIdField.setEditable(id == null || id.isEmpty());
+        billIdField.getDocument().addDocumentListener(this);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 0;
         c.weighty = 0.05f;
+        c.weightx = 0.05;
         c.insets = getCommonInsets();
         add(label, c);
         c.gridx = 1;
         c.weightx = 0.45;
         add(billIdField, c);
+        canGenerate = id != null && !id.isEmpty();
     }
 
     public void setupDate() {
@@ -83,36 +105,118 @@ public class ModifyBillDialog extends JDialog implements WindowListener {
         label.setText("Fecha");
         billDateField = new JTextField(controller.getModel().getDate());
         label.setLabelFor(billDateField);
-        GridBagConstraints c = new GridBagConstraints();
+        billDateField.getDocument().addDocumentListener(this);
+        GridBagConstraints c = new GridBagConstraints();    
         c.fill = GridBagConstraints.BOTH;
-        c.gridx = 1;
+        c.gridx = 2;
         c.gridy = 0;
         c.weighty = 0.05f;
+        c.weightx = 0.05;
         c.insets = getCommonInsets();
         add(label, c);
-        c.gridx = 2;
+        c.gridx = 3;
         c.weightx = 0.45;
-        add(billIdField, c); 
+        add(billDateField, c); 
     }
+
     public void setupProject() {
         JLabel label = new JLabel();
         label.setText("Proyecto");
         billProjectField = new JTextField(controller.getModel().getProject());
         label.setLabelFor(billProjectField);
+        billProjectField.getDocument().addDocumentListener(this);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 1;
         c.weighty = 0.05f;
+        c.weightx = 0.1;
         c.insets = getCommonInsets();
         add(label, c);
         c.gridx = 1;
         c.weightx = 0.9;
-        add(billIdField, c); 
+        c.gridwidth = 3;
+        add(billProjectField, c); 
+    }
+
+    public void setupClientNif() {
+        JLabel label = new JLabel();
+        label.setText("NIF/DNI");
+        billClientNifField = new JTextField(controller.getModel().getClient().getNif());
+        label.setLabelFor(billClientNifField);
+        billClientNifField.getDocument().addDocumentListener(this);
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weighty = 0.05f;
+        c.weightx = 0.05;
+        c.insets = getCommonInsets();
+        add(label, c);
+        c.gridx = 1;
+        c.weightx = 0.5;
+        c.gridwidth = 2;
+        add(billClientNifField, c);
+    }
+
+    public void setupClientType() {
+        billClientTypeField = new JComboBox<>();
+        billClientTypeField.addItem("Empresa");
+        billClientTypeField.addItem("Individual");
+        billClientTypeField.addActionListener(l -> validate());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 3;
+        c.gridy = 2;
+        c.weighty = 0.05f;
+        c.insets = getCommonInsets();
+        c.weightx = 0.5;
+        add(billClientTypeField, c); 
+    }
+
+
+    public void setupClientName() {
+        JLabel label = new JLabel();
+        label.setText("Nombre Cliente");
+        billClientNameField = new JTextField(controller.getModel().getClient().getName());
+        label.setLabelFor(billClientNameField);
+        billClientNameField.getDocument().addDocumentListener(this);
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 3;
+        c.weighty = 0.05f;
+        c.weightx = 0.05;
+        c.insets = getCommonInsets();
+        add(label, c);
+        c.gridx = 1;
+        c.weightx = 0.95;
+        c.gridwidth = 3;
+        add(billClientNameField, c);
+    }
+
+    public void setupClientAddress() {
+        JLabel label = new JLabel();
+        label.setText("Dirección Cliente");
+        billClientAddressField = new JTextField(controller.getModel().getClient().getAddress());
+        label.setLabelFor(billClientAddressField);
+        billClientAddressField.getDocument().addDocumentListener(this);
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 4;
+        c.weighty = 0.05f;
+        c.weightx = 0.05;
+        c.insets = getCommonInsets();
+        add(label, c);
+        c.gridx = 1;
+        c.weightx = 0.95;
+        c.gridwidth = 3;
+        add(billClientAddressField, c);
     }
 
     private void setupSaveButton() {
-        JButton submitButton = new JButton("Guardar");
+        submitButton = new JButton("Guardar");
         submitButton.addActionListener(e -> {
             controller.onSubmit(
                 new Bill(
@@ -121,22 +225,121 @@ public class ModifyBillDialog extends JDialog implements WindowListener {
                     billDateField.getText(),
                     new Client(
                         billClientNifField.getText(), 
-                        billClientDniField.getText(), 
+                        billClientTypeField.getSelectedItem().equals("Empresa"), 
                         billClientNameField.getText(), 
                         billClientAddressField.getText())
             ));
-            dispose();
+            generatePdfButton.setEnabled(canGenerate);
+            submitButton.setEnabled(false);
+            canGenerate = true;
+            canSave = false;
         });
+        submitButton.setEnabled(canSave);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 7;
         c.gridwidth = 2;
         c.weighty = 0.05f;
         c.insets = getCommonInsets();
         add(submitButton, c);
     }
 
+    
+    private void setupGeneratePdf() {
+        generatePdfButton = new JButton("Generar PDF");
+        generatePdfButton.addActionListener(e -> {
+            controller.onGeneratePdf();
+        });
+        generatePdfButton.setEnabled(canGenerate);
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 2;
+        c.gridy = 7;
+        c.gridwidth = 2;
+        c.weighty = 0.05f;
+        c.insets = getCommonInsets();
+        add(generatePdfButton, c);
+    }
+
+    private void setupAddTaskButton() {
+        generatePdfButton = new JButton("Añadir Tarea");
+        generatePdfButton.addActionListener(e -> {
+            addTask();
+        });
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridy = 5;
+        c.gridwidth = 4;
+        c.weighty = 0.01f;
+        c.insets = getCommonInsets();
+        add(generatePdfButton, c);
+    }
+
+    private void setupAddTaskTable() {
+        List<Task> tasks = controller.getModel().getTasks();
+        if(taskComponent != null) {
+            remove(taskComponent);
+        }
+        Object[][] data = new Object[tasks.size()][5];
+        DefaultTableModel defaultModel = new DefaultTableModel();
+        defaultModel.addColumn("Título");
+        defaultModel.addColumn("Descripción");
+        defaultModel.addColumn("Precio");
+        defaultModel.addColumn("");
+        defaultModel.addColumn("");
+        for(int i = 0; i < tasks.size(); i++) {
+            Object[] rowData = new Object[5];
+            rowData[0] = tasks.get(i).getTitle();
+            rowData[1] = tasks.get(i).getDescription();
+            rowData[2] = tasks.get(i).getPrice();
+            rowData[3] = "Buscar";
+            rowData[4] = "Eliminar";
+            defaultModel.addRow(rowData);
+        }
+
+        taskTable = new AutoRowHeightTable(defaultModel);
+        taskTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        taskTable.getColumnModel().getColumn(0).setMinWidth(100);
+        taskTable.getColumnModel().getColumn(1).setMinWidth(100);
+        taskTable.getColumnModel().getColumn(2).setMinWidth(100);
+        taskTable.getColumnModel().getColumn(2).setMaxWidth(100);
+        taskTable.getColumnModel().getColumn(3).setMinWidth(100);
+        taskTable.getColumnModel().getColumn(3).setMaxWidth(100);
+        taskTable.getColumnModel().getColumn(4).setMinWidth(100);
+        taskTable.getColumnModel().getColumn(4).setMaxWidth(100);
+        taskTable.setDefaultRenderer(Object.class, new JTextAreaCellRenderer());
+        taskTable.setRowSelectionAllowed(true);
+        
+        JScrollPane scrollPane = new  JScrollPane(taskTable);
+        taskTable.setFillsViewportHeight(true);        
+    
+        new ButtonColumn(taskTable, 3, e -> {
+            new TaskSelectDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Elegir Tarea", t -> {
+                ((DefaultTableModel)taskTable.getModel()).setValueAt(t.getTitle(), taskTable.getSelectedRow(), 0);
+                ((DefaultTableModel)taskTable.getModel()).setValueAt(t.getDescription(), taskTable.getSelectedRow(), 1);
+                ((DefaultTableModel)taskTable.getModel()).setValueAt(t.getPrice(), taskTable.getSelectedRow(), 2);
+            }, true);
+        });
+        new ButtonColumn(taskTable, 4, e -> {
+            new ConfirmDialog(new JFrame(), "Eliminar tarea", "¿Seguro que quieres eliminar la tarea? Esta acción no se puede revertir.", true, () -> {
+                ((DefaultTableModel)taskTable.getModel()).removeRow(taskTable.getSelectedRow());
+            });                
+        });
+                
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridy = 6;
+        c.gridwidth = 4;
+        c.weighty = 1f;
+        c.insets = getCommonInsets();
+        add(scrollPane, c);
+    }
+
+    private void addTask() {
+        ((DefaultTableModel) taskTable.getModel()).addRow(new Object[]{"", "", "", "Buscar", "Eliminar"});
+    }
+    
     private Insets getCommonInsets() {
         return new Insets(3,3,3,3);
     }
@@ -163,4 +366,38 @@ public class ModifyBillDialog extends JDialog implements WindowListener {
 
     @Override
     public void windowDeactivated(WindowEvent e) {}
+
+    public void validateChanges() {
+        String id = billIdField.getText();
+        String date = billDateField.getText();
+        String project = billProjectField.getText();
+        boolean hasErrors = id.isEmpty() || date.isEmpty() || project.isEmpty();
+
+        if (hasErrors) {
+            canSave = false;
+            canGenerate = false;
+        } else {
+            boolean modified = !id.equals(controller.getModel().getId()) || 
+                                !date.equals(controller.getModel().getDate()) || 
+                                !project.equals(controller.getModel().getProject());
+            canSave = modified;
+            canGenerate = !modified;
+        }
+        submitButton.setEnabled(canSave);
+        generatePdfButton.setEnabled(canGenerate);
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        validateChanges();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        validateChanges();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+    }
 }

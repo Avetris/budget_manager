@@ -4,9 +4,9 @@ import com.avetris.models.Bill;
 
 public interface IBillListener {
     public void onSubmit(Bill newBill);
+    public void onGeneratePdf();
     public void setFilter(String filter);
     public void onBillListUpdated();
     public void showDialog(String id);
-    public void onRemoveBill(String id);
-    
+    public void onRemoveBill(String id);    
 }
