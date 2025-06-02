@@ -5,13 +5,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.text.NumberFormat;
 import java.util.List;
 
-import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -24,31 +25,32 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
+import javax.swing.text.NumberFormatter;
 
-import com.avetris.controllers.BillsController;
-import com.avetris.models.Bill;
+import com.avetris.controllers.BudgetsController;
+import com.avetris.models.Budget;
 import com.avetris.models.Client;
 import com.avetris.models.Task;
 import com.avetris.ui.components.AutoRowHeightTable;
 import com.avetris.ui.components.ButtonColumn;
 import com.avetris.ui.components.JTextAreaCellRenderer;
 
-public class ModifyBillDialog extends JDialog implements WindowListener, DocumentListener {
+public class ModifyBudgetDialog extends JDialog implements WindowListener, DocumentListener {
 
-    BillsController controller;
+    BudgetsController controller;
 
-    JTextField billIdField;
-    JTextField billProjectField;
-    JTextField billDateField;
-    JTextField billClientNifField;
-    JComboBox<String> billClientTypeField;
-    JTextField billClientNameField;   
-    JTextField billClientAddressField;
+    JTextField idField;
+    JTextField projectField;
+    JTextField dateField;
+    JTextField clientNifField;
+    JComboBox<String> clientTypeField;
+    JTextField clientNameField;   
+    JTextField clientAddressField;
     
-    JTextField billIvaField;
-    JLabel billTotal;
-    JLabel billTotalIva;
-    JLabel billTotalWithIva;
+    JFormattedTextField ivaField;
+    JLabel total;
+    JLabel totalIva;
+    JLabel totalWithIva;
 
     JComponent taskComponent;
     AutoRowHeightTable taskTable;
@@ -59,7 +61,7 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
     boolean canGenerate = false;
     boolean canSave = false;
 
-    public ModifyBillDialog(JFrame parent, String title, BillsController controller, boolean modal) {
+    public ModifyBudgetDialog(JFrame parent, String title, BudgetsController controller, boolean modal) {
         super(parent, title, modal);
 
         this.controller = controller;
@@ -94,10 +96,10 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         String id = controller.getModel().getId();
         JLabel label = new JLabel();
         label.setText("Id");
-        billIdField = new JTextField(id);
-        label.setLabelFor(billIdField);
-        billIdField.setEditable(id == null || id.isEmpty());
-        billIdField.getDocument().addDocumentListener(this);
+        idField = new JTextField(id);
+        label.setLabelFor(idField);
+        idField.setEditable(id == null || id.isEmpty());
+        idField.getDocument().addDocumentListener(this);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -108,16 +110,16 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         add(label, c);
         c.gridx = 1;
         c.weightx = 0.45;
-        add(billIdField, c);
+        add(idField, c);
         canGenerate = id != null && !id.isEmpty();
     }
 
     public void setupDate() {
         JLabel label = new JLabel();
         label.setText("Fecha");
-        billDateField = new JTextField(controller.getModel().getDate());
-        label.setLabelFor(billDateField);
-        billDateField.getDocument().addDocumentListener(this);
+        dateField = new JTextField(controller.getModel().getDate());
+        label.setLabelFor(dateField);
+        dateField.getDocument().addDocumentListener(this);
         GridBagConstraints c = new GridBagConstraints();    
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 2;
@@ -128,15 +130,15 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         add(label, c);
         c.gridx = 3;
         c.weightx = 0.45;
-        add(billDateField, c); 
+        add(dateField, c); 
     }
 
     public void setupProject() {
         JLabel label = new JLabel();
         label.setText("Proyecto");
-        billProjectField = new JTextField(controller.getModel().getProject());
-        label.setLabelFor(billProjectField);
-        billProjectField.getDocument().addDocumentListener(this);
+        projectField = new JTextField(controller.getModel().getProject());
+        label.setLabelFor(projectField);
+        projectField.getDocument().addDocumentListener(this);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -148,15 +150,15 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         c.gridx = 1;
         c.weightx = 0.9;
         c.gridwidth = 3;
-        add(billProjectField, c); 
+        add(projectField, c); 
     }
 
     public void setupClientNif() {
         JLabel label = new JLabel();
         label.setText("NIF/DNI");
-        billClientNifField = new JTextField(controller.getModel().getClient().getNif());
-        label.setLabelFor(billClientNifField);
-        billClientNifField.getDocument().addDocumentListener(this);
+        clientNifField = new JTextField(controller.getModel().getClient().getNif());
+        label.setLabelFor(clientNifField);
+        clientNifField.getDocument().addDocumentListener(this);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -168,14 +170,14 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         c.gridx = 1;
         c.weightx = 0.5;
         c.gridwidth = 2;
-        add(billClientNifField, c);
+        add(clientNifField, c);
     }
 
     public void setupClientType() {
-        billClientTypeField = new JComboBox<>();
-        billClientTypeField.addItem("Empresa");
-        billClientTypeField.addItem("Individual");
-        billClientTypeField.addActionListener(l -> validate());
+        clientTypeField = new JComboBox<>();
+        clientTypeField.addItem("Empresa");
+        clientTypeField.addItem("Individual");
+        clientTypeField.addActionListener(l -> validate());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 3;
@@ -183,16 +185,16 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         c.weighty = 0.05f;
         c.insets = getCommonInsets();
         c.weightx = 0.5;
-        add(billClientTypeField, c); 
+        add(clientTypeField, c); 
     }
 
 
     public void setupClientName() {
         JLabel label = new JLabel();
         label.setText("Nombre Cliente");
-        billClientNameField = new JTextField(controller.getModel().getClient().getName());
-        label.setLabelFor(billClientNameField);
-        billClientNameField.getDocument().addDocumentListener(this);
+        clientNameField = new JTextField(controller.getModel().getClient().getName());
+        label.setLabelFor(clientNameField);
+        clientNameField.getDocument().addDocumentListener(this);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -204,15 +206,15 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         c.gridx = 1;
         c.weightx = 0.95;
         c.gridwidth = 3;
-        add(billClientNameField, c);
+        add(clientNameField, c);
     }
 
     public void setupClientAddress() {
         JLabel label = new JLabel();
         label.setText("Dirección Cliente");
-        billClientAddressField = new JTextField(controller.getModel().getClient().getAddress());
-        label.setLabelFor(billClientAddressField);
-        billClientAddressField.getDocument().addDocumentListener(this);
+        clientAddressField = new JTextField(controller.getModel().getClient().getAddress());
+        label.setLabelFor(clientAddressField);
+        clientAddressField.getDocument().addDocumentListener(this);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -224,42 +226,81 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         c.gridx = 1;
         c.weightx = 0.95;
         c.gridwidth = 3;
-        add(billClientAddressField, c);
+        add(clientAddressField, c);
     }
 
     public void setupIvaTotal() {
-      /*   JLabel label = new JLabel();
-        label.setText("Dirección Cliente");
-        billClientAddressField = new JTextField(controller.getModel().getClient().getAddress());
-        label.setLabelFor(billClientAddressField);
-        billClientAddressField.getDocument().addDocumentListener(this);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
-        c.gridx = 0;
-        c.gridy = 4;
+        c.gridy = 7;
         c.weighty = 0.05f;
         c.weightx = 0.05;
         c.insets = getCommonInsets();
-        add(label, c);
+
+        JLabel totalLabel = new JLabel();
+        totalLabel.setText("Total");
+        c.gridx = 2;
+        add(totalLabel, c);
+        total = new JLabel(controller.getModel().getTotal() + "");
+        c.gridx = 3;
+        add(total, c);
+
+        
+        JLabel ivaLabel = new JLabel();
+        ivaLabel.setText("IVA (%)");
+        c.gridy++;
+        c.gridx = 0;
+        add(ivaLabel, c);        
+        NumberFormatter formatter = new NumberFormatter(NumberFormat.getNumberInstance());
+        formatter.setMinimum(0.0);
+        formatter.setMaximum(100.0);
+        formatter.setAllowsInvalid(false);
+        ivaField = new JFormattedTextField(formatter);
+        ivaField.setValue(controller.getModel().getIva());
+
+        ivaLabel.setLabelFor(ivaField);
+        ivaField.getDocument().addDocumentListener(this);
         c.gridx = 1;
-        c.weightx = 0.95;
-        c.gridwidth = 3;
-        add(billClientAddressField, c);*/
+        add(ivaField, c);
+        JLabel ivaPriceLabel = new JLabel();
+        ivaPriceLabel.setText("Total IVA");
+        c.gridx = 2;
+        add(ivaPriceLabel, c);
+        totalIva = new JLabel(controller.getModel().getTotalIva() + "");
+        c.gridx = 3;
+        add(totalIva, c);
+        JLabel totalWithIvaLabel = new JLabel();
+        totalWithIvaLabel.setText("Total (Con IVA)");
+        c.gridy++;
+        c.gridx = 2;
+        add(totalWithIvaLabel, c);
+        totalWithIva = new JLabel(controller.getModel().getTotalWithIva() + "");
+        c.gridx = 3;
+        add(totalWithIva, c);
     }
 
     private void setupSaveButton() {
         submitButton = new JButton("Guardar");
         submitButton.addActionListener(e -> {
+            List<Task> tasks = new java.util.ArrayList<>();
+            for(int i = 0; i < taskTable.getModel().getRowCount(); i++) {
+                double price = 0;
+                try {
+                    price += Double.parseDouble((String) taskTable.getValueAt(i, 2));
+                } catch (NumberFormatException e1) {}
+                tasks.add(new Task((String) taskTable.getValueAt(i, 0), (String) taskTable.getValueAt(i, 1), price));
+            }
             controller.onSubmit(
-                new Bill(
-                    billIdField.getText(),
-                    billProjectField.getText(),
-                    billDateField.getText(),
+                new Budget(
+                    idField.getText(),
+                    projectField.getText(),
+                    dateField.getText(),
                     new Client(
-                        billClientNifField.getText(), 
-                        billClientTypeField.getSelectedItem().equals("Empresa"), 
-                        billClientNameField.getText(), 
-                        billClientAddressField.getText())
+                        clientNifField.getText(), 
+                        clientTypeField.getSelectedItem().equals("Empresa"), 
+                        clientNameField.getText(), 
+                        clientAddressField.getText()),
+                    tasks
             ));
             generatePdfButton.setEnabled(canGenerate);
             submitButton.setEnabled(false);
@@ -270,7 +311,7 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
-        c.gridy = 8;
+        c.gridy = 10;
         c.gridwidth = 2;
         c.weighty = 0.05f;
         c.insets = getCommonInsets();
@@ -287,7 +328,7 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 2;
-        c.gridy = 8;
+        c.gridy = 10;
         c.gridwidth = 2;
         c.weighty = 0.05f;
         c.insets = getCommonInsets();
@@ -323,7 +364,7 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
             Object[] rowData = new Object[5];
             rowData[0] = tasks.get(i).getTitle();
             rowData[1] = tasks.get(i).getDescription();
-            rowData[2] = tasks.get(i).getPrice();
+            rowData[2] = Double.valueOf(tasks.get(i).getPrice());
             rowData[3] = "Buscar";
             rowData[4] = "Eliminar";
             defaultModel.addRow(rowData);
@@ -339,7 +380,7 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         taskTable.getColumnModel().getColumn(3).setMaxWidth(100);
         taskTable.getColumnModel().getColumn(4).setMinWidth(100);
         taskTable.getColumnModel().getColumn(4).setMaxWidth(100);
-        taskTable.setDefaultRenderer(Object.class, new JTextAreaCellRenderer());
+        taskTable.setDefaultRenderer(String.class, new JTextAreaCellRenderer());
         
         TableCellEditor editor = taskTable.getDefaultEditor(Object.class);
         editor.addCellEditorListener(new CellEditorListener() {
@@ -349,6 +390,9 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
          
             @Override
             public void editingStopped(ChangeEvent e) {
+                for(int i = 0; i < taskTable.getModel().getRowCount(); i++) {
+                    taskTable.getModel().setValueAt(((String)taskTable.getValueAt(i, 0)).toUpperCase(), i, 0);
+                }
                 validateChanges();
             }
          });
@@ -356,7 +400,7 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         taskTable.setRowSelectionAllowed(true);
         
         JScrollPane scrollPane = new  JScrollPane(taskTable);
-        taskTable.setFillsViewportHeight(true);        
+        taskTable.setFillsViewportHeight(true);
     
         new ButtonColumn(taskTable, 3, e -> {
             new TaskSelectDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Elegir Tarea", t -> {
@@ -381,7 +425,7 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
     }
 
     private void addTask() {
-        ((DefaultTableModel) taskTable.getModel()).addRow(new Object[]{"", "", "", "Buscar", "Eliminar"});
+        ((DefaultTableModel) taskTable.getModel()).addRow(new Object[]{"", "", Double.valueOf(0), "Buscar", "Eliminar"});
     }
     
     private Insets getCommonInsets() {
@@ -412,10 +456,11 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
     public void windowDeactivated(WindowEvent e) {}
 
     public void validateChanges() {
-        String id = billIdField.getText();
-        String date = billDateField.getText();
-        String project = billProjectField.getText();
+        String id = idField.getText();
+        String date = dateField.getText();
+        String project = projectField.getText();
         boolean hasErrors = id.isEmpty() || date.isEmpty() || project.isEmpty();
+        calculatePrices();
 
         if (hasErrors) {
             canSave = false;
@@ -432,6 +477,22 @@ public class ModifyBillDialog extends JDialog implements WindowListener, Documen
         }
         submitButton.setEnabled(canSave);
         generatePdfButton.setEnabled(canGenerate);
+    }
+
+    void calculatePrices() {  
+        double totalValue = 0;
+        for(int i = 0; i < taskTable.getModel().getRowCount(); i++) {
+            try {
+                totalValue += Double.parseDouble((String) taskTable.getValueAt(i, 2));
+            } catch (NumberFormatException e) {}
+        }
+        double totalIVAValue = 0;
+        try {
+            totalIVAValue = totalValue * (Double.parseDouble(ivaField.getText()) / 100.0);
+        }catch(NumberFormatException e) {}
+        total.setText(totalValue + "€");
+        totalIva.setText(totalIVAValue + "€");
+        totalWithIva.setText((totalValue + totalIVAValue) + "€");
     }
 
     boolean hasDifferentTasks () {

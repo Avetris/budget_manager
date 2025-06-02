@@ -3,7 +3,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.*;
 
-import com.avetris.controllers.BillsController;
+import com.avetris.controllers.BudgetsController;
 import com.avetris.controllers.ConfigController;
 import com.avetris.controllers.TaskController;
 
@@ -15,15 +15,15 @@ public class MainWindow extends JFrame {
     TasksTab taskTab;
     TaskController taskController;
     
-    BillsTab billsTab;
-    BillsController billController;
+    BudgetsTab budgetsTab;
+    BudgetsController budgetController;
     
     ConfigTab configTab;
     ConfigController configController;
     
     
     public MainWindow() {
-        setTitle("Facturas");
+        setTitle("Presupuestos");
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -33,17 +33,17 @@ public class MainWindow extends JFrame {
 
     private void initializeUI() {
         JTabbedPane tabsPanel = new JTabbedPane();
-        tabsPanel.addTab("Facturas", initBills());
+        tabsPanel.addTab("Presupuestos", initBudgets());
         tabsPanel.addTab("Tareas", initTasks());
         tabsPanel.addTab("Configuración", initConfig());
         add(tabsPanel, BorderLayout.CENTER);        
     }
     
-    private JPanel initBills() {
-        billsTab = new BillsTab();
-        billController = new BillsController(billsTab);
-        add(billsTab);
-        return billsTab;
+    private JPanel initBudgets() {
+        budgetsTab = new BudgetsTab();
+        budgetController = new BudgetsController(budgetsTab);
+        add(budgetsTab);
+        return budgetsTab;
     }
 
     private JPanel initTasks() {

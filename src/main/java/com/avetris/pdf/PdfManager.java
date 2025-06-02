@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import com.avetris.managers.ConfigManager;
-import com.avetris.models.Bill;
+import com.avetris.models.Budget;
 import com.avetris.models.Config;
 import com.avetris.utils.FileManager;
 import com.itextpdf.text.Document;
@@ -13,9 +13,9 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class PdfManager {
-    public static void createPDF(Bill bill) {
+    public static void createPDF(Budget budget) {
         try {
-            String path = FileManager.getFilePath("facturas/" + bill.getId() + ".pdf");
+            String path = FileManager.getFilePath("facturas/" + budget.getId() + ".pdf");
             File f = new File(path);
             if(!f.exists()) {
                 f.getParentFile().mkdirs();
@@ -28,8 +28,8 @@ public class PdfManager {
             HeaderFooterPageEvent event = new HeaderFooterPageEvent();
             writer.setPageEvent(event);
 
-            writeMetadata(document, bill);
-            writeTasks(document, bill);
+            writeMetadata(document, budget);
+            writeTasks(document, budget);
         
             document.close();
             System.out.println("Your PDF file has been generated!(¡Se ha generado tu hoja PDF!");
@@ -38,14 +38,14 @@ public class PdfManager {
         }
     }
 
-    private static void writeMetadata(Document document, Bill bill) {
-        document.addTitle(String.format("Factura %s", bill.getId()));
+    private static void writeMetadata(Document document, Budget budget) {
+        document.addTitle(String.format("Presupuesto %s", budget.getId()));
         Config config = ConfigManager.getInstance().getConfig();
         document.addAuthor(config.getName());
         document.addCreator(config.getName());
     }
 
-    private static void writeTasks(Document document, Bill bill) {
+    private static void writeTasks(Document document, Budget budget) {
         
     }        
 }

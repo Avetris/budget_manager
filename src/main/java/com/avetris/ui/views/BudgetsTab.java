@@ -2,7 +2,6 @@ package com.avetris.ui.views;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import javax.swing.BoxLayout;
@@ -15,29 +14,29 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import com.avetris.listeners.IBillListener;
-import com.avetris.models.Bill;
+import com.avetris.listeners.IBudgetListener;
+import com.avetris.models.Budget;
 import com.avetris.ui.components.ButtonColumn;
 import com.avetris.ui.dialogs.ConfirmDialog;
 
-public class BillsTab extends JPanel   {
+public class BudgetsTab extends JPanel   {
 
     final String[] COLUMN_NAMES = { "Id", "Proyecto", "Cliente", "Fecha", "", ""};
 
-    IBillListener listener;
+    IBudgetListener listener;
 
     JPanel tablePanel;
 
-    public BillsTab() {
+    public BudgetsTab() {
         setLayout(new BorderLayout());
         addTopBar();
         tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel,BoxLayout.Y_AXIS));
         add(tablePanel, BorderLayout.CENTER);
-        updateView(new Bill[0], false);
+        updateView(new Budget[0], false);
     }
 
-    public void addListener(IBillListener listener) {
+    public void addListener(IBudgetListener listener) {
         this.listener = listener;
     }
 
@@ -54,7 +53,7 @@ public class BillsTab extends JPanel   {
             listener.setFilter(filter.getText());
         });
         panel.add(filterButton);
-        JButton button = new JButton("Crear Factura");
+        JButton button = new JButton("Crear Presupuesto");
         button.addActionListener(e -> {
             listener.showDialog(null);
         });
@@ -62,18 +61,18 @@ public class BillsTab extends JPanel   {
         add(panel, BorderLayout.NORTH);
     }
 
-    public void updateView(Bill[] bills, boolean withFilter) {
+    public void updateView(Budget[] budgets, boolean withFilter) {
         tablePanel.removeAll();
         
-        Arrays.sort(bills, (a,b) -> {
+        Arrays.sort(budgets, (a,b) -> {
             return a.getDate().compareTo(b.getDate());
         });
-        Object[][] data = new Object[bills.length][6];
-        for(int i = 0; i < bills.length; i++) {
-            data[i][0] = bills[i].getId();
-            data[i][1] = bills[i].getProject();
-            data[i][2] = bills[i].getClient().getName();
-            data[i][2] = bills[i].getDate();
+        Object[][] data = new Object[budgets.length][6];
+        for(int i = 0; i < budgets.length; i++) {
+            data[i][0] = budgets[i].getId();
+            data[i][1] = budgets[i].getProject();
+            data[i][2] = budgets[i].getClient().getName();
+            data[i][2] = budgets[i].getDate();
             data[i][4] = "Editar";
             data[i][5] = "Eliminar";
         }
@@ -104,7 +103,7 @@ public class BillsTab extends JPanel   {
             });
             new ButtonColumn(table, 4, e -> {
                 new ConfirmDialog(new JFrame(), "Eliminar factura", "¿Seguro que quieres eliminar la factura? Esta acción no se puede revertir.", true, () -> {
-                    listener.onRemoveBill(table.getValueAt(table.getSelectedRow(), 0).toString());
+                    listener.onRemoveBudget(table.getValueAt(table.getSelectedRow(), 0).toString());
                 });                
             });
             //Agregamos el JScrollPane al contenedor

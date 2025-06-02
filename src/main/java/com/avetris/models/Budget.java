@@ -2,10 +2,11 @@ package com.avetris.models;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class Bill {
+public class Budget {
 
     @JsonProperty("id")
     private String id;
@@ -26,18 +27,19 @@ public class Bill {
     private double total;
 
     @JsonProperty("tasks")
-    private ArrayList<Task> tasks = new ArrayList<Task>();
+    private List<Task> tasks = new ArrayList<Task>();
 
     
-    public Bill() {
+    public Budget() {
         this.date = LocalDate.now().toString();
     }
 
-    public Bill(String id, String project, String date, Client client) {
+    public Budget(String id, String project, String date, Client client, List<Task> tasks) {
         this.id = id;
         this.project = project;
         this.client = client;
         this.date = date;
+        this.tasks = tasks;
     }
 
     // Getters
@@ -73,7 +75,7 @@ public class Bill {
         return getTotal() + getTotalIva(); 
     }
 
-    public ArrayList<Task> getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 
@@ -102,11 +104,11 @@ public class Bill {
         }
     }
 
-    public void copy(Bill newBill) {
-        this.id = newBill.getId();
-        this.project = newBill.getProject();
+    public void copy(Budget newBudget) {
+        this.id = newBudget.getId();
+        this.project = newBudget.getProject();
         this.client.copy(client);
-        this.date = newBill.getDate();
-        this.tasks = newBill.getTasks();
+        this.date = newBudget.getDate();
+        this.tasks = newBudget.getTasks();
     }
 }

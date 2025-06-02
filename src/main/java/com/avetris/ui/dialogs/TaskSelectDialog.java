@@ -22,7 +22,7 @@ import com.avetris.ui.components.ButtonColumn;
 
 public class TaskSelectDialog extends JDialog {
 
-    final String[] COLUMN_NAMES = { "Id", "Titulo", "Precio", ""};
+    final String[] COLUMN_NAMES = { "Id", "Titulo", "Descripción", "Precio", ""};
 
     ITaskSelectListener listener;
 
@@ -65,12 +65,13 @@ public class TaskSelectDialog extends JDialog {
     public void updateView(List<Task> tasks, boolean withFilter) {
         tablePanel.removeAll();
         
-        Object[][] data = new Object[tasks.size()][4];
+        Object[][] data = new Object[tasks.size()][5];
         for(int i = 0; i < tasks.size(); i++) {
             data[i][0] = tasks.get(i).getId();
             data[i][1] = tasks.get(i).getTitle();
-            data[i][2] = tasks.get(i).getPrice() + "€";
-            data[i][3] = "Elegir";
+            data[i][2] = tasks.get(i).getDescription();
+            data[i][3] = tasks.get(i).getPrice() + "€";
+            data[i][4] = "Elegir";
         }
         
         if(data.length > 0) {
@@ -78,9 +79,9 @@ public class TaskSelectDialog extends JDialog {
             table.setAutoCreateRowSorter(true);
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             table.getColumnModel().getColumn(0).setMaxWidth(100);
-            table.getColumnModel().getColumn(2).setMaxWidth(100);
             table.getColumnModel().getColumn(3).setMaxWidth(100);
-            table.getColumnModel().getColumn(3).setMinWidth(100);
+            table.getColumnModel().getColumn(4).setMaxWidth(100);
+            table.getColumnModel().getColumn(4).setMinWidth(100);
             table.setDefaultEditor(Object.class, null);
             table.setFocusable(false);
             table.setRowSelectionAllowed(true);
@@ -90,7 +91,7 @@ public class TaskSelectDialog extends JDialog {
             JScrollPane scrollPane = new  JScrollPane(table);
             table.setFillsViewportHeight(false); 
     
-            new ButtonColumn(table, 3, e -> {
+            new ButtonColumn(table, 4, e -> {
                 listener.onSelect(tasks.get(table.getSelectedRow()));
                 dispose();
             });

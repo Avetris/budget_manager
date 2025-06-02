@@ -5,6 +5,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.text.NumberFormat;
@@ -20,6 +22,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.NumberFormatter;
 
 import com.avetris.controllers.TaskController;
@@ -59,6 +63,17 @@ public class ModifyTaskDialog extends JDialog implements WindowListener {
         label.setText("Titulo");
         taskTitle = new JTextField(controller.getModel().getTitle());
         label.setLabelFor(taskTitle);
+        taskTitle.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent e) {}
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                taskTitle.setText(taskTitle.getText().toUpperCase());
+            }
+            
+        });
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -123,7 +138,7 @@ public class ModifyTaskDialog extends JDialog implements WindowListener {
         JButton submitButton = new JButton("Guardar");
         submitButton.addActionListener(e -> {
             controller.onSubmit(new Task(
-                taskTitle.getText(),
+                taskTitle.getText().toUpperCase(),
                 taskDescription.getText(),
                 (double) taskPrice.getValue()
             ));

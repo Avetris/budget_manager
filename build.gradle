@@ -17,6 +17,6 @@ dependencies {
 
 application {
     // Define the application properties
-    applicationName = 'Generador de Facturas'
+    applicationName = 'Generador de Presupuestos'
     version = '1.0.0'
 }
