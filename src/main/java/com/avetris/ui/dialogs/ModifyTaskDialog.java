@@ -22,8 +22,6 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.NumberFormatter;
 
 import com.avetris.controllers.TaskController;
@@ -98,6 +96,8 @@ public class ModifyTaskDialog extends JDialog implements WindowListener {
         JLabel label = new JLabel();
         label.setText("Descipción");
         taskDescription = new JTextArea(controller.getModel().getDescription());
+        taskDescription.setLineWrap(true);
+        taskDescription.setWrapStyleWord(true);
         label.setLabelFor(taskDescription);
         Set<AWTKeyStroke> forward = new HashSet<AWTKeyStroke>(label.getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
         forward.add(KeyStroke.getKeyStroke("TAB"));

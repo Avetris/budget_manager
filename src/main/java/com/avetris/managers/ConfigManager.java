@@ -1,7 +1,5 @@
 package com.avetris.managers;
 
-import javax.swing.JTextField;
-
 import com.avetris.models.Config;
 import com.avetris.utils.FileManager;
 import com.google.gson.Gson;

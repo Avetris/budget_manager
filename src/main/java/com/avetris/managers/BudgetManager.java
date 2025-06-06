@@ -38,7 +38,7 @@ public class BudgetManager {
         for (String fileName : FileManager.getFilesInDirectory(BILLS_PATH)) 
         {
             try {
-                String content = FileManager.readFile(fileName, "{}");
+                String content = FileManager.readFile(BILLS_PATH + "/" + fileName, "{}");
                 Gson gson = new Gson();  
                 Budget budget = gson.fromJson(content, Budget.class);
                 budgets.put(budget.getId(), budget);
@@ -69,12 +69,18 @@ public class BudgetManager {
         return budgets.get(id);
     }
     
-    public boolean addBudget(Budget budget) {
-        if(budgets.containsKey(budget.getId())) {
+    public boolean addBudget(Budget budget, boolean isNew) {
+        if(budgets.containsKey(budget.getId()) && isNew) {
             return false;
         }
-        budgets.put(budget.getId(), budget);
+        budgets.put(budget.getId(), budget); 
+        save(budget.getId());
         return true;
+    }
+
+    private void save(String id) {        
+        String content = new Gson().toJson(budgets.get(id));
+        FileManager.saveFile(BILLS_PATH + "/" + id + ".json", content);
     }
 
     public void removeBudget(String id) {

@@ -27,15 +27,23 @@ public class BudgetsController implements IBudgetListener {
     }
 
     @Override
-    public void onSubmit(Budget newBudget) {
+    public boolean onSubmit(Budget newBudget) {
         model.copy(newBudget);
-        BudgetManager.getInstance().addBudget(getModel());
+        return BudgetManager.getInstance().addBudget(getModel(), (model.getId() == null || model.getId().length() == 0));
+    }
+
+    @Override
+    public void onGeneratePdf(String id) {
+        Budget budget = BudgetManager.getInstance().getBudget(id);
+        if (budget != null) {
+            PdfManager.createPDF(budget);
+        }
     }
 
     @Override
     public void onGeneratePdf() {
-        if (model != null) {
-            PdfManager.createPDF(model);            
+        if(this.model != null) {
+            PdfManager.createPDF(model);
         }
     }
 
@@ -65,6 +73,7 @@ public class BudgetsController implements IBudgetListener {
         if(this.model != null) {
             this.model = null;
         }
+        onBudgetListUpdated();
     }
 
     @Override

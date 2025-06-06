@@ -107,7 +107,7 @@ public class Budget {
     public void copy(Budget newBudget) {
         this.id = newBudget.getId();
         this.project = newBudget.getProject();
-        this.client.copy(client);
+        this.client.copy(newBudget.getClient());
         this.date = newBudget.getDate();
         this.tasks = newBudget.getTasks();
     }

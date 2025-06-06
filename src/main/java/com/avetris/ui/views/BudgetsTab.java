@@ -21,7 +21,7 @@ import com.avetris.ui.dialogs.ConfirmDialog;
 
 public class BudgetsTab extends JPanel   {
 
-    final String[] COLUMN_NAMES = { "Id", "Proyecto", "Cliente", "Fecha", "", ""};
+    final String[] COLUMN_NAMES = { "Id", "Proyecto", "Cliente", "Fecha", "", "", ""};
 
     IBudgetListener listener;
 
@@ -67,14 +67,15 @@ public class BudgetsTab extends JPanel   {
         Arrays.sort(budgets, (a,b) -> {
             return a.getDate().compareTo(b.getDate());
         });
-        Object[][] data = new Object[budgets.length][6];
+        Object[][] data = new Object[budgets.length][7];
         for(int i = 0; i < budgets.length; i++) {
             data[i][0] = budgets[i].getId();
             data[i][1] = budgets[i].getProject();
             data[i][2] = budgets[i].getClient().getName();
-            data[i][2] = budgets[i].getDate();
+            data[i][3] = budgets[i].getDate();
             data[i][4] = "Editar";
-            data[i][5] = "Eliminar";
+            data[i][5] = "Generar PDF";
+            data[i][6] = "Eliminar";
         }
         
         if(data.length > 0) {
@@ -82,13 +83,14 @@ public class BudgetsTab extends JPanel   {
             table.setAutoCreateRowSorter(true);
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             table.getColumnModel().getColumn(0).setMaxWidth(100);
-            table.getColumnModel().getColumn(2).setMaxWidth(100);
             table.getColumnModel().getColumn(3).setMinWidth(100);
             table.getColumnModel().getColumn(3).setMaxWidth(100);
             table.getColumnModel().getColumn(4).setMinWidth(100);
             table.getColumnModel().getColumn(4).setMaxWidth(100);
-            table.getColumnModel().getColumn(5).setMinWidth(100);
-            table.getColumnModel().getColumn(5).setMaxWidth(100);
+            table.getColumnModel().getColumn(5).setMinWidth(120);
+            table.getColumnModel().getColumn(5).setMaxWidth(120);
+            table.getColumnModel().getColumn(6).setMinWidth(100);
+            table.getColumnModel().getColumn(6).setMaxWidth(100);
             table.setDefaultEditor(Object.class, null);
             table.setFocusable(false);
             table.setRowSelectionAllowed(true);
@@ -98,18 +100,22 @@ public class BudgetsTab extends JPanel   {
             JScrollPane scrollPane = new  JScrollPane(table);
             table.setFillsViewportHeight(false); 
     
-            new ButtonColumn(table, 3, e -> {                       
+            new ButtonColumn(table, 4, e -> {                       
                 listener.showDialog(table.getValueAt(table.getSelectedRow(), 0).toString());
             });
-            new ButtonColumn(table, 4, e -> {
-                new ConfirmDialog(new JFrame(), "Eliminar factura", "¿Seguro que quieres eliminar la factura? Esta acción no se puede revertir.", true, () -> {
+            new ButtonColumn(table, 5, e -> {            
+                listener.onGeneratePdf(table.getValueAt(table.getSelectedRow(), 0).toString());
+            });
+
+            new ButtonColumn(table, 6, e -> {
+                new ConfirmDialog(new JFrame(), "Eliminar presupuesto", "¿Seguro que quieres eliminar el presupuesto? Esta acción no se puede revertir.", true, () -> {
                     listener.onRemoveBudget(table.getValueAt(table.getSelectedRow(), 0).toString());
                 });                
             });
             //Agregamos el JScrollPane al contenedor
             tablePanel.add(scrollPane, BorderLayout.CENTER);
         } else {
-            JLabel noContentLabel = new JLabel(withFilter ? "No existen facturas con el filtro actual." : "No has creado ninguna factura todavía.");            
+            JLabel noContentLabel = new JLabel(withFilter ? "No existen presupuestos con el filtro actual." : "No has creado ningun presupuesto todavía.");            
             noContentLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
             noContentLabel.setAlignmentY(JLabel.CENTER_ALIGNMENT);
             tablePanel.add(noContentLabel, BorderLayout.NORTH);

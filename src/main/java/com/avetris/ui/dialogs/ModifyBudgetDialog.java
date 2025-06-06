@@ -66,7 +66,7 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
 
         this.controller = controller;
 
-        setSize(800, 600);
+        setSize(1024, 800);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
@@ -177,7 +177,8 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         clientTypeField = new JComboBox<>();
         clientTypeField.addItem("Empresa");
         clientTypeField.addItem("Individual");
-        clientTypeField.addActionListener(l -> validate());
+        clientTypeField.setSelectedItem(controller.getModel().getClient().isCompany() ? "Empresa" : "Individual");
+        clientTypeField.addActionListener(l -> validateChanges());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 3;
@@ -286,26 +287,30 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
             for(int i = 0; i < taskTable.getModel().getRowCount(); i++) {
                 double price = 0;
                 try {
-                    price += Double.parseDouble((String) taskTable.getValueAt(i, 2));
+                    price += (Double) taskTable.getValueAt(i, 2);
                 } catch (NumberFormatException e1) {}
                 tasks.add(new Task((String) taskTable.getValueAt(i, 0), (String) taskTable.getValueAt(i, 1), price));
             }
-            controller.onSubmit(
+            boolean success = controller.onSubmit(
                 new Budget(
-                    idField.getText(),
-                    projectField.getText(),
-                    dateField.getText(),
+                    idField.getText().trim(),
+                    projectField.getText().trim(),
+                    dateField.getText().trim(),
                     new Client(
-                        clientNifField.getText(), 
+                        clientNifField.getText().trim(),
                         clientTypeField.getSelectedItem().equals("Empresa"), 
-                        clientNameField.getText(), 
-                        clientAddressField.getText()),
+                        clientNameField.getText().trim(), 
+                        clientAddressField.getText().trim()),
                     tasks
             ));
-            generatePdfButton.setEnabled(canGenerate);
-            submitButton.setEnabled(false);
-            canGenerate = true;
-            canSave = false;
+            if(success) {
+                canGenerate = true;
+                canSave = false;
+                generatePdfButton.setEnabled(canGenerate);
+                submitButton.setEnabled(canSave);
+            } else {
+                new InfoDialog(new JFrame(), "Existe ID", "Ya existe un presupuesto con el id insertado. Cambia el ID y vuelve a intentarlo.", true);
+            }
         });
         submitButton.setEnabled(canSave);
         GridBagConstraints c = new GridBagConstraints();
@@ -407,6 +412,7 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
                 ((DefaultTableModel)taskTable.getModel()).setValueAt(t.getTitle(), taskTable.getSelectedRow(), 0);
                 ((DefaultTableModel)taskTable.getModel()).setValueAt(t.getDescription(), taskTable.getSelectedRow(), 1);
                 ((DefaultTableModel)taskTable.getModel()).setValueAt(t.getPrice(), taskTable.getSelectedRow(), 2);
+                validateChanges();
             }, true);
         });
         new ButtonColumn(taskTable, 4, e -> {
@@ -462,13 +468,19 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         boolean hasErrors = id.isEmpty() || date.isEmpty() || project.isEmpty();
         calculatePrices();
 
+
+        Budget model = controller.getModel();
         if (hasErrors) {
             canSave = false;
             canGenerate = false;
         } else {
-            boolean modified = !id.equals(controller.getModel().getId()) || 
-                                !date.equals(controller.getModel().getDate()) || 
-                                !project.equals(controller.getModel().getProject());
+            boolean modified = !id.equals(model.getId()) || 
+                                !date.equals(model.getDate()) || 
+                                !project.equals(model.getProject()) || 
+                                !clientNifField.getText().equals(model.getClient().getNif()) || 
+                                !clientNameField.getText().equals(model.getClient().getName()) || 
+                                clientTypeField.getSelectedItem().equals("Empresa") != model.getClient().isCompany() || 
+                                !clientAddressField.getText().equals(model.getClient().getAddress());
             if(!modified) {
                 modified = hasDifferentTasks();
             }
@@ -483,13 +495,17 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         double totalValue = 0;
         for(int i = 0; i < taskTable.getModel().getRowCount(); i++) {
             try {
-                totalValue += Double.parseDouble((String) taskTable.getValueAt(i, 2));
-            } catch (NumberFormatException e) {}
+                totalValue += (Double) taskTable.getValueAt(i, 2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         double totalIVAValue = 0;
         try {
             totalIVAValue = totalValue * (Double.parseDouble(ivaField.getText()) / 100.0);
-        }catch(NumberFormatException e) {}
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
         total.setText(totalValue + "€");
         totalIva.setText(totalIVAValue + "€");
         totalWithIva.setText((totalValue + totalIVAValue) + "€");

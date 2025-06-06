@@ -160,6 +160,7 @@ public class ConfigTab extends JPanel   {
         JLabel label = new JLabel("Info (Separado por salto de línea)");
         infoField = new JTextArea();
         infoField.setLineWrap(true);
+        infoField.setWrapStyleWord(true);
         JScrollPane scrollpane = new JScrollPane(infoField);
         label.setLabelFor(infoField);
 
@@ -171,6 +172,7 @@ public class ConfigTab extends JPanel   {
         JLabel label = new JLabel("Condiciones de Uso");
         conditionsField = new JTextArea();
         conditionsField.setLineWrap(true);
+        conditionsField.setWrapStyleWord(true);
         JScrollPane scrollpane = new JScrollPane(conditionsField);
         label.setLabelFor(conditionsField);
 
@@ -182,6 +184,7 @@ public class ConfigTab extends JPanel   {
         JLabel label = new JLabel("Garantía");
         garantyField = new JTextArea();
         garantyField.setLineWrap(true);
+        garantyField.setWrapStyleWord(true);
         JScrollPane scrollpane = new JScrollPane(garantyField);
         label.setLabelFor(garantyField);
 
