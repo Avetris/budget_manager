@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.TableRowSorter;
 
 import com.avetris.listeners.IBudgetListener;
 import com.avetris.models.Budget;
@@ -96,6 +97,15 @@ public class BudgetsTab extends JPanel   {
             table.setRowSelectionAllowed(true);
             
             table.setAutoscrolls(true);
+
+            table.setRowSorter(new TableRowSorter(table.getModel()) {
+                @Override
+                public boolean isSortable(int column) {
+                    return column < 4;
+                }
+            });
+
+            table.getTableHeader().setReorderingAllowed(false);
     
             JScrollPane scrollPane = new  JScrollPane(table);
             table.setFillsViewportHeight(false); 

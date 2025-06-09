@@ -15,7 +15,7 @@ public class InfoDialog extends JDialog {
     public InfoDialog(JFrame parent, String title, String message, boolean modal) {
         super(parent, title, modal);
 
-        setSize(300, 125);
+        setSize(300, 150);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         

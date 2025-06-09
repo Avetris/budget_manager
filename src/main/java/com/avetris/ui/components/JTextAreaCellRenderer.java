@@ -35,8 +35,6 @@ public class JTextAreaCellRenderer  extends JTextArea implements TableCellRender
             setBackground(table.getBackground());
         }
 
-        System.out.println(column);
-
         // Set font to match table's font
         setFont(table.getFont());
 

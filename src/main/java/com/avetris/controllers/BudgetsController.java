@@ -7,6 +7,7 @@ import com.avetris.listeners.IBudgetListener;
 import com.avetris.managers.BudgetManager;
 import com.avetris.models.Budget;
 import com.avetris.pdf.PdfManager;
+import com.avetris.ui.dialogs.InfoDialog;
 import com.avetris.ui.dialogs.ModifyBudgetDialog;
 import com.avetris.ui.views.BudgetsTab;
 
@@ -36,15 +37,21 @@ public class BudgetsController implements IBudgetListener {
     public void onGeneratePdf(String id) {
         Budget budget = BudgetManager.getInstance().getBudget(id);
         if (budget != null) {
-            PdfManager.createPDF(budget);
+            if(!PdfManager.createPDF(budget)) {
+                new InfoDialog((JFrame) SwingUtilities.getWindowAncestor(view), "Error", "Ha habido un error al generar el documento. Cierra el documento si lo tienes abierto y vuelve a intentarlo.", true);        
+            }
         }
     }
 
     @Override
     public void onGeneratePdf() {
         if(this.model != null) {
-            PdfManager.createPDF(model);
+            onGeneratePdf(this.model.getId());
         }
+    }
+
+    void showPdfErrorDialog() {
+        
     }
 
     public Budget getModel() {

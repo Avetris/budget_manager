@@ -22,9 +22,6 @@ public class Budget {
 
     @JsonProperty("iva")
     private int iva = 21;
-    
-    @JsonProperty("total")
-    private double total;
 
     @JsonProperty("tasks")
     private List<Task> tasks = new ArrayList<Task>();
@@ -64,11 +61,15 @@ public class Budget {
     }
 
     public double getTotal() {
+        double total = 0;
+        for(var t : tasks) {
+            total += t.getPrice();
+        }
         return total;
     }
 
     public double getTotalIva() {
-        return total * (iva / 100.0);
+        return getTotal() * (iva / 100.0);
     }
 
     public double getTotalWithIva() {
@@ -98,10 +99,6 @@ public class Budget {
 
     public void setTasks(ArrayList<Task> tasks) {
         this.tasks = tasks;
-        this.total = 0;
-        for(Task t : tasks) {
-            this.total += t.getPrice();
-        }
     }
 
     public void copy(Budget newBudget) {

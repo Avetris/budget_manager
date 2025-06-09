@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
@@ -87,6 +88,7 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         setupSaveButton();
         setupGeneratePdf();
 
+        validateChanges();
         addWindowListener(this);
 
         setVisible(true);
@@ -238,11 +240,10 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         c.weightx = 0.05;
         c.insets = getCommonInsets();
 
-        JLabel totalLabel = new JLabel();
-        totalLabel.setText("Total");
+        JLabel totalLabel = new JLabel("Total", SwingConstants.RIGHT);
         c.gridx = 2;
         add(totalLabel, c);
-        total = new JLabel(controller.getModel().getTotal() + "");
+        total = new JLabel(controller.getModel().getTotal() + "", SwingConstants.RIGHT);
         c.gridx = 3;
         add(total, c);
 
@@ -263,19 +264,17 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         ivaField.getDocument().addDocumentListener(this);
         c.gridx = 1;
         add(ivaField, c);
-        JLabel ivaPriceLabel = new JLabel();
-        ivaPriceLabel.setText("Total IVA");
+        JLabel ivaPriceLabel = new JLabel("Total IVA", SwingConstants.RIGHT);
         c.gridx = 2;
         add(ivaPriceLabel, c);
-        totalIva = new JLabel(controller.getModel().getTotalIva() + "");
+        totalIva = new JLabel(controller.getModel().getTotalIva() + "", SwingConstants.RIGHT);
         c.gridx = 3;
         add(totalIva, c);
-        JLabel totalWithIvaLabel = new JLabel();
-        totalWithIvaLabel.setText("Total (Con IVA)");
+        JLabel totalWithIvaLabel = new JLabel("Total (Con IVA)", SwingConstants.RIGHT);
         c.gridy++;
         c.gridx = 2;
         add(totalWithIvaLabel, c);
-        totalWithIva = new JLabel(controller.getModel().getTotalWithIva() + "");
+        totalWithIva = new JLabel(controller.getModel().getTotalWithIva() + "", SwingConstants.RIGHT);
         c.gridx = 3;
         add(totalWithIva, c);
     }
@@ -285,11 +284,18 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         submitButton.addActionListener(e -> {
             List<Task> tasks = new java.util.ArrayList<>();
             for(int i = 0; i < taskTable.getModel().getRowCount(); i++) {
-                double price = 0;
+            double price = 0;
+                Object priceObj = taskTable.getValueAt(i, 2);
                 try {
-                    price += (Double) taskTable.getValueAt(i, 2);
+                    if (priceObj instanceof Double) {
+                        price = (Double) priceObj;
+                    } else if (priceObj instanceof String) { // Fallback if editor returns string
+                        price = Double.parseDouble((String) priceObj);
+                    } else if (priceObj instanceof Number) { // General Number
+                        price = ((Number) priceObj).doubleValue();
+                    }
                 } catch (NumberFormatException e1) {}
-                tasks.add(new Task((String) taskTable.getValueAt(i, 0), (String) taskTable.getValueAt(i, 1), price));
+                tasks.add(new Task(String.valueOf(taskTable.getValueAt(i, 0)), String.valueOf(taskTable.getValueAt(i, 1)), price));
             }
             boolean success = controller.onSubmit(
                 new Budget(
@@ -359,7 +365,25 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         if(taskComponent != null) {
             remove(taskComponent);
         }
-        DefaultTableModel defaultModel = new DefaultTableModel();
+        DefaultTableModel defaultModel = new DefaultTableModel() {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                switch (columnIndex) {
+                    case 0: // Título
+                    case 1: // Descripción
+                        return String.class;
+                    case 2: // Precio
+                        return Double.class;
+                    default: // Button columns
+                        return Object.class;
+                }
+            }
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Only Title, Description, and Price are directly editable
+                return column == 0 || column == 1 || column == 2;
+            }
+        };
         defaultModel.addColumn("Título");
         defaultModel.addColumn("Descripción");
         defaultModel.addColumn("Precio");
@@ -400,8 +424,9 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
                 }
                 validateChanges();
             }
-         });
-        taskTable.setDefaultEditor(Object.class, editor);
+        });
+        taskTable.setDefaultEditor(String.class, editor);
+        taskTable.setDefaultEditor(Double.class, editor);
         taskTable.setRowSelectionAllowed(true);
         
         JScrollPane scrollPane = new  JScrollPane(taskTable);
@@ -418,6 +443,7 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         new ButtonColumn(taskTable, 4, e -> {
             new ConfirmDialog(new JFrame(), "Eliminar tarea", "¿Seguro que quieres eliminar la tarea? Esta acción no se puede revertir.", true, () -> {
                 ((DefaultTableModel)taskTable.getModel()).removeRow(taskTable.getSelectedRow());
+                validateChanges();
             });                
         });
                 
@@ -468,7 +494,6 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         boolean hasErrors = id.isEmpty() || date.isEmpty() || project.isEmpty();
         calculatePrices();
 
-
         Budget model = controller.getModel();
         if (hasErrors) {
             canSave = false;
@@ -506,9 +531,9 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         }catch(Exception e) {
             e.printStackTrace();
         }
-        total.setText(totalValue + "€");
-        totalIva.setText(totalIVAValue + "€");
-        totalWithIva.setText((totalValue + totalIVAValue) + "€");
+        total.setText(String.format("%1$,.2f €", totalValue));
+        totalIva.setText(String.format("%1$,.2f €", totalIVAValue));
+        totalWithIva.setText(String.format("%1$,.2f €", totalValue + totalIVAValue));
     }
 
     boolean hasDifferentTasks () {
@@ -520,7 +545,25 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         for(int i = 0; i < tasks.size() && equal; i++) {
             equal &= tasks.get(i).getTitle().equals(taskTable.getValueAt(i, 0));
             equal &= tasks.get(i).getDescription().equals(taskTable.getValueAt(i, 1));
-            equal &= tasks.get(i).getPrice() == (double) taskTable.getValueAt(i, 2);
+            Object tablePriceObj = taskTable.getValueAt(i, 2);
+            double tablePrice = 0.0;
+            boolean priceParsed = false;
+            if (tablePriceObj instanceof Double) {
+                tablePrice = (Double) tablePriceObj;
+                priceParsed = true;
+            } else if (tablePriceObj != null) { // Attempt to parse if not null and not Double
+                try {
+                    tablePrice = Double.parseDouble(tablePriceObj.toString());
+                    priceParsed = true;
+                } catch (NumberFormatException e) {
+                    equal = false; // Cannot parse, so not equal
+                }
+            } else { // tablePriceObj is null
+                equal = false;
+            }
+            if(priceParsed && equal) { // only compare if successfully parsed and still equal
+                equal &= tasks.get(i).getPrice() == tablePrice;
+            }
         }
         return !equal;
     }

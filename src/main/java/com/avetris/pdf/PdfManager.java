@@ -1,5 +1,6 @@
 package com.avetris.pdf;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,16 +9,19 @@ import java.io.IOException;
 
 import com.avetris.managers.ConfigManager;
 import com.avetris.models.Budget;
+import com.avetris.models.Client;
 import com.avetris.models.Config;
 import com.avetris.models.Task;
 import com.avetris.utils.FileManager;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -26,7 +30,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class PdfManager {
 
     static final int FONT_SIZE = 10;
-    public static void createPDF(Budget budget) {
+    static Font FONT_BOLD = new Font(FontFamily.TIMES_ROMAN, FONT_SIZE, Font.BOLD);
+    static Font FONT_NORMAL = new Font(FontFamily.TIMES_ROMAN, FONT_SIZE);
+    public static boolean createPDF(Budget budget) {
         try {
             String path = FileManager.getFilePath("presupuestos/" + budget.getId() + ".pdf");
             File f = new File(path);
@@ -35,28 +41,40 @@ public class PdfManager {
             } else {
                 f.delete();
             }
-            Document document = new Document(PageSize.A4, 0, 0, 100, 50);
-            try {
-                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(path));
-                HeaderFooterPageEvent headerEvent = new HeaderFooterPageEvent();
-                writer.setPageEvent(headerEvent);
-                document.setMargins(10, 10, headerEvent.getHeaderTableHeight() + 40, 50);
-            } catch (FileNotFoundException fileNotFoundException) {
-                System.out.println("No such file was found to generate the PDF "
-                        + "(No se encontró el fichero para generar el pdf)" + fileNotFoundException);
-            }
+            // Initialize document with PageSize. Specific margins will be set before open().
+            Document document = new Document(PageSize.A4); 
+
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(path));
+            HeaderFooterPageEvent headerEvent = new HeaderFooterPageEvent();
+            writer.setPageEvent(headerEvent);
+            
+            // Set margins for the first page BEFORE opening the document.
+            // This ensures the first page is initialized with the correct space for its header.
+            document.setMargins(10, 10, headerEvent.getFirstHeaderTableHeight(), 50);
             document.open();
 
             writeMetadata(document, budget);
+            writeClientInfo(document, budget.getClient());
             writeBudgetInfo(document, budget);
+            document.setMargins(10, 10, headerEvent.getHeaderTableHeight() + 40, 50);
             writeTasks(document, budget);
+            writeTotal(document, budget);
+            writeConditions(document);
+            writeGaranty(document);
 
             document.close();   
             Desktop.getDesktop().open(new File(path));
+            return true;
+        } catch (FileNotFoundException fileNotFoundException) {
+            System.out.println("No such file was found to generate the PDF "
+                    + "(No se encontró el fichero para generar el pdf)" + fileNotFoundException);
+            return false;
         } catch (DocumentException documentException) {
             System.out.println("The file not exists (Se ha producido un error al generar un documento): " + documentException);
+            return false;
         } catch (IOException exception) {
             System.out.println("The file cannot be opened: " + exception);
+            return false;
         }        
     }
 
@@ -67,28 +85,49 @@ public class PdfManager {
         document.addCreator(config.getName());
     }
 
-    private static void writeBudgetInfo(Document document, Budget budget) throws DocumentException {
+    private static void writeClientInfo(Document document, Client client) throws DocumentException {
         PdfPTable table = new PdfPTable(3);
+        
+        PdfPCell emptyCellTemplate = new PdfPCell(new Phrase(""));
+        emptyCellTemplate.setBorder(Rectangle.NO_BORDER);
+        table.addCell(new PdfPCell(emptyCellTemplate));
+        table.addCell(new PdfPCell(emptyCellTemplate));
+                
+        PdfPCell clientCell = new PdfPCell();
+        clientCell.setBorder(PdfPCell.NO_BORDER);
+        clientCell.addElement(new Phrase(client.getName(), FONT_BOLD));
+        clientCell.addElement(new Phrase((client.isCompany() ? "NIF " : "DNI ") + client.getNif(), FONT_BOLD));
+        if(client.getAddress() != null && !client.getAddress().isEmpty()) {
+            clientCell.addElement(new Phrase(client.getAddress(), FONT_BOLD));
+        }
+        table.addCell(clientCell); 
+        table.setSpacingAfter(20);
+
+        document.add(table);
+    }
+
+    private static void writeBudgetInfo(Document document, Budget budget) throws DocumentException {
+        PdfPTable table = new PdfPTable(3);        
 
         PdfPCell idCell = new PdfPCell();
         Phrase idParagraph = new Phrase();       
-        idParagraph.add(new Chunk("Nº ", new Font(FontFamily.TIMES_ROMAN, FONT_SIZE, Font.BOLD)));
-        idParagraph.add(new Chunk(budget.getId(), new Font(FontFamily.TIMES_ROMAN, FONT_SIZE)));
+        idParagraph.add(new Chunk("Nº ", FONT_BOLD));
+        idParagraph.add(new Chunk(budget.getId(), FONT_NORMAL));
         idCell.addElement(idParagraph);
         idCell.setBorder(PdfPCell.NO_BORDER);
         table.addCell(idCell); 
 
         
         PdfPCell budgetCell = new PdfPCell();
-        Phrase budgetParagraph = new Phrase("PRESUPUESTO ", new Font(FontFamily.TIMES_ROMAN, FONT_SIZE, Font.BOLD));
+        Phrase budgetParagraph = new Phrase("PRESUPUESTO ", FONT_BOLD);
         budgetCell.addElement(budgetParagraph);
         budgetCell.setBorder(PdfPCell.NO_BORDER);
         table.addCell(budgetCell); 
         
         PdfPCell dateCell = new PdfPCell();
         Phrase dateParagraph = new Phrase(); 
-        dateParagraph.add(new Chunk("FECHA ", new Font(FontFamily.TIMES_ROMAN, FONT_SIZE, Font.BOLD)));
-        dateParagraph.add(new Chunk(budget.getDate(), new Font(FontFamily.TIMES_ROMAN, FONT_SIZE)));        
+        dateParagraph.add(new Chunk("FECHA ", FONT_BOLD));
+        dateParagraph.add(new Chunk(budget.getDate(), FONT_NORMAL));        
         dateCell.addElement(dateParagraph);
         dateCell.setBorder(PdfPCell.NO_BORDER);
         table.addCell(dateCell); 
@@ -117,13 +156,101 @@ public class PdfManager {
             table.addCell(createTaskCell(task));
             table.addCell(createPriceCell(task));
         }
+        table.setSpacingAfter(20);
         // We add the paragraph with the table (Añadimos el elemento con la tabla).
         document.add(table);
     }
 
+    private static void writeTotal(Document document, Budget budget) throws DocumentException {
+        PdfPTable table = new PdfPTable(3);
+        table.setTotalWidth(new float[] {30f, 30f, 40f});
+        
+        PdfPCell emptyCellTemplate = new PdfPCell(new Phrase(""));
+        emptyCellTemplate.setBorder(Rectangle.NO_BORDER);
+        table.addCell(new PdfPCell(emptyCellTemplate));
+        table.addCell(new PdfPCell(emptyCellTemplate));
+                
+        // Base Label
+        PdfPTable pricesSubTable = new PdfPTable(3);
+        pricesSubTable.setTotalWidth(new float[] {30f, 10f, 20f});
+        Paragraph base = new Paragraph("Base Imponible:", FONT_BOLD);
+        base.setAlignment(Element.ALIGN_RIGHT);
+        PdfPCell baseCell = new PdfPCell(base);
+        baseCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        baseCell.setBorder(PdfPCell.NO_BORDER);
+        pricesSubTable.addCell(baseCell);        
+        // Space
+        pricesSubTable.addCell(new PdfPCell(emptyCellTemplate));
+        // Price
+        Paragraph basePrice = new Paragraph(formatPrice(budget.getTotal()), FONT_NORMAL);
+        basePrice.setAlignment(Element.ALIGN_RIGHT);        
+        PdfPCell basePriceCell = new PdfPCell(basePrice);
+        basePriceCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        basePriceCell.setBorder(PdfPCell.NO_BORDER);
+        pricesSubTable.addCell(basePriceCell);        
+        // IVA Label
+        Paragraph iva = new Paragraph("I.V.A:", FONT_BOLD);
+        iva.setAlignment(Element.ALIGN_RIGHT);
+        PdfPCell ivaCell = new PdfPCell(iva);
+        ivaCell.setBorder(PdfPCell.NO_BORDER);
+        ivaCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        pricesSubTable.addCell(ivaCell);
+        // IVA value
+        Paragraph ivaValue = new Paragraph(budget.getIva() + "%", FONT_BOLD);
+        ivaValue.setAlignment(Element.ALIGN_RIGHT);
+        PdfPCell ivaValueCell = new PdfPCell(ivaValue);
+        ivaValueCell.setBorder(PdfPCell.NO_BORDER);
+        ivaValueCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        pricesSubTable.addCell(ivaValueCell);
+        // IVA Price
+        Paragraph ivaPrice = new Paragraph(formatPrice(budget.getTotalIva()), FONT_NORMAL);
+        ivaPrice.setAlignment(Element.ALIGN_RIGHT);        
+        PdfPCell ivaPriceCell = new PdfPCell(ivaPrice);
+        ivaPriceCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        ivaPriceCell.setBorder(PdfPCell.NO_BORDER);
+        pricesSubTable.addCell(ivaPriceCell);
+
+        PdfPCell preTotalCell = new PdfPCell(pricesSubTable);
+        preTotalCell.setBorderWidth(1);
+        preTotalCell.setPaddingBottom(3);
+        table.addCell(preTotalCell); 
+
+        // TOTAL
+        table.addCell(new PdfPCell(emptyCellTemplate));
+        table.addCell(new PdfPCell(emptyCellTemplate));
+        PdfPTable totalSubTable = new PdfPTable(3);
+        totalSubTable.setTotalWidth(new float[] {30f, 10f, 20f});
+        Paragraph total = new Paragraph("TOTAL", FONT_BOLD);
+        total.setAlignment(Element.ALIGN_RIGHT);
+        PdfPCell totalLabelCell = new PdfPCell(total);
+        totalLabelCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        totalLabelCell.setBorder(PdfPCell.NO_BORDER);
+        totalSubTable.addCell(totalLabelCell);        
+        // Space
+        totalSubTable.addCell(new PdfPCell(emptyCellTemplate));
+        // Price
+        Paragraph totalPrice = new Paragraph(formatPrice(budget.getTotalWithIva()), FONT_NORMAL);
+        totalPrice.setAlignment(Element.ALIGN_RIGHT);        
+        PdfPCell totalPriceCell = new PdfPCell(totalPrice);
+        totalPriceCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        totalPriceCell.setBorderWidth(1);
+        totalSubTable.addCell(totalPriceCell);
+
+        PdfPCell totalCell = new PdfPCell(totalSubTable);
+        totalCell.setBorder(PdfPCell.NO_BORDER);
+        totalCell.setPaddingBottom(3);
+        table.addCell(totalCell); 
+
+        document.add(table);
+    }
+
+    private static String formatPrice(double price) {
+        return String.format("%1$,.2f €", price);
+    }
+
     private static PdfPCell getProjectCell(String project) {
         PdfPCell cell = new PdfPCell();
-        Paragraph paragraph = new Paragraph(project, new Font(FontFamily.TIMES_ROMAN, FONT_SIZE, Font.BOLD));
+        Paragraph paragraph = new Paragraph(project, FONT_BOLD);
         cell.addElement(paragraph);
         cell.setPaddingBottom(10);
         return cell;    
@@ -134,7 +261,7 @@ public class PdfManager {
         Paragraph taskTitle = new Paragraph(task.getTitle(), new Font(FontFamily.TIMES_ROMAN, FONT_SIZE, Font.UNDERLINE));
         cell.addElement(taskTitle);
         if(!task.getDescription().isEmpty()) {
-            Paragraph taskDescription = new Paragraph(task.getDescription(), new Font(FontFamily.TIMES_ROMAN, FONT_SIZE));
+            Paragraph taskDescription = new Paragraph(task.getDescription(), FONT_NORMAL);
             cell.addElement(taskDescription);
         }
         cell.setPaddingBottom(10);    
@@ -145,10 +272,65 @@ public class PdfManager {
         PdfPCell cell = new PdfPCell();
         cell.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
         cell.setVerticalAlignment(PdfPCell.ALIGN_BOTTOM);
-        Paragraph price = new Paragraph(task.getPrice() + " €", new Font(FontFamily.TIMES_ROMAN, FONT_SIZE));
+        Paragraph price = new Paragraph(task.getPrice() + " €", FONT_NORMAL);
         price.setAlignment(Paragraph.ALIGN_RIGHT);
         cell.addElement(price);
         cell.setPaddingBottom(10);
         return cell;        
+    }
+    
+    private static void writeConditions(Document document) throws DocumentException {
+        document.newPage();
+        Integer numColumns = 3;
+        // We create the table (Creamos la tabla).
+        PdfPTable table = new PdfPTable(numColumns);
+        table.setTotalWidth(new float[]{ 22, 200, 28});
+
+        // Now we fill the PDF table 
+        // Fill table rows (rellenamos las filas de la tabla).
+        table.addCell("");
+
+        PdfPCell cell = new PdfPCell();
+        Paragraph conditionsTitle = new Paragraph("CONDICIONES GENERALES:", FONT_BOLD);
+        conditionsTitle.setSpacingAfter(20); 
+        cell.addElement(conditionsTitle);
+        Paragraph conditions = new Paragraph(ConfigManager.getInstance().getConfig().getConditions(), FONT_NORMAL);
+        conditions.setExtraParagraphSpace(10);
+        cell.addElement(conditions);
+        cell.setPaddingBottom(10);   
+
+        table.addCell(cell);
+        table.addCell("");
+
+        table.setExtendLastRow(true);
+        // We add the paragraph with the table (Añadimos el elemento con la tabla).
+        document.add(table);
+    }
+    
+    private static void writeGaranty(Document document) throws DocumentException {
+        document.newPage();
+        Integer numColumns = 3;
+        // We create the table (Creamos la tabla).
+        PdfPTable table = new PdfPTable(numColumns);
+        table.setTotalWidth(new float[]{ 22, 200, 28});
+        // Now we fill the PDF table 
+        // Fill table rows (rellenamos las filas de la tabla).
+        table.addCell("");
+
+        PdfPCell cell = new PdfPCell();
+        Paragraph conditionsTitle = new Paragraph("GARANTÍA DE LOS TRABAJOS:", FONT_BOLD);
+        conditionsTitle.setSpacingAfter(20); 
+        cell.addElement(conditionsTitle);
+        Paragraph conditions = new Paragraph(ConfigManager.getInstance().getConfig().getGaranty(), FONT_NORMAL);
+        conditions.setExtraParagraphSpace(10);
+        cell.addElement(conditions);
+        cell.setPaddingBottom(10);   
+
+        table.addCell(cell);
+        table.addCell("");
+
+        table.setExtendLastRow(true);
+        // We add the paragraph with the table (Añadimos el elemento con la tabla).
+        document.add(table);
     }
 }

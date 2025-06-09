@@ -9,8 +9,11 @@ public class Config {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("address")
-    private String address;
+    @JsonProperty("street")
+    private String street;
+
+    @JsonProperty("ciudad")
+    private String city;
 
     @JsonProperty("phone")
     private String phone;
@@ -31,9 +34,10 @@ public class Config {
     private String garanty;
     public Config() {}
 
-    public Config(String name, String address, String web, String phone, String nif, String email, String[] info, String conditions, String garanty) {
+    public Config(String name, String street, String city, String web, String phone, String nif, String email, String[] info, String conditions, String garanty) {
         this.name = name;
-        this.address = address;
+        this.street = street;
+        this.city = city;
         this.web = web;
         this.phone = phone;
         this.nif = nif;
@@ -53,8 +57,12 @@ public class Config {
         return name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getStreet() {
+        return street;
+    }
+
+    public String getCity() {
+        return city;
     }
 
     public String getPhone() {
@@ -92,9 +100,13 @@ public class Config {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public void setStreet(String street) {
+        this.street = street;
+    }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public void setPhone(String phone) {
