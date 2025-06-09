@@ -1,0 +1,50 @@
+name: Java CI/CD - Build Executable JAR
+
+on:
+  push:
+    branches: [ main ] # Triggers on pushes to the main branch
+  pull_request:
+    branches: [ main ] # Triggers on pull requests to the main branch
+
+jobs:
+  build-jar:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up GraalVM
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'graalvm' # Use GraalVM
+        java-version: '17' # Specify your Java version, ensure it's compatible with
+
+    - name: Build native executable with Maven
+      # This command cleans the project and then uses the native-image plugin
+      # (configured in your pom.xml) to build the native executable.
+      # The -Pnative profile is commonly used to trigger the native image build.
+      # Ensure your pom.xml has a 'native' profile configured for this.
+      run: mvn -B clean package -Pnative --file pom.xml
+
+    - name: Upload native executable artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: facturas-native-executable # Name of the artifact in GitHub Actions
+        # Path to the generated native executable.
+        # The exact name depends on your <buildArg> configuration for the native-maven-plugin
+        # or the <finalName> of your project.
+        # For Linux/macOS, it's typically the artifactId. For Windows, it would be artifactId.exe.
+        # This example assumes the executable is named 'facturas' (adjust if different).
+        # You might need to be more specific if other files are in target/, e.g., target/${project.artifactId}
+        path: |
+          target/*
+          !target/*.jar
+          !target/*.original
+          !target/archive-tmp/
+          !target/classes/
+          !target/generated-sources/
+          !target/maven-archiver/
+          !target/maven-status/
+          !target/surefire-reports/
+          !target/test-classes/
