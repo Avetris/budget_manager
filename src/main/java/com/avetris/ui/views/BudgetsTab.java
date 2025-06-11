@@ -62,6 +62,7 @@ public class BudgetsTab extends JPanel   {
         add(panel, BorderLayout.NORTH);
     }
 
+    @SuppressWarnings("unchecked")
     public void updateView(Budget[] budgets, boolean withFilter) {
         tablePanel.removeAll();
         

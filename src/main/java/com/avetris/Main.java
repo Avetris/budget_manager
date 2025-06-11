@@ -4,7 +4,7 @@ import javax.swing.SwingUtilities;
 
 import com.avetris.ui.views.MainWindow;
 
-public class App {
+public class Main {
     public static void main(String[] args) {
         // Initialize the application
         SwingUtilities.invokeLater(() -> {
