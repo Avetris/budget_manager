@@ -23,7 +23,7 @@ jobs:
     - name: Verify Gradle Wrapper
       uses: gradle/wrapper-validation-action@v1
     - name: Give permissions
-      uses: chmod +x ./gradlew
+      run: chmod +x ./gradlew
     - name: Execute build
       run: ./gradlew --info --stacktrace build
     - name: Execute runtime
