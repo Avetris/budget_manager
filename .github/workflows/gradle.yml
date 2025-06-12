@@ -77,4 +77,4 @@ jobs:
             artifacts/budget-dmg/*.dmg
             artifacts/budget-exe/*.exe
             artifacts/budget-msi/*.msi
-            data
+            data/**
