@@ -11,7 +11,6 @@ jobs:
     strategy:
       matrix:
         os: [macOS-latest, windows-latest]
-        java: [ '15.0.1' ]
       fail-fast: false
     name: ${{ matrix.os }}
     steps:
@@ -20,7 +19,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ matrix.java }}        
+        java-version: '15'
         distribution: 'temurin' # Add this line
     - name: Echo JAVA_HOME
       run: echo $JAVA_HOME
@@ -38,19 +37,19 @@ jobs:
       uses: actions/upload-artifact@v4
       if: runner.os == 'macOS'
       with:
-        name: budget${{ matrix.java }}-${{ matrix.os }}-dmg
+        name: budget-dmg
         path: build/jpackage/*.dmg
     - name: Upload EXE as an artifact
       uses: actions/upload-artifact@v4
       if: runner.os == 'Windows'
       with:
-        name: budget${{ matrix.java }}-${{ matrix.os }}-exe
+        name: budget-exe
         path: build/jpackage/*.exe
     - name: Upload MSI as an artifact
       uses: actions/upload-artifact@v4
       if: runner.os == 'Windows'
       with:
-        name: budget${{ matrix.java }}-${{ matrix.os }}-msi
+        name: budget-msi
         path: build/jpackage/*.msi
   release:
     name: Create GitHub Release
