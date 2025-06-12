@@ -16,15 +16,15 @@ jobs:
     name: ${{ matrix.os }}
     steps:
     - name: Git checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
     - name: Set up JDK
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java }}
     - name: Echo JAVA_HOME
-      run: echo "JAVA_HOME is $env:JAVA_HOME" # More robust echo for PowerShell (Windows default) and Bash
+      run: echo $JAVA_HOME
     - name: Verify Gradle Wrapper
-      uses: gradle/actions/wrapper-validation@v3
+      uses: gradle/wrapper-validation-action@v1
     - name: Give permissions
       run: chmod +x ./gradlew
     - name: Execute build
@@ -51,7 +51,18 @@ jobs:
       with:
         name: budget${{ matrix.java }}-${{ matrix.os }}-msi
         path: build/jpackage/*.msi
-
+    - name: Upload DEB as an artifact
+      uses: actions/upload-artifact@v4
+      if: runner.os == 'macOS'
+      with:
+        name: budget${{ matrix.java }}-${{ matrix.os }}-deb
+        path: build/jpackage/*.deb
+    - name: Upload RPM as an artifact
+      uses: actions/upload-artifact@v4
+      if: runner.os == 'macOS'
+      with:
+        name: budget${{ matrix.java }}-${{ matrix.os }}-rpm
+        path: build/jpackage/*.rpm
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
@@ -78,4 +89,3 @@ jobs:
             artifacts/budget*-macOS-latest-dmg/*.dmg
             artifacts/budget*-windows-latest-exe/*.exe
             artifacts/budget*-windows-latest-msi/*.msi
-          # The tag_name, release name, and body are often inferred or can be customized further
