@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
+        os: [macOS-latest, windows-latest]
         java: [ '15.0.1' ]
       fail-fast: false
     name: ${{ matrix.os }}
@@ -31,26 +31,31 @@ jobs:
     - name: Execute jpackage
       run: ./gradlew --info --stacktrace jpackage
     - name: Upload DMG as an artifact
+    - if: runner.os == 'macOS'
       uses: actions/upload-artifact@v4
       with:
         name: budget${{ matrix.java }}-${{ matrix.os }}-dmg
         path: build/jpackage/*.dmg
     - name: Upload EXE as an artifact
+    - if: runner.os == 'Windows'
       uses: actions/upload-artifact@v4
       with:
         name: budget${{ matrix.java }}-${{ matrix.os }}-exe
         path: build/jpackage/*.exe
     - name: Upload MSI as an artifact
+    - if: runner.os == 'Windows'
       uses: actions/upload-artifact@v4
       with:
         name: budget${{ matrix.java }}-${{ matrix.os }}-msi
         path: build/jpackage/*.msi
     - name: Upload DEB as an artifact
+    - if: runner.os == 'macOS'
       uses: actions/upload-artifact@v4
       with:
         name: budget${{ matrix.java }}-${{ matrix.os }}-deb
         path: build/jpackage/*.deb
     - name: Upload RPM as an artifact
+    - if: runner.os == 'macOS'
       uses: actions/upload-artifact@v4
       with:
         name: budget${{ matrix.java }}-${{ matrix.os }}-rpm
