@@ -74,6 +74,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            artifacts/budget*-macOS-latest-dmg/*.dmg
-            artifacts/budget*-windows-latest-exe/*.exe
-            artifacts/budget*-windows-latest-msi/*.msi
+            artifacts/budget-dmg/*.dmg
+            artifacts/budget-exe/*.exe
+            artifacts/budget-msi/*.msi
+            data
