@@ -9,6 +9,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -275,10 +276,14 @@ public class ConfigTab extends JPanel implements DocumentListener  {
             imageSize = Math.min(logoLabel.getWidth(), logoLabel.getHeight());
         }
         try {
-            myPicture = ImageIO.read(new File(path));
+            myPicture = ImageIO.read(new File(path));            
             logoLabel.setIcon(new ImageIcon(myPicture.getScaledInstance(imageSize, imageSize, Image.SCALE_SMOOTH)));
         } catch (Exception e) {
-            logoLabel.setText("No existe el archivo " + path); 
+            
+            //logoLabel.setText("No existe el archivo " + path); 
+            
+            logoLabel.setText("No existe el archivo " + Paths.get("").toAbsolutePath().toString()); 
+            
         }
     }
 
