@@ -1,5 +1,8 @@
 package com.avetris.controllers;
 
+import java.io.File;
+
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -37,8 +40,15 @@ public class BudgetsController implements IBudgetListener {
     public void onGeneratePdf(String id) {
         Budget budget = BudgetManager.getInstance().getBudget(id);
         if (budget != null) {
-            if(!PdfManager.createPDF(budget)) {
-                new InfoDialog((JFrame) SwingUtilities.getWindowAncestor(view), "Error", "Ha habido un error al generar el documento. Cierra el documento si lo tienes abierto y vuelve a intentarlo.", true);        
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(null);
+            int response = fileChooser.showSaveDialog(null);
+            if (response == JFileChooser.APPROVE_OPTION) {                
+                if(!PdfManager.createPDF(budget, fileChooser.getSelectedFile().getAbsolutePath())) {
+                    new InfoDialog((JFrame) SwingUtilities.getWindowAncestor(view), "Error", "Ha habido un error al generar el documento. Cierra el documento si lo tienes abierto y vuelve a intentarlo.", true);        
+                }
+            } else {
+                new InfoDialog((JFrame) SwingUtilities.getWindowAncestor(view), "Error", "No has seleccionado el archivo donde guardar el presupuesto.", true);                        
             }
         }
     }
@@ -48,10 +58,6 @@ public class BudgetsController implements IBudgetListener {
         if(this.model != null) {
             onGeneratePdf(this.model.getId());
         }
-    }
-
-    void showPdfErrorDialog() {
-        
     }
 
     public Budget getModel() {

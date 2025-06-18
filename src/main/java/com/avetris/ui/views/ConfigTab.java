@@ -278,12 +278,8 @@ public class ConfigTab extends JPanel implements DocumentListener  {
         try {
             myPicture = ImageIO.read(new File(path));            
             logoLabel.setIcon(new ImageIcon(myPicture.getScaledInstance(imageSize, imageSize, Image.SCALE_SMOOTH)));
-        } catch (Exception e) {
-            
-            //logoLabel.setText("No existe el archivo " + path); 
-            
-            logoLabel.setText("No existe el archivo " + Paths.get("").toAbsolutePath().toString()); 
-            
+        } catch (Exception e) {            
+            logoLabel.setText("No existe el archivo " + path);            
         }
     }
 

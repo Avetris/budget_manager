@@ -32,9 +32,8 @@ public class PdfManager {
     static final int FONT_SIZE = 10;
     static Font FONT_BOLD = new Font(FontFamily.TIMES_ROMAN, FONT_SIZE, Font.BOLD);
     static Font FONT_NORMAL = new Font(FontFamily.TIMES_ROMAN, FONT_SIZE);
-    public static boolean createPDF(Budget budget) {
+    public static boolean createPDF(Budget budget, String path) {
         try {
-            String path = FileManager.getFilePath("presupuestos/" + budget.getId() + ".pdf");
             File f = new File(path);
             if(!f.exists()) {
                 f.getParentFile().mkdirs();

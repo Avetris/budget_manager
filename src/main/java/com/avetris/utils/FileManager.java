@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class FileManager {
-    static final String PATH = "data/";
+    static final String PATH = "/Presupuestos/data/";
 
     public static String getFilePath(String filePath) {
-        return PATH + filePath;
+        return System.getProperty("user.home") + PATH + filePath;
     }
 
     public static String[] getFilesInDirectory(String directoryPath) {
