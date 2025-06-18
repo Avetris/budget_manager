@@ -3,8 +3,6 @@ plugins {
     id 'org.beryx.runtime' version '1.13.1'
 }
 
-mainClassName = 'com.avetris.Main'
-
 repositories {
     mavenCentral()
 }
@@ -30,10 +28,36 @@ jar {
 }
 
 runtime {
+    additive = true
+    modules = ['java.desktop', 'java.naming']
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
 
-    additive = true
-    modules = ['java.desktop', 'java.naming']    
+    jpackage {
+        def currentOs = org.gradle.internal.os.OperatingSystem.current()
+
+        if(currentOs.windows) {
+            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
+            installerOptions += ['--icon', project.file('src/main/resources/app_icon.ico').absolutePath]
+        } else if(currentOs.mac) {
+            addOptions('--icon', project.file('src/main/resources/app_icon.icns').absolutePath)
+        }
+        // The following commented section can be removed if not planned for use.
+        /*targetPlatform("win") {
+            jdkHome = jdkDownload("https://download.oracle.com/java/17/archive/jdk-17.0.12_windows-x64_bin.zip")
+            addOptions('--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut')
+        }
+        installerOptions += [] // This line might be a remnant and can likely be removed.
+        targetPlatform("mac") {
+            jdkHome = jdkDownload("https://download.oracle.com/java/17/archive/jdk-17.0.12_macos-x64_bin.tar.gz") {
+                downloadDir = "$buildDir\\myMac"
+                archiveName = "my-mac-jdk"
+                archiveExtension = "tar.gz"
+                pathToHome = "jdk-17.0.12.jdk/Contents/Home"
+                overwrite = true
+            }
+            addOptions('--mac-package-name', 'prestamos')
+        }*/
+    }
 }
 
 java {
@@ -58,37 +82,6 @@ def configureJPackageTask(task, String platformDisplayName) {
     // These jlink options are applied when creating the runtime image via the 'jlinkImage' task
     // They don't need to be repeated here as JPackageTask uses the output of jlinkImage.
     // task.jlinkOptions.set(project.runtime.options)
-}
-
-// https://badass-runtime-plugin.beryx.org/releases/latest/#_tasks
-runtime {
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    
-    jpackage {
-        /*targetPlatform("win") {
-            jdkHome = jdkDownload("https://download.oracle.com/java/17/archive/jdk-17.0.12_windows-x64_bin.zip")
-            addOptions('--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut')
-        }
-        installerOptions += []
-        targetPlatform("mac") {
-            jdkHome = jdkDownload("https://download.oracle.com/java/17/archive/jdk-17.0.12_macos-x64_bin.tar.gz") {
-                downloadDir = "$buildDir\\myMac"
-                archiveName = "my-mac-jdk"
-                archiveExtension = "tar.gz"
-                pathToHome = "jdk-17.0.12.jdk/Contents/Home"
-                overwrite = true
-            }
-            addOptions('--mac-package-name', 'prestamos')
-        }*/
-        def currentOs = org.gradle.internal.os.OperatingSystem.current()
-
-        if(currentOs.windows) {
-            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
-            installerOptions += ['--icon', project.file('src/main/resources/app_icon.ico').absolutePath]
-        } else if(currentOs.mac) {
-            addOptions('--icon', project.file('src/main/resources/app_icon.icns').absolutePath)
-        }
-    }
 }
 
 compileJava.options.encoding = 'UTF-8'
