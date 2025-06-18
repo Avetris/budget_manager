@@ -29,12 +29,11 @@ jobs:
       run: chmod +x ./gradlew
     - name: Build and Package Application
       if: runner.os == 'macOS'
-      run: |
-        iconutil -c icns src/main/resources/icon.iconset
-        ls src/main/resources
-        mv icon.icns src/main/resources/icon.icns
+      run: iconutil -c icns src/main/resources/icon.iconset
     - name: Build and Package Application
-      run: ./gradlew --info --stacktrace jpackage -Pmacos.x64.jdk.path=$JAVA_HOME
+      run: |
+        ls src/main/resources
+        ./gradlew --info --stacktrace jpackage -Pmacos.x64.jdk.path=$JAVA_HOME
     - name: Upload PKG as an artifact
       uses: actions/upload-artifact@v4
       if: runner.os == 'macOS'
