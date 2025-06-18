@@ -28,9 +28,12 @@ jobs:
     - name: Give permissions
       run: chmod +x ./gradlew
     - name: Build and Package Application
+      if: runner.os == 'macOS'
       run: |
         iconutil -c icns src/main/resources/icon.iconset
-        ./gradlew --info --stacktrace jpackage -Pmacos.x64.jdk.path=$JAVA_HOME
+        mv icon.icns src/main/resources/icon.icns
+    - name: Build and Package Application
+      run: ./gradlew --info --stacktrace jpackage -Pmacos.x64.jdk.path=$JAVA_HOME
     - name: Upload PKG as an artifact
       uses: actions/upload-artifact@v4
       if: runner.os == 'macOS'
