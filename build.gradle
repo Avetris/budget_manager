@@ -59,8 +59,8 @@ runtime {
             installerOptions += ['--icon', project.file('src/main/resources/icon.ico').absolutePath]
             imageOptions += ['--icon', project.file('src/main/resources/icon.ico').absolutePath]
         } else if(currentOs.isMacOsX()) {
-            installerOptions += ['--icon', project.file('src/main/resources/icon.icns').absolutePath]
-            imageOptions += ['--icon', project.file('src/main/resources/icon.icns').absolutePath]
+            installerOptions += ['--icon', project.file('icon.icns').absolutePath]
+            imageOptions += ['--icon', project.file('icon.icns').absolutePath]
             installerType = 'pkg' // Specify PKG installer for macOS
         }
     }

@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macOS-latest, windows-latest]
+        os: [macOS-13, windows-latest]
       fail-fast: false
     name: ${{ matrix.os }}
     steps:
@@ -27,12 +27,10 @@ jobs:
       uses: gradle/wrapper-validation-action@v1
     - name: Give permissions
       run: chmod +x ./gradlew
-    - name: Execute build
-      run: ./gradlew --info --stacktrace build
-    - name: Execute runtime
-      run: ./gradlew --info --stacktrace runtime
-    - name: Execute jpackage
-      run: ./gradlew --info --stacktrace jpackage
+    - name: Build and Package Application
+      run: |
+        iconutil -c icns src/main/resources/icon.iconset
+        ./gradlew --info --stacktrace jpackage -Pmacos.x64.jdk.path=$JAVA_HOME
     - name: Upload PKG as an artifact
       uses: actions/upload-artifact@v4
       if: runner.os == 'macOS'
