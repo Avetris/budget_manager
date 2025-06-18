@@ -31,6 +31,7 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         iconutil -c icns src/main/resources/icon.iconset
+        ls
         mv icon.icns src/main/resources/icon.icns
     - name: Build and Package Application
       run: ./gradlew --info --stacktrace jpackage -Pmacos.x64.jdk.path=$JAVA_HOME
