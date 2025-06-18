@@ -29,6 +29,10 @@ jobs:
       run: ./gradlew --info --stacktrace build
     - name: Execute runtime
       run: ./gradlew --info --stacktrace runtime
+    - name: Set permissions for downloaded JDK (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        sudo chmod -R +rX build/jdks/mac || echo "Failed to chmod downloaded JDK, but continuing..."
     - name: Execute jpackage
       run: ./gradlew --info --stacktrace jpackage
     - name: Upload PKG as an artifact
