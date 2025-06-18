@@ -34,12 +34,10 @@ runtime {
 
     jpackage {
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
+        installerOptions += ['--icon', project.file('src/main/resources/icon.ico').absolutePath]
 
         if(currentOs.isWindows()) {
             installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
-            installerOptions += ['--icon', project.file('src/main/resources/icon.ico').absolutePath]
-        } else if(currentOs.isMacOsX()) {
-            addOptions('--icon', project.file('src/main/resources/icon.icns').absolutePath)
         }
         // The following commented section can be removed if not planned for use.
         /*targetPlatform("win") {

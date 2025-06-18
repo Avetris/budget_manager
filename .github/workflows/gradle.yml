@@ -21,8 +21,6 @@ jobs:
       with:
         java-version: '17.0.0+35'
         distribution: 'temurin' # Add this line
-    - name: Echo JAVA_HOME
-      run: echo $JAVA_HOME
     - name: Verify Gradle Wrapper
       uses: gradle/wrapper-validation-action@v1
     - name: Give permissions
