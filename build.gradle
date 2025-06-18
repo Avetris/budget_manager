@@ -32,6 +32,25 @@ runtime {
     modules = ['java.desktop', 'java.naming']
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
 
+    // Configure for macOS Intel (x86_64) build if property is set
+    // This allows overriding the JDK used by jlink and jpackage.
+    // On CI, ensure JAVA_HOME points to an x86_64 JDK for macOS builds.
+    def currentOsForJdkConfig = org.gradle.internal.os.OperatingSystem.current()
+    if (currentOsForJdkConfig.isMacOsX()) {
+        if (project.hasProperty('macos.x64.jdk.path')) {
+            def jdkPath = project.property('macos.x64.jdk.path') as String
+            if (new File(jdkPath).isDirectory()) {
+                project.logger.lifecycle("Using explicit x86_64 JDK for macOS jlink/jpackage: ${jdkPath}")
+                jlinkJdk = jdkPath
+                jpackageJdk = jdkPath
+            } else {
+                project.logger.warn("Specified macos.x64.jdk.path ('${jdkPath}') not found or not a directory. Default JDK (JAVA_HOME) will be used for jlink/jpackage.")
+            }
+        } else {
+            project.logger.info("Property 'macos.x64.jdk.path' not set. Default JDK (JAVA_HOME) will be used for macOS jlink/jpackage. Ensure JAVA_HOME points to an x86_64 JDK for Intel builds on CI, or set macos.x64.jdk.path for local cross-compilation.")
+        }
+    }
+
     jpackage {
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
 
@@ -43,16 +62,6 @@ runtime {
             installerOptions += ['--icon', project.file('src/main/resources/icon.icns').absolutePath]
             imageOptions += ['--icon', project.file('src/main/resources/icon.icns').absolutePath]
             installerType = 'pkg' // Specify PKG installer for macOS
-            targetPlatform("mac") {
-                // This will download an x86_64 JDK for packaging if the build JDK is different.
-                jdkHome = jdkDownload("https://download.oracle.com/java/17/archive/jdk-17.0.12_macos-x64_bin.tar.gz") {
-                    downloadDir = "$buildDir\\myMac"
-                    archiveName = "my-mac-jdk"
-                    archiveExtension = "tar.gz"
-                    pathToHome = "jdk-17.0.12.jdk/Contents/Home"
-                    overwrite = true
-                }
-            }
         }
     }
 }
