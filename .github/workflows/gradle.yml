@@ -31,12 +31,12 @@ jobs:
       run: ./gradlew --info --stacktrace runtime
     - name: Execute jpackage
       run: ./gradlew --info --stacktrace jpackage
-    - name: Upload DMG as an artifact
+    - name: Upload PKG as an artifact
       uses: actions/upload-artifact@v4
       if: runner.os == 'macOS'
       with:
-        name: budget-dmg
-        path: build/jpackage/*.dmg
+        name: budget-pkg
+        path: build/jpackage/*.pkg
     - name: Upload EXE as an artifact
       uses: actions/upload-artifact@v4
       if: runner.os == 'Windows'
@@ -72,6 +72,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            artifacts/budget-dmg/*.dmg
+            artifacts/budget-pkg/*.pkg
             artifacts/budget-exe/*.exe
             artifacts/budget-msi/*.msi
