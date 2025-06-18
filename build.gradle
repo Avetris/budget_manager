@@ -43,18 +43,17 @@ runtime {
             installerOptions += ['--icon', project.file('src/main/resources/icon.icns').absolutePath]
             imageOptions += ['--icon', project.file('src/main/resources/icon.icns').absolutePath]
             installerType = 'pkg' // Specify PKG installer for macOS
-        }
-          targetPlatform("mac") {
-            // This will download an x86_64 JDK for packaging if the build JDK is different.
-            jdkHome = jdkDownload("https://download.oracle.com/java/17/archive/jdk-17.0.12_macos-x64_bin.tar.gz") {                
-                // You can customize downloadDir and archiveName if needed
-                // downloadDir = "$buildDir/macJdk_x64"
-                // archiveName = "jdk-17-macos-x64"
-                archiveExtension = "tar.gz"
-                pathToHome = "jdk-17.0.12.jdk/Contents/Home"
-                overwrite = true
+            targetPlatform("mac") {
+                // This will download an x86_64 JDK for packaging if the build JDK is different.
+                jdkHome = jdkDownload("https://download.oracle.com/java/17/archive/jdk-17.0.12_macos-x64_bin.tar.gz") {                
+                    // You can customize downloadDir and archiveName if needed
+                    // downloadDir = "$buildDir/macJdk_x64"
+                    // archiveName = "jdk-17-macos-x64"
+                    archiveExtension = "tar.gz"
+                    pathToHome = "jdk-17.0.12.jdk/Contents/Home"
+                    overwrite = true
+                }
             }
-            addOptions('--mac-package-name', 'prestamos')
         }
     }
 }
