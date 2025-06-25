@@ -33,7 +33,7 @@ jobs:
     - name: Build and Package Application
       run: |
         ls src/main/resources
-        ./gradlew --info --stacktrace jpackage -PappVersion=${{ github.ref_name }}
+        ./gradlew --info --stacktrace jpackage -PappVersion="${{ github.ref_name }}"
     - name: Upload PKG as an artifact
       uses: actions/upload-artifact@v4
       if: runner.os == 'macOS'
