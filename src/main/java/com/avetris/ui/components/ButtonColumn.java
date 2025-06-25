@@ -1,5 +1,6 @@
 package com.avetris.ui.components;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 
@@ -37,7 +38,7 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
     {
         if (hasFocus)
         {
-            renderButton.setForeground(table.getForeground());
+            renderButton.setForeground(UIManager.getColor("Button.foreground"));
             renderButton.setBackground(UIManager.getColor("Button.background"));
         }
         else if (isSelected)
@@ -47,7 +48,7 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
         }
         else
         {
-            renderButton.setForeground(table.getForeground());
+            renderButton.setForeground(UIManager.getColor("Button.foreground"));
             renderButton.setBackground(UIManager.getColor("Button.background"));
         }
 

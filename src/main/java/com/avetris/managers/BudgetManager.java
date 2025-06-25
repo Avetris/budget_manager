@@ -1,13 +1,40 @@
 package com.avetris.managers;
 
+import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import com.avetris.listeners.IBudgetListener;
 import com.avetris.models.Budget;
 import com.avetris.utils.FileManager;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
+class LocalDateDeserializer implements JsonDeserializer<LocalDate>, JsonSerializer<LocalDate> {
+
+    @Override
+    public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        return LocalDate.parse(json.getAsString(), DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    }
+
+    @Override
+    public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) throws JsonParseException {
+        return context.serialize(src.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+    }
+
+}
 
 public class BudgetManager {
 
@@ -34,35 +61,61 @@ public class BudgetManager {
         this.listener = listener;
     }
 
-    public void readBugdgets() {
-        for (String fileName : FileManager.getFilesInDirectory(BILLS_PATH)) 
-        {
-            try {
-                String content = FileManager.readFile(BILLS_PATH + "/" + fileName, "{}");
-                Gson gson = new Gson();  
-                Budget budget = gson.fromJson(content, Budget.class);
-                budgets.put(budget.getId(), budget);
-                if(listener != null) {
-                    listener.onBudgetListUpdated();
-                }
-            } catch(Exception e) {
+    private Gson getGson() {
+        var builder = new GsonBuilder();
+        builder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
+        return builder.create();
+    }
 
-            }            
+    public void readBugdgets() {
+        if(budgets.size() == 0) {
+            Gson gson = getGson();
+            for (String fileName : FileManager.getFilesInDirectory(BILLS_PATH)) 
+            {
+                try {
+                    String content = FileManager.readFile(BILLS_PATH + "/" + fileName, "{}");
+                    Budget budget = gson.fromJson(content, Budget.class);
+                    budgets.put(budget.getId(), budget);
+                    if(listener != null) {
+                        listener.onBudgetListUpdated();
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }            
+            }
+        } else {
+            if(listener != null) {
+                listener.onBudgetListUpdated();
+            }
         }
     }
     
     public Budget[] getBudgets(String filter) {
-        if(filter == null || filter.isEmpty()) {
-            return budgets.values().toArray(new Budget[budgets.size()]);
-        }
         List<Budget> filtered = new ArrayList<>();
-        filter = filter.toLowerCase();
-        for(Budget budget : budgets.values()) {
-            if(budget.getProject().toLowerCase().contains(filter) || budget.getId().toLowerCase().contains(filter) || budget.getClient().containsFilter(filter)) {
-                filtered.add(budget);
+        if(filter == null || filter.isEmpty()) {
+            filtered = new ArrayList<Budget>(budgets.values());
+        } else {
+            filter = filter.toLowerCase();
+            for(Budget budget : budgets.values()) {
+                if(budget.getProject().toLowerCase().contains(filter) || budget.getId().toLowerCase().contains(filter) || budget.getClient().containsFilter(filter)) {
+                    filtered.add(budget);
+                }
             }
         }
+        filtered.sort((a, b) -> b.getDate().compareTo(a.getDate()));
         return filtered.toArray(new Budget[filtered.size()]);
+    }
+
+    public String getNewId(int year) {
+        int lastId = 1;
+        String id = String.format("%d-%03d", year, lastId);
+        boolean exists = budgets.containsKey(id);
+        while(exists) {
+            lastId++;
+            id = String.format("%d-%03d", year, lastId);
+            exists = budgets.containsKey(id);
+        }
+        return id;
     }
 
     public Budget getBudget(String id) {
@@ -79,14 +132,20 @@ public class BudgetManager {
     }
 
     private void save(String id) {        
-        String content = new Gson().toJson(budgets.get(id));
-        FileManager.saveFile(BILLS_PATH + "/" + id + ".json", content);
+        String content = getGson().toJson(budgets.get(id));
+        FileManager.saveFile(BILLS_PATH + "/" + id + ".json", content);        
+        if(listener != null) {
+            listener.onBudgetListUpdated();
+        }
     }
 
     public void removeBudget(String id) {
         if(budgets.containsKey(id)) {
-            FileManager.removeFile(String.format("%s/%s", BILLS_PATH, budgets.get(id).getId()));
+            FileManager.removeFile(String.format("%s/%s.json", BILLS_PATH, id));
             budgets.remove(id);
+            if(listener != null) {
+                listener.onBudgetListUpdated();
+            }
         }
     }
 }

@@ -6,6 +6,9 @@ import java.awt.Insets;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.text.NumberFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -35,6 +38,10 @@ import com.avetris.models.Task;
 import com.avetris.ui.components.AutoRowHeightTable;
 import com.avetris.ui.components.ButtonColumn;
 import com.avetris.ui.components.JTextAreaCellRenderer;
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
+import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 
 public class ModifyBudgetDialog extends JDialog implements WindowListener, DocumentListener {
 
@@ -42,7 +49,7 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
 
     JTextField idField;
     JTextField projectField;
-    JTextField dateField;
+    DatePicker dateField;
     JTextField clientNifField;
     JComboBox<String> clientTypeField;
     JTextField clientNameField;   
@@ -95,13 +102,11 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
     }
 
     public void setupId() {
-        String id = controller.getModel().getId();
         JLabel label = new JLabel();
         label.setText("Id");
-        idField = new JTextField(id);
+        idField = new JTextField(controller.getModel().getId());
         label.setLabelFor(idField);
-        idField.setEditable(id == null || id.isEmpty());
-        idField.getDocument().addDocumentListener(this);
+        idField.setEditable(false);
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
@@ -113,15 +118,24 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         c.gridx = 1;
         c.weightx = 0.45;
         add(idField, c);
-        canGenerate = id != null && !id.isEmpty();
     }
 
     public void setupDate() {
         JLabel label = new JLabel();
         label.setText("Fecha");
-        dateField = new JTextField(controller.getModel().getDate());
+        DatePickerSettings dateSettings = new DatePickerSettings();
+        dateSettings.setFirstDayOfWeek(DayOfWeek.MONDAY);        
+        dateField = new DatePicker(dateSettings);
+        dateField.setDate(controller.getModel().getDate());
         label.setLabelFor(dateField);
-        dateField.getDocument().addDocumentListener(this);
+        dateField.addDateChangeListener(new DateChangeListener() {            
+            @Override
+            public void dateChanged(DateChangeEvent event) {
+                validateChanges();            
+            }
+        });
+        /*dateField.addLis
+        dateField.getDocument().addDocumentListener(this);*/
         GridBagConstraints c = new GridBagConstraints();    
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 2;
@@ -299,9 +313,9 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
             }
             boolean success = controller.onSubmit(
                 new Budget(
-                    idField.getText().trim(),
+                    idField.getText(),
                     projectField.getText().trim(),
-                    dateField.getText().trim(),
+                    dateField.getDate(),
                     new Client(
                         clientNifField.getText().trim(),
                         clientTypeField.getSelectedItem().equals("Empresa"), 
@@ -381,7 +395,7 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
             @Override
             public boolean isCellEditable(int row, int column) {
                 // Only Title, Description, and Price are directly editable
-                return column == 0 || column == 1 || column == 2;
+                return true;
             }
         };
         defaultModel.addColumn("Título");
@@ -488,19 +502,21 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
     public void windowDeactivated(WindowEvent e) {}
 
     public void validateChanges() {
-        String id = idField.getText();
-        String date = dateField.getText();
+        LocalDate date = dateField.getDate();
         String project = projectField.getText();
-        boolean hasErrors = id.isEmpty() || date.isEmpty() || project.isEmpty();
         calculatePrices();
+        
+        String id = controller.getModel().getId();
+        if(id == null || id.isEmpty()) {
+            idField.setText(controller.getNewId(date));
+        }
 
         Budget model = controller.getModel();
-        if (hasErrors) {
+        if (project.isEmpty()) {
             canSave = false;
             canGenerate = false;
         } else {
-            boolean modified = !id.equals(model.getId()) || 
-                                !date.equals(model.getDate()) || 
+            boolean modified =  !date.equals(model.getDate()) || 
                                 !project.equals(model.getProject()) || 
                                 !clientNifField.getText().equals(model.getClient().getNif()) || 
                                 !clientNameField.getText().equals(model.getClient().getName()) || 

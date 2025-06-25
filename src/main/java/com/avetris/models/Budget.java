@@ -2,6 +2,7 @@ package com.avetris.models;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -12,7 +13,7 @@ public class Budget {
     private String id;
 
     @JsonProperty("date")
-    private String date;
+    private LocalDate date;
 
     @JsonProperty("project")
     private String project;
@@ -28,10 +29,10 @@ public class Budget {
 
     
     public Budget() {
-        this.date = LocalDate.now().toString();
+        this.date = LocalDate.now();
     }
 
-    public Budget(String id, String project, String date, Client client, List<Task> tasks) {
+    public Budget(String id, String project, LocalDate date, Client client, List<Task> tasks) {
         this.id = id;
         this.project = project;
         this.client = client;
@@ -52,7 +53,7 @@ public class Budget {
         return client;
     }
     
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
@@ -89,7 +90,7 @@ public class Budget {
         this.project = project;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

@@ -12,13 +12,14 @@ dependencies {
     implementation("com.google.code.gson:gson:2.7")
     implementation("org.codehaus.jackson:jackson-core-asl:1.1.0")
     implementation("com.itextpdf:itextpdf:5.0.6")
+    implementation("com.github.lgooddatepicker:LGoodDatePicker:11.2.1")
 }
 
 application {
     // Define the application properties
     mainClass = 'com.avetris.Main'
     applicationName = 'Presupuestos'
-    version = '1.0.0'
+    version = project.findProperty('appVersion') ?: '1.0.0-SNAPSHOT'
 }
 
 jar {

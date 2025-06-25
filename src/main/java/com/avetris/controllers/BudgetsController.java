@@ -1,6 +1,7 @@
 package com.avetris.controllers;
 
-import java.io.File;
+import java.time.LocalDate;
+import java.util.Calendar;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -62,6 +63,10 @@ public class BudgetsController implements IBudgetListener {
 
     public Budget getModel() {
         return this.model;
+    }
+
+    public String getNewId(LocalDate date) {
+        return BudgetManager.getInstance().getNewId(date.getYear());
     }
 
     public void setFilter(String filter) {

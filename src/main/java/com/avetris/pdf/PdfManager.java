@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 import com.avetris.managers.ConfigManager;
 import com.avetris.models.Budget;
@@ -126,7 +127,7 @@ public class PdfManager {
         PdfPCell dateCell = new PdfPCell();
         Phrase dateParagraph = new Phrase(); 
         dateParagraph.add(new Chunk("FECHA ", FONT_BOLD));
-        dateParagraph.add(new Chunk(budget.getDate(), FONT_NORMAL));        
+        dateParagraph.add(new Chunk(budget.getDate().format(DateTimeFormatter.ofPattern("dd/MM/YYYY")), FONT_NORMAL));        
         dateCell.addElement(dateParagraph);
         dateCell.setBorder(PdfPCell.NO_BORDER);
         table.addCell(dateCell); 
