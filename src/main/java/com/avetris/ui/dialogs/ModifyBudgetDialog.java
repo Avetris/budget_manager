@@ -298,8 +298,10 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         submitButton.addActionListener(e -> {
             List<Task> tasks = new java.util.ArrayList<>();
             for(int i = 0; i < taskTable.getModel().getRowCount(); i++) {
-            double price = 0;
+                double price = 0;
+                int count = 1;
                 Object priceObj = taskTable.getValueAt(i, 2);
+                Object countObj = taskTable.getValueAt(i, 3);
                 try {
                     if (priceObj instanceof Double) {
                         price = (Double) priceObj;
@@ -309,7 +311,20 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
                         price = ((Number) priceObj).doubleValue();
                     }
                 } catch (NumberFormatException e1) {}
-                tasks.add(new Task(String.valueOf(taskTable.getValueAt(i, 0)), String.valueOf(taskTable.getValueAt(i, 1)), price));
+                try {
+                    if (countObj instanceof Integer) {
+                        count = (Integer) countObj;
+                    } else if (countObj instanceof String) { // Fallback if editor returns string
+                        count = Integer.parseInt((String) countObj);
+                    } else if (countObj instanceof Number) { // General Number
+                        count = ((Number) countObj).intValue();
+                    }
+                } catch (NumberFormatException e1) {}
+                tasks.add(
+                    new Task(
+                        String.valueOf(taskTable.getValueAt(i, 0)), 
+                        String.valueOf(taskTable.getValueAt(i, 1)), 
+                        price, count));
             }
             boolean success = controller.onSubmit(
                 new Budget(
@@ -388,6 +403,8 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
                         return String.class;
                     case 2: // Precio
                         return Double.class;
+                    case 3: // Cantidad
+                        return Integer.class;
                     default: // Button columns
                         return Object.class;
                 }
@@ -401,15 +418,17 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         defaultModel.addColumn("Título");
         defaultModel.addColumn("Descripción");
         defaultModel.addColumn("Precio");
+        defaultModel.addColumn("Cantidad");
         defaultModel.addColumn("");
         defaultModel.addColumn("");
         for(int i = 0; i < tasks.size(); i++) {
-            Object[] rowData = new Object[5];
+            Object[] rowData = new Object[6];
             rowData[0] = tasks.get(i).getTitle();
             rowData[1] = tasks.get(i).getDescription();
             rowData[2] = Double.valueOf(tasks.get(i).getPrice());
-            rowData[3] = "Buscar";
-            rowData[4] = "Eliminar";
+            rowData[3] = Integer.valueOf(tasks.get(i).getCount());
+            rowData[4] = "Buscar";
+            rowData[5] = "Eliminar";
             defaultModel.addRow(rowData);
         }
 
@@ -423,6 +442,8 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         taskTable.getColumnModel().getColumn(3).setMaxWidth(100);
         taskTable.getColumnModel().getColumn(4).setMinWidth(100);
         taskTable.getColumnModel().getColumn(4).setMaxWidth(100);
+        taskTable.getColumnModel().getColumn(5).setMinWidth(100);
+        taskTable.getColumnModel().getColumn(5).setMaxWidth(100);
         taskTable.setDefaultRenderer(String.class, new JTextAreaCellRenderer());
         
         TableCellEditor editor = taskTable.getDefaultEditor(Object.class);
@@ -441,22 +462,31 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         });
         taskTable.setDefaultEditor(String.class, editor);
         taskTable.setDefaultEditor(Double.class, editor);
+        taskTable.setDefaultEditor(Integer.class, editor);
         taskTable.setRowSelectionAllowed(true);
         
         JScrollPane scrollPane = new  JScrollPane(taskTable);
         taskTable.setFillsViewportHeight(true);
     
-        new ButtonColumn(taskTable, 3, e -> {
+        new ButtonColumn(taskTable, 4, e -> {
             new TaskSelectDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Elegir Tarea", t -> {
                 ((DefaultTableModel)taskTable.getModel()).setValueAt(t.getTitle(), taskTable.getSelectedRow(), 0);
                 ((DefaultTableModel)taskTable.getModel()).setValueAt(t.getDescription(), taskTable.getSelectedRow(), 1);
                 ((DefaultTableModel)taskTable.getModel()).setValueAt(t.getPrice(), taskTable.getSelectedRow(), 2);
+                ((DefaultTableModel)taskTable.getModel()).setValueAt(1, taskTable.getSelectedRow(), 3);
                 validateChanges();
             }, true);
         });
-        new ButtonColumn(taskTable, 4, e -> {
-            new ConfirmDialog(new JFrame(), "Eliminar tarea", "¿Seguro que quieres eliminar la tarea? Esta acción no se puede revertir.", true, () -> {
-                ((DefaultTableModel)taskTable.getModel()).removeRow(taskTable.getSelectedRow());
+        new ButtonColumn(taskTable, 5, e -> {
+            if (taskTable.getSelectedRow() < 0 && taskTable.getEditingRow() < 0) {
+                return;
+            }
+            new ConfirmDialog(new JFrame(), "Eliminar tarea", "¿Seguro que quieres eliminar la tarea? Esta acción no se puede revertir.", true, () -> {                
+                int row = taskTable.getSelectedRow();
+                if (row < 0) {
+                    row = taskTable.getEditingRow();
+                }
+                ((DefaultTableModel)taskTable.getModel()).removeRow(row);
                 validateChanges();
             });                
         });
@@ -536,7 +566,10 @@ public class ModifyBudgetDialog extends JDialog implements WindowListener, Docum
         double totalValue = 0;
         for(int i = 0; i < taskTable.getModel().getRowCount(); i++) {
             try {
-                totalValue += (Double) taskTable.getValueAt(i, 2);
+                int count = (Integer) taskTable.getValueAt(i, 3);
+                if (count > 0) {
+                    totalValue += ((Double) taskTable.getValueAt(i, 2)) * count;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

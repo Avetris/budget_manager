@@ -3,6 +3,7 @@ package com.avetris.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class FileManager {
@@ -50,7 +51,7 @@ public class FileManager {
             saveFile(filePath, emptyContent);
             return emptyContent;
         }
-        return new String(Files.readAllBytes(file.toPath()));
+        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     }
     
     public static void removeFile(String filePath) {

@@ -13,14 +13,25 @@ public class Task {
     private String description;
 
     @JsonProperty("price")
-    private double price;    
+    private double price;
+    
+    @JsonProperty("count")
+    private int count = 1;
 
     public Task(){}
+    
+    public Task(String title, String description, double price, int count) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.count = count;
+    }
 
     public Task(String title, String description, double price) {
         this.title = title;
         this.description = description;
         this.price = price;
+        this.count = 1;
     }
 
     public Task(int id, String title, String description, double price) {
@@ -28,6 +39,7 @@ public class Task {
         this.title = title;
         this.description = description;
         this.price = price;
+        this.count = 1;
     }
     
     // Getters
@@ -41,6 +53,10 @@ public class Task {
 
     public String getDescription() {
         return description;
+    }
+
+    public int getCount() {
+        return count;
     }
 
     public double getPrice() {
@@ -60,6 +76,10 @@ public class Task {
         this.description = description;
     }
 
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     public void setPrice(double price) {
         this.price = price;
     }
@@ -68,5 +88,6 @@ public class Task {
         this.title = newTask.getTitle();
         this.description = newTask.getDescription();
         this.price = newTask.getPrice();
+        this.count = newTask.getCount();
     }
 }

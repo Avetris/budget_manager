@@ -1,6 +1,5 @@
 package com.avetris.pdf;
 
-import java.awt.Color;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +12,6 @@ import com.avetris.models.Budget;
 import com.avetris.models.Client;
 import com.avetris.models.Config;
 import com.avetris.models.Task;
-import com.avetris.utils.FileManager;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -119,7 +117,7 @@ public class PdfManager {
 
         
         PdfPCell budgetCell = new PdfPCell();
-        Phrase budgetParagraph = new Phrase("PRESUPUESTO ", FONT_BOLD);
+        Phrase budgetParagraph = new Phrase(budget.getProject(), FONT_BOLD);
         budgetCell.addElement(budgetParagraph);
         budgetCell.setBorder(PdfPCell.NO_BORDER);
         table.addCell(budgetCell); 
@@ -138,28 +136,32 @@ public class PdfManager {
     }
     
     private static void writeTasks(Document document, Budget budget) throws DocumentException {
-        Integer numColumns = 3;
-        // We create the table (Creamos la tabla).
-        PdfPTable table = new PdfPTable(numColumns);
-        table.setTotalWidth(new float[]{ 22, 200, 28});
+        PdfPTable table = new PdfPTable(4);
+        table.setTotalWidth(new float[]{ 70, 6, 12, 12});
 
         table.setSplitLate(false);
         table.setSplitRows(false);
-        // Now we fill the PDF table 
-        // Fill table rows (rellenamos las filas de la tabla).
-        table.addCell("");
-        table.addCell(getProjectCell(budget.getProject()));
-        table.addCell("");
+        
+        table.addCell(createHeaderCell("Descripción"));
+        table.addCell(createHeaderCell("Nº"));
+        table.addCell(createHeaderCell("Precio"));
+        table.addCell(createHeaderCell("Total"));
 
         for (Task task : budget.getTasks()) {
-            table.addCell(new PdfPCell());
-            table.addCell(createTaskCell(task));
-            table.addCell(createPriceCell(task));
+            if(task.getCount() > 0){
+                table.addCell(createTaskCell(task));
+                table.addCell(createCountCell(task));
+                table.addCell(createPriceCell(task.getPrice()));
+                table.addCell(createPriceCell(task.getPrice() * task.getCount()));
+            }
         }
         table.setSpacingAfter(20);
-        // We add the paragraph with the table (Añadimos el elemento con la tabla).
+        
+        table.setHeaderRows(1);
         document.add(table);
     }
+
+
 
     private static void writeTotal(Document document, Budget budget) throws DocumentException {
         PdfPTable table = new PdfPTable(3);
@@ -248,12 +250,13 @@ public class PdfManager {
         return String.format("%1$,.2f €", price);
     }
 
-    private static PdfPCell getProjectCell(String project) {
+    private static PdfPCell createHeaderCell(String title) {
         PdfPCell cell = new PdfPCell();
-        Paragraph paragraph = new Paragraph(project, FONT_BOLD);
-        cell.addElement(paragraph);
+        Paragraph header = new Paragraph(title, new Font(FontFamily.TIMES_ROMAN, FONT_SIZE, Font.BOLD));
+        header.setAlignment(Paragraph.ALIGN_CENTER);
+        cell.addElement(header);
         cell.setPaddingBottom(10);
-        return cell;    
+        return cell;        
     }
 
     private static PdfPCell createTaskCell(Task task) {
@@ -268,27 +271,31 @@ public class PdfManager {
         return cell;        
     }
 
-    private static PdfPCell createPriceCell(Task task) {
+    private static PdfPCell createCountCell(Task task) {
         PdfPCell cell = new PdfPCell();
         cell.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
         cell.setVerticalAlignment(PdfPCell.ALIGN_BOTTOM);
-        Paragraph price = new Paragraph(task.getPrice() + " €", FONT_NORMAL);
-        price.setAlignment(Paragraph.ALIGN_RIGHT);
-        cell.addElement(price);
+        Paragraph count = new Paragraph(task.getCount() + "", FONT_NORMAL);
+        count.setAlignment(Paragraph.ALIGN_CENTER);
+        cell.addElement(count);
+        cell.setPaddingBottom(10);
+        return cell;        
+    }
+
+    private static PdfPCell createPriceCell(double price) {
+        PdfPCell cell = new PdfPCell();
+        cell.setHorizontalAlignment(PdfPCell.ALIGN_RIGHT);
+        cell.setVerticalAlignment(PdfPCell.ALIGN_BOTTOM);
+        Paragraph paragraph = new Paragraph(price + " €", FONT_NORMAL);
+        paragraph.setAlignment(Paragraph.ALIGN_RIGHT);
+        cell.addElement(paragraph);
         cell.setPaddingBottom(10);
         return cell;        
     }
     
     private static void writeConditions(Document document) throws DocumentException {
         document.newPage();
-        Integer numColumns = 3;
-        // We create the table (Creamos la tabla).
-        PdfPTable table = new PdfPTable(numColumns);
-        table.setTotalWidth(new float[]{ 22, 200, 28});
-
-        // Now we fill the PDF table 
-        // Fill table rows (rellenamos las filas de la tabla).
-        table.addCell("");
+        PdfPTable table = new PdfPTable(1);
 
         PdfPCell cell = new PdfPCell();
         Paragraph conditionsTitle = new Paragraph("CONDICIONES GENERALES:", FONT_BOLD);
@@ -300,22 +307,14 @@ public class PdfManager {
         cell.setPaddingBottom(10);   
 
         table.addCell(cell);
-        table.addCell("");
 
         table.setExtendLastRow(true);
-        // We add the paragraph with the table (Añadimos el elemento con la tabla).
         document.add(table);
     }
     
     private static void writeGaranty(Document document) throws DocumentException {
         document.newPage();
-        Integer numColumns = 3;
-        // We create the table (Creamos la tabla).
-        PdfPTable table = new PdfPTable(numColumns);
-        table.setTotalWidth(new float[]{ 22, 200, 28});
-        // Now we fill the PDF table 
-        // Fill table rows (rellenamos las filas de la tabla).
-        table.addCell("");
+        PdfPTable table = new PdfPTable(1);
 
         PdfPCell cell = new PdfPCell();
         Paragraph conditionsTitle = new Paragraph("GARANTÍA DE LOS TRABAJOS:", FONT_BOLD);
@@ -327,10 +326,8 @@ public class PdfManager {
         cell.setPaddingBottom(10);   
 
         table.addCell(cell);
-        table.addCell("");
 
         table.setExtendLastRow(true);
-        // We add the paragraph with the table (Añadimos el elemento con la tabla).
         document.add(table);
     }
 }

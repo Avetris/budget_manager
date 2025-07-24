@@ -2,7 +2,6 @@ package com.avetris.models;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -64,7 +63,9 @@ public class Budget {
     public double getTotal() {
         double total = 0;
         for(var t : tasks) {
-            total += t.getPrice();
+            if (t.getCount() > 0) {
+                total += t.getPrice() * t.getCount();
+            }
         }
         return total;
     }

@@ -1,6 +1,5 @@
 package com.avetris.ui.components;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 
@@ -18,6 +17,7 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
     JButton renderButton;
     JButton editButton;
     String text;
+    
 
     public ButtonColumn(JTable table, int column, ActionListener listener)
     {
