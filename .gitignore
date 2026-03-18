@@ -1,5 +1,2 @@
 .vscode
-.gradle
-build
 data/presupuestos/*
-bin
