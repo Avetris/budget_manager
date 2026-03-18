@@ -20,6 +20,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/public",
             "browser": "client/src/main.ts",
             "tsConfig": "client/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
