@@ -1,0 +1,63 @@
+{
+    "generic": {
+        "accept": "Accept",
+        "cancel": "Cancel",
+        "save": "Save"
+    },
+    "login": {
+        "title": "Login",
+        "user": "User",
+        "password": "Password",
+        "error": "Error incorrect user or password"
+    },
+    "budgets": {
+        "create": "Create Budget",
+        "table": {
+            "id": "Nº",
+            "date": "Date",
+            "project": "Project",
+            "client": "Client",
+            "vat": "VAT",
+            "tasks": "Tasks"
+        },
+        "errors": {
+            "exist": {
+                "title": "Error getting budgets",
+                "message": "The budget does not exist"
+            }
+        },
+        "edit": {
+            "title_edit": "Edit Budget",
+            "title_create": "Create Budget",
+            "subtitle": "General information and tasks",
+            "basic_header": "Basic Data",
+            "code": "Budget Code",
+            "date": "Emission Date",
+            "project": "Project Name",
+            "client": "Select Client",
+            "tasks": "Budget's tasks (Services/Products)",
+            "add_task": "Add new task",
+            "remove_task": "Remove task",
+            "vat": "Applicable VAT (%)",
+            "subtotal": "Budget Subtotal",
+            "total": "TOTAL",
+            "save": "Save Budget",
+            "vat_total": "Total VAT"
+        }
+    },
+    "task": {
+        "title": "Task",
+        "description": "Description",
+        "price": "Unit. Price",
+        "quantity": "Quantity",
+        "subtotal": "Subtotal",
+        "acr_quantity": "Qty.",
+        "total": "Total",
+        "title_tooltip": "Search or write a new task..."
+    },
+    "tabs": {
+        "budgets": "Budgets",
+        "tasks": "Tasks",
+        "clients": "Clients"
+    }
+}

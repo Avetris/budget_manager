@@ -1,0 +1,31 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } 
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Ocultar flechas para Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.col-price input.mat-mdc-input-element {
+  text-align: right !important;
+}
+
+.col-price .mdc-text-field--outlined .mdc-text-field__suffix {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  color: #555; /* Color más visible */
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.col-price .mat-mdc-form-field-flex {
+  padding-right: 4px !important;
+}

@@ -1,64 +1,59 @@
-# Java Desktop Application
+# BudgetsManager
 
-This project is a simple Java desktop application that demonstrates the use of Java Swing for creating a graphical user interface (GUI). 
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.21.
 
-## Project Structure
+## Development server
 
-```
-java-desktop-app
-├── src
-│   ├── main
-│   │   ├── java
-│   │   │   └── com
-│   │   │       └── example
-│   │   │           ├── App.java
-│   │   │           └── ui
-│   │   │               └── MainWindow.java
-│   │   └── resources
-│   │       └── application.properties
-├── lib
-├── build.gradle
-├── settings.gradle
-└── README.md
+To start a local development server, run:
+
+```bash
+ng serve
 ```
 
-## Getting Started
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-### Prerequisites
+## Code scaffolding
 
-- Java Development Kit (JDK) 8 or higher
-- Gradle 6.0 or higher
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-### Installation
-
-1. Clone the repository:
-   ```
-   git clone <repository-url>
-   ```
-2. Navigate to the project directory:
-   ```
-   cd java-desktop-app
-   ```
-3. Build the project using Gradle:
-   ```
-   gradle build
-   ```
-
-### Running the Application
-
-To run the application, execute the following command:
-```
-gradle run
+```bash
+ng generate component component-name
 ```
 
-## Usage
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-Once the application is running, you will see the main window where you can interact with the features provided by the application.
+```bash
+ng generate --help
+```
 
-## Contributing
+## Building
 
-Feel free to submit issues or pull requests for any improvements or features you would like to see.
+To build the project run:
 
-## License
+```bash
+ng build
+```
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

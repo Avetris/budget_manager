@@ -1,0 +1,156 @@
+<div class="budget-wrapper">
+    <div class="budget-container">
+        <mat-card class="main-budget-card">
+            <mat-card-header>
+                <div mat-card-avatar class="budget-avatar-icon">
+                    <mat-icon>insert_drive_file</mat-icon>
+                </div>
+                <mat-card-title>{{ (budgetForm.get('id')?.value ? 'budgets.edit.title_edit' :
+                    'budgets.edit.title_create') | transloco }}</mat-card-title>
+                <mat-card-subtitle>{{ 'budgets.edit.subtitle' | transloco }}</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+                <form [formGroup]="budgetForm" class="budget-form-grid">
+
+                    <div class="form-section header-info-section">
+                        <h3 class="section-title">{{ 'budgets.edit.basic_header' | transloco }}</h3>
+
+                        <div class="form-grid-2-col">
+                            <mat-form-field appearance="outline">
+                                <mat-label>{{ 'budgets.edit.code' | transloco }}</mat-label>
+                                <input matInput formControlName="budgetId">
+                                <mat-icon matSuffix>vpn_key</mat-icon>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>{{ 'budgets.edit.date' | transloco }}</mat-label>
+                                <input matInput [matDatepicker]="picker" formControlName="date">
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="form-grid-2-col">
+                            <mat-form-field appearance="outline">
+                                <mat-label>{{ 'budgets.edit.project' | transloco }}</mat-label>
+                                <input matInput formControlName="project">
+                                <mat-icon matSuffix>rocket</mat-icon>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>{{ 'budgets.edit.client' | transloco }}</mat-label>
+                                <mat-select formControlName="client">
+                                    <mat-option *ngFor="let client of clients" [value]="client">{{ client.name
+                                        }}</mat-option>
+                                </mat-select>
+                                <mat-icon matSuffix>business</mat-icon>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="tasks-header-row">
+                            <h3 class="section-title">{{ 'budgets.edit.tasks' | transloco }}</h3>
+                            <button mat-mini-fab color="primary" type="button" (click)="addTask()">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+
+                        <div class="task-row task-table-header">
+                            <span>{{ 'task.title' | transloco }} / {{ 'task.description' | transloco }}</span>
+                            <span class="col-qty">{{ 'task.acr_quantity' | transloco }}</span>
+                            <span class="col-price">{{ 'task.price' | transloco }}</span>
+                            <span class="col-total">{{ 'task.subtotal' | transloco }}</span>
+                            <span></span>
+                        </div>
+
+                        <div formArrayName="tasks" class="task-list">
+                            <div *ngFor="let task of tasks.controls; let i = index" [formGroupName]="i"
+                                class="task-row task-data-row">
+
+                                <div class="col-main-content">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{ 'task.title' | transloco}}</mat-label>
+                                        <input matInput formControlName="title" [matAutocomplete]="auto">
+                                        <mat-autocomplete #auto="matAutocomplete"
+                                            (optionSelected)="onTaskSelected($event, i)" [displayWith]="displayTitle">
+                                            <mat-option *ngFor="let option of filteredTasks[i] | async"
+                                                [value]="option">
+                                                <div class="option-container">
+                                                    <strong>{{option.title}}</strong>
+                                                    <small> {{option.price | currency: currency}}</small>
+                                                </div>
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                        <textarea matInput formControlName="description" rows="2"
+                                            [placeholder]="'task.description' | transloco"></textarea>
+                                    </mat-form-field>
+                                </div>
+
+                                <mat-form-field appearance="outline" class="col-qty">
+                                    <input matInput type="number" formControlName="quantity">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="col-price">
+                                    <input matInput type="number" formControlName="price">
+                                    <span matSuffix *ngIf="currency === 'EUR'">&nbsp;{{ getCurrencySymbol() }}</span>
+                                    <span matPrefix *ngIf="currency !== 'EUR'">{{ getCurrencySymbol() }}&nbsp;</span>
+                                </mat-form-field>
+
+                                <div class="col-total">
+                                    <span class="value-display">{{ calculateTaskSubtotal(i) | currency: currency
+                                        }}</span>
+                                </div>
+
+                                <div class="col-actions">
+                                    <button mat-icon-button color="warn" (click)="removeTask(i)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section totals-and-taxes-section">
+                        <div class="vat-input-container">
+                            <mat-form-field appearance="outline" class="form-field-vat">
+                                <mat-label>{{ 'budgets.edit.vat' | transloco }}</mat-label>
+                                <input matInput type="number" formControlName="vat">
+                                <span matSuffix>%</span>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="final-totals-container">
+                            <p>
+                                <span>{{ 'budgets.edit.subtotal' | transloco }}:</span>
+                                <span class="value">{{ calculateSubtotal() | currency: currency }}</span>
+                            </p>
+                            <p>
+                                <span>{{ 'budgets.edit.vat_total' | transloco }} ({{ budgetForm.get('vat')?.value }}%):</span>
+                                <span class="value">{{ (calculateTotal() - calculateSubtotal()) | currency: currency }}</span>
+                            </p>
+                            <mat-divider></mat-divider>
+                            <div class="final-grand-total">
+                                <strong>{{ 'budgets.edit.total' | transloco }}</strong>
+                                <div class="value-large">{{ calculateTotal() | currency: currency }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </mat-card-content>
+
+            <mat-card-actions align="end" class="action-buttons-container">
+                <button mat-button color="default">
+                    <mat-icon>close</mat-icon> {{ 'generic.cancel' | transloco}}
+                </button>
+                <button mat-raised-button color="primary" [disabled]="budgetForm.invalid" (click)="saveBudget()">
+                    <mat-icon>save_alt</mat-icon> {{ 'budgets.edit.save' | transloco}}
+                </button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

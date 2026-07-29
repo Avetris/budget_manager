@@ -1,0 +1,63 @@
+{
+    "generic": {
+        "accept": "Aceptar",
+        "cancel": "Cancelar",
+        "save": "Guardar"
+    },
+    "login": {
+        "title": "Iniciar Sesión",
+        "user": "Usuario",
+        "password": "Contraseña",
+        "error": "Error usuario o contraseña incorrectos"
+    },
+    "budgets": {
+        "create": "Crear Factura",
+        "table": {
+            "id": "Nº",
+            "date": "Fecha",
+            "project": "Proyecto",
+            "client": "Cliente",
+            "vat": "IVA",
+            "tasks": "Tareas"
+        },
+        "errors": {
+            "exist": {
+                "title": "Error obteniendo el presupuesto",
+                "message": "El presupuesto no existe"
+            }
+        },
+        "edit": {
+            "title_edit": "Editar Presupuesto",
+            "title_create": "Crear Presupuesto",
+            "subtitle": "Información general y tareas",
+            "basic_header": "Datos Básicos",
+            "code": "Código de Presupuesto",
+            "date": "Fecha de Emisión",
+            "project": "Nombre del Proyecto",
+            "client": "Seleccionar Cliente",
+            "tasks": "Tareas del Presupuesto (Servicios/Productos)",
+            "add_task": "Añadir nueva tarea",
+            "remove_task": "Eliminar tarea",
+            "vat": "IVA Aplicable (%)",
+            "subtotal": "Subtotal Presupuesto",
+            "total": "TOTAL",
+            "save": "Guardar Presupuesto",
+            "vat_total": "IVA Total"
+        }
+    },
+    "task": {
+        "title": "Tarea",
+        "description": "Descripción",
+        "price": "Precio Unit.",
+        "quantity": "Cantidad",
+        "subtotal": "Subtotal",
+        "acr_quantity": "Cant.",
+        "total": "Total",
+        "title_tooltip": "Busca o escribe una tarea..."
+    },
+    "tabs": {
+        "budgets": "Presupuestos",
+        "tasks": "Trabajos",
+        "clients": "Clientes"
+    }
+}

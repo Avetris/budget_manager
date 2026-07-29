@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>{{ data.title | transloco}}</h2>
+<mat-dialog-content>
+  <p>{{ data.message | transloco }}</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button matButton [mat-dialog-close]="false">{{'generic.cancel' | transloco}}</button>
+  <button matButton [mat-dialog-close]="true" cdkFocusInitial>{{'generic.accept' | transloco}}</button>
+</mat-dialog-actions>

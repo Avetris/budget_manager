@@ -1,0 +1,12 @@
+<mat-toolbar>
+  <span>{{configService.config()!.name}}</span>
+  <span class="spacer"></span>
+  <mat-icon class="icon" aria-hidden="false" aria-label="Example heart icon">favorite</mat-icon>
+  <mat-icon class="icon" aria-hidden="false" aria-label="Example delete icon">delete</mat-icon>
+</mat-toolbar>
+
+<mat-tab-group>
+  <mat-tab [label]="'tabs.budgets' | transloco"> <app-budgets-component></app-budgets-component></mat-tab>
+  <mat-tab [label]="'tabs.tasks' | transloco"> <app-tasks-component></app-tasks-component></mat-tab>
+  <mat-tab [label]="'tabs.clients' | transloco"> <app-clients-component></app-clients-component></mat-tab>
+</mat-tab-group>

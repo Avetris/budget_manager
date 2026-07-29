@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Solo permite leer y escribir si el usuario está autenticado
+    // (Asumiendo que activarás Firebase Auth después)
+    match /facturas/{facturaId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // O si es solo para ti y no quieres login ahora, 
+    // puedes restringirlo por una "llave" simple en los datos o dejarlo cerrado:
+    //match /{document=**} {
+    //  allow read, write: if false; // Nadie puede tocar nada por fuera de las reglas
+    //}
+    match /{document=**} {
+      allow read, write: if true; // Nadie puede tocar nada por fuera de las reglas
+    }
+  }
+}

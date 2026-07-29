@@ -1,0 +1,46 @@
+<div class="demo-button-container">
+  <button matButton="elevated" (click)="goBudget()" class="demo-button">
+    {{ 'budgets.create' | transloco}}
+  </button>
+</div>
+<table mat-table [dataSource]="budgetService.items()" class="mat-elevation-z8">
+  <ng-container matColumnDef="budgetId">
+    <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.id' | transloco }} </th>
+    <td mat-cell *matCellDef="let element"> </td>
+  </ng-container>
+
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.date' | transloco }} </th>
+    <td mat-cell *matCellDef="let element"> {{element.date}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="project">
+    <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.project' | transloco }} </th>
+    <td mat-cell *matCellDef="let element"> {{element.project}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="client">
+    <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.client' | transloco }} </th>
+    <td mat-cell *matCellDef="let element"> {{element.client.name}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="vat">
+    <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.vat' | transloco }} </th>
+    <td mat-cell *matCellDef="let element"> {{element.client.vat}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="tasks">
+    <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.tasks' | transloco }} </th>
+    <td mat-cell *matCellDef="let element"> {{element.tasks.length}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="delete">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let element">        
+        <button (click)="budgetService.deleteBudget(element.id!)"><mat-icon>delete</mat-icon></button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
