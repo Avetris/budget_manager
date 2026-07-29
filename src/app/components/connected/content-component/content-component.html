@@ -1,12 +1,59 @@
-<mat-toolbar>
-  <span>{{configService.config()!.name}}</span>
-  <span class="spacer"></span>
-  <mat-icon class="icon" aria-hidden="false" aria-label="Example heart icon">favorite</mat-icon>
-  <mat-icon class="icon" aria-hidden="false" aria-label="Example delete icon">delete</mat-icon>
-</mat-toolbar>
+<div class="main-workspace-container">
+  <header class="app-header-toolbar">
+    <div class="brand-container">
+      <div class="brand-badge">
+        <mat-icon class="brand-icon">receipt_long</mat-icon>
+      </div>
+      <div class="brand-info">
+        <span class="brand-title">{{configService.config()!.name || 'BudgetsManager'}}</span>
+        <span class="brand-subtitle">Financial Workspace</span>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <button mat-icon-button class="header-icon-btn" aria-label="Notifications">
+        <mat-icon>notifications_none</mat-icon>
+      </button>
+      <button mat-icon-button class="header-icon-btn" aria-label="Settings">
+        <mat-icon>settings</mat-icon>
+      </button>
+      <div class="user-avatar-badge">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+    </div>
+  </header>
 
-<mat-tab-group>
-  <mat-tab [label]="'tabs.budgets' | transloco"> <app-budgets-component></app-budgets-component></mat-tab>
-  <mat-tab [label]="'tabs.tasks' | transloco"> <app-tasks-component></app-tasks-component></mat-tab>
-  <mat-tab [label]="'tabs.clients' | transloco"> <app-clients-component></app-clients-component></mat-tab>
-</mat-tab-group>
+  <main class="content-body">
+    <mat-tab-group animationDuration="200ms" class="custom-tabs-group">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">description</mat-icon>
+          <span>{{ 'tabs.budgets' | transloco }}</span>
+        </ng-template>
+        <div class="tab-content-wrapper">
+          <app-budgets-component></app-budgets-component>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">check_circle_outline</mat-icon>
+          <span>{{ 'tabs.tasks' | transloco }}</span>
+        </ng-template>
+        <div class="tab-content-wrapper">
+          <app-tasks-component></app-tasks-component>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">people_outline</mat-icon>
+          <span>{{ 'tabs.clients' | transloco }}</span>
+        </ng-template>
+        <div class="tab-content-wrapper">
+          <app-clients-component></app-clients-component>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </main>
+</div>

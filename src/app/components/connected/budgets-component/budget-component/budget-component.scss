@@ -1,210 +1,255 @@
-@use "sass:color";
-
-// --- Variables ---
-$primary-color: #3f51b5;
-$bg-color: #f4f7f6;
-$text-primary: #333;
-$text-secondary: #666;
-$border-color: #e0e0e0;
-$shadow-card: 0 10px 30px rgba(0, 0, 0, 0.1);
-
-// --- Estilos Base ---
 .budget-wrapper {
-  background-color: $bg-color;
+  background-color: var(--slate-50);
   min-height: 100vh;
-  padding: 40px 20px;
-  font-family: 'Roboto', sans-serif;
+  padding: 32px 20px;
+  box-sizing: border-box;
 }
 
 .budget-container {
-  max-width: 1000px;
+  max-width: 1040px;
   margin: 0 auto;
 }
 
 .main-budget-card {
-  border-radius: 12px;
+  border-radius: var(--radius-lg) !important;
   overflow: hidden;
-  box-shadow: $shadow-card;
-  background-color: #fff;
-  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-lg) !important;
+  background-color: #ffffff !important;
+  border: 1px solid var(--slate-200) !important;
 
   mat-card-header {
-    padding: 24px 32px;
-    border-bottom: 1px solid $border-color;
-    
-    mat-card-title { font-size: 24px; font-weight: 500; }
+    padding: 28px 36px !important;
+    border-bottom: 1px solid var(--slate-200);
+    background: linear-gradient(to right, #ffffff, #f8fafc);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .budget-avatar-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--primary-grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: var(--shadow-glow);
+
+      mat-icon {
+        font-size: 26px;
+        width: 26px;
+        height: 26px;
+      }
+    }
+
+    mat-card-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin: 0 0 4px 0;
+    }
+
+    mat-card-subtitle {
+      font-size: 0.875rem;
+      color: var(--slate-500);
+      margin: 0;
+    }
   }
 
-  mat-card-content { padding: 32px; }
+  mat-card-content {
+    padding: 36px !important;
+  }
 }
 
-// --- Secciones del Formulario ---
 .form-section {
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 
   .section-title {
-    font-size: 18px;
-    font-weight: 500;
-    color: $text-primary;
-    margin-bottom: 24px;
-    padding-left: 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--slate-900);
+    margin-bottom: 20px;
+    padding-left: 14px;
     position: relative;
     
     &::before {
       content: '';
       position: absolute;
-      left: 0; top: 0; bottom: 0;
+      left: 0;
+      top: 2px;
+      bottom: 2px;
       width: 4px;
-      background-color: $primary-color;
+      background: var(--primary-grad);
       border-radius: 2px;
     }
   }
 }
 
-// --- Grid de Tareas (Header y Filas sincronizados) ---
+/* Form Grid */
+.header-info-section {
+  .form-grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 24px;
+    margin-bottom: 16px;
+  }
+}
+
+/* Tasks Grid */
+.tasks-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .section-title {
+    margin-bottom: 0;
+  }
+}
+
 .task-row {
   display: grid;
-  // Sincronización absoluta de columnas
-  grid-template-columns: 1fr 70px 110px 120px 50px; 
-  gap: 12px;
-  padding: 12px 16px;
-  align-items: start;
+  grid-template-columns: 1fr 90px 130px 130px 48px;
+  gap: 14px;
+  padding: 14px 18px;
+  align-items: center;
 }
 
 .task-table-header {
-  background-color: #f8f9fa;
-  color: $text-secondary;
-  font-size: 11px;
-  font-weight: 600;
+  background-color: var(--slate-100);
+  color: var(--slate-600);
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-radius: 8px 8px 0 0;
-  border: 1px solid $border-color;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border: 1px solid var(--slate-200);
   border-bottom: none;
-  align-items: center; // Centrar texto del header verticalmente
 }
 
 .task-list {
-  border: 1px solid $border-color;
-  border-radius: 0 0 8px 8px;
-  background: #fafafa;
-}
-
-
-.col-price, .col-qty, .col-total, .col-actions {
-  text-align: right;
+  border: 1px solid var(--slate-200);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background: white;
+  overflow: hidden;
 }
 
 .task-data-row {
   background: white;
-  border-bottom: 1px solid #eee;
-  padding: 20px;
-  transition: background 0.2s;
+  border-bottom: 1px solid var(--slate-200);
+  transition: background-color var(--transition-fast);
 
-  &:hover { background-color: #fcfcff; }
-  &:last-child { border-bottom: none; }
+  &:hover {
+    background-color: #f8fafc;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
 
   .col-main-content {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    input { font-weight: 600; }
-  }
 
-  .col-total, .col-actions {
-    padding-top: 15px; // Alineación visual con los inputs
-  }
-}
-
-// --- Ajustes de Angular Material (MDC) ---
-:host ::ng-deep {
-  // 1. Eliminar espacio reservado para errores (compactar tabla)
-  .mat-mdc-form-field-subscript-wrapper { display: none !important; }
-
-  // 2. Alinear números a la derecha
-  .col-qty, .col-price {
-    input { text-align: right !important; }
-  }
-
-  // 3. Fix para el símbolo de moneda (€)
-  .col-price {
-    .mdc-text-field--outlined .mdc-text-field__suffix {
-      padding-left: 8px !important;
-      padding-right: 12px !important; // Evita que toque el borde
-      color: $primary-color;
-      font-weight: 500;
+    input {
+      font-weight: 600;
     }
   }
 
-  // 4. Compactar paddings de los campos en la tabla
-  .task-data-row .mat-mdc-text-field-wrapper {
-    background-color: white !important;
+  .col-total {
+    text-align: right;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--slate-900);
+  }
+
+  .col-actions {
+    text-align: right;
   }
 }
 
-// --- Totales y Botones ---
+:host ::ng-deep {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
+
+  .col-qty, .col-price {
+    input {
+      text-align: right !important;
+    }
+  }
+}
+
+/* Totals Section */
 .totals-and-taxes-section {
   display: grid;
-  grid-template-columns: 1fr 1fr; 
+  grid-template-columns: 1fr 1fr;
   gap: 32px;
   margin-top: 32px;
-  align-items: start; // Mantiene el IVA arriba
+  align-items: start;
 
-  .vat-container {
-    display: flex;
-    justify-content: flex-start;
-    // Asegura que el label no se vea mal al ser el campo pequeño
-    .form-field-vat { max-width: 130px; }
+  .vat-input-container {
+    .form-field-vat {
+      max-width: 140px;
+    }
   }
 
   .final-totals-container {
-    // Esto asegura que el bloque de totales se pegue a la derecha del grid
-    justify-self: end; 
+    justify-self: end;
     width: 100%;
-    max-width: 400px; // Evita que se estire demasiado horizontalmente
-
-    background-color: #f8f9fa;
-    border-radius: 8px;
+    max-width: 380px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--slate-200);
     padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    box-shadow: var(--shadow-xs);
 
     p {
       display: flex;
-      justify-content: space-between; // Nombre a la izquierda, número a la derecha
+      justify-content: space-between;
       align-items: center;
       margin: 0;
-      font-size: 15px;
-      color: $text-secondary;
+      font-size: 0.925rem;
+      color: var(--slate-600);
     }
 
     .value {
       font-weight: 600;
-      color: $text-primary;
+      color: var(--slate-900);
     }
 
     mat-divider {
-      margin: 8px 0;
+      margin: 6px 0;
+      border-top-color: var(--slate-200);
     }
 
     .final-grand-total {
       display: flex;
       flex-direction: column;
-      align-items: flex-end; // Alinea "TOTAL" y el número a la derecha
+      align-items: flex-end;
       margin-top: 4px;
 
       strong {
-        font-size: 14px;
-        color: $text-secondary;
+        font-size: 0.75rem;
+        color: var(--slate-500);
         text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
       }
 
       .value-large {
-        font-size: 2.4em;
-        font-weight: 700;
-        color: $primary-color;
-        line-height: 1.2;
+        font-size: 2.2rem;
+        font-weight: 800;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--primary-600);
+        line-height: 1.1;
       }
     }
   }
@@ -213,40 +258,8 @@ $shadow-card: 0 10px 30px rgba(0, 0, 0, 0.1);
 .action-buttons-container {
   display: flex;
   justify-content: flex-end;
-  gap: 16px;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid $border-color;
-}
-
-.tasks-header-row {
-  display: flex;
-  justify-content: flex-start; // Alineados a la izquierda
-  align-items: center;      // Centrados verticalmente entre sí
-  gap: 16px;                // Espacio entre el texto y el botón
-  margin-bottom: 20px;
-
-  .section-title {
-    margin-bottom: 0;       // Quitamos el margen para que no empuje al botón
-  }
-}
-
-.header-info-section {
-  .form-grid-2-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px 24px; // 32px de separación vertical entre filas, 24px horizontal
-    margin-bottom: 24px; // Espacio con la siguiente sección
-  }
-
-  // Asegurar que los campos tengan su propio espacio
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 4px; // Pequeño margen extra de seguridad
-  }
-}
-
-// Opcional: Si quieres que toda la tarjeta tenga más aire interno
-.main-budget-card mat-card-content {
-  padding: 40px !important; 
+  gap: 12px;
+  padding: 20px 36px !important;
+  border-top: 1px solid var(--slate-200);
+  background: var(--slate-50);
 }

@@ -1,1 +1,21 @@
-<p>tasks-component works!</p>
+<div class="placeholder-dashboard animate-fade-in">
+  <div class="dashboard-header-bar">
+    <div class="dashboard-title-group">
+      <h2 class="dashboard-title">{{ 'tabs.tasks' | transloco }}</h2>
+      <span class="results-badge">0 items</span>
+    </div>
+    <button mat-raised-button color="primary" class="create-btn">
+      <mat-icon>add_task</mat-icon>
+      <span>New Task</span>
+    </button>
+  </div>
+
+  <div class="empty-state-card">
+    <div class="empty-state-icon-box">
+      <mat-icon class="empty-icon">task_alt</mat-icon>
+    </div>
+    <h3 class="empty-state-title">Task & Service Catalog</h3>
+    <p class="empty-state-desc">Define standard catalog tasks, rates, and default descriptions to auto-complete budget
+      forms faster.</p>
+  </div>
+</div>

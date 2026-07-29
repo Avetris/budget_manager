@@ -1,26 +1,40 @@
- <mat-card>
-    <mat-card-header>
-        <mat-card-title>{{ 'login.title' | transloco }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-        <form [formGroup]="form" (ngSubmit)="submit()">
-            <mat-form-field>
-                <input type="text" matInput [placeholder]="'login.user'  | transloco" formControlName="user">
-            </mat-form-field>
+<div class="login-wrapper">
+  <div class="background-glow glow-1"></div>
+  <div class="background-glow glow-2"></div>
 
-            <mat-form-field>
-                <input type="password" matInput [placeholder]="'login.password' | transloco" formControlName="password">
-            </mat-form-field>
+  <div class="login-card-container animate-fade-in">
+    <div class="login-header">
+      <div class="brand-badge-large">
+        <mat-icon class="brand-icon-large">receipt_long</mat-icon>
+      </div>
+      <h1 class="login-title">{{ 'login.title' | transloco }}</h1>
+      <p class="login-subtitle">Sign in to access your financial manager</p>
+    </div>
 
-            @if(error) {
-                <p class="error">
-                    {{ error | transloco }}
-                </p>
-            }
-            <div class="button">
-            <button type="submit" mat-button>Login</button>
-            </div>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'login.user' | transloco }}</mat-label>
+        <input type="text" matInput [placeholder]="'login.user' | transloco" formControlName="user">
+        <mat-icon matSuffix class="input-icon">person</mat-icon>
+      </mat-form-field>
 
-        </form>
-    </mat-card-content>
-</mat-card>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>{{ 'login.password' | transloco }}</mat-label>
+        <input type="password" matInput [placeholder]="'login.password' | transloco" formControlName="password">
+        <mat-icon matSuffix class="input-icon">lock</mat-icon>
+      </mat-form-field>
+
+      @if (error) {
+        <div class="error-banner">
+          <mat-icon class="error-icon">error_outline</mat-icon>
+          <span>{{ error | transloco }}</span>
+        </div>
+      }
+
+      <button type="submit" mat-raised-button color="primary" class="login-submit-btn">
+        <span>Login</span>
+        <mat-icon class="btn-arrow-icon">arrow_forward</mat-icon>
+      </button>
+    </form>
+  </div>
+</div>

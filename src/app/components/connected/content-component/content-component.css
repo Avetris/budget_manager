@@ -1,7 +1,145 @@
-.icon {
-  padding: 0 14px;
+.main-workspace-container {
+  min-height: 100vh;
+  background-color: var(--slate-50);
+  display: flex;
+  flex-direction: column;
 }
 
-.spacer {
-  flex: 1 1 auto;
+.app-header-toolbar {
+  height: 64px;
+  padding: 0 28px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-xs);
+}
+
+.brand-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--primary-grad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.brand-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--slate-900);
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--slate-500);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon-btn {
+  color: var(--slate-600) !important;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.header-icon-btn:hover {
+  color: var(--primary-600) !important;
+  background-color: var(--slate-100) !important;
+}
+
+.user-avatar-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--slate-600);
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.user-avatar-badge mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.content-body {
+  flex: 1;
+  padding: 0;
+}
+
+/* Custom Mat Tab Group Styling */
+:host ::ng-deep .custom-tabs-group .mat-mdc-tab-header {
+  background-color: white;
+  border-bottom: 1px solid var(--slate-200);
+  padding: 0 28px;
+}
+
+:host ::ng-deep .custom-tabs-group .mat-mdc-tab-label-container {
+  padding-top: 4px;
+}
+
+:host ::ng-deep .custom-tabs-group .mdc-tab {
+  height: 48px;
+  padding: 0 20px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--slate-600);
+}
+
+:host ::ng-deep .custom-tabs-group .mdc-tab--active {
+  color: var(--primary-600) !important;
+}
+
+:host ::ng-deep .custom-tabs-group .mdc-tab-indicator__content--underline {
+  border-color: var(--primary-600) !important;
+  border-top-width: 3px !important;
+  border-radius: 3px 3px 0 0;
+}
+
+.tab-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.tab-content-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px;
 }

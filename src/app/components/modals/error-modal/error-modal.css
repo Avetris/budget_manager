@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  padding: 8px;
+}
+
+h2[mat-dialog-title] {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 700 !important;
+  color: #dc2626 !important;
+  font-size: 1.25rem !important;
+  margin-bottom: 8px !important;
+}
+
+mat-dialog-content {
+  color: var(--slate-600) !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+}
+
+mat-dialog-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  padding-top: 16px !important;
+}
+
+button[matButton] {
+  background: var(--slate-100) !important;
+  color: var(--slate-800) !important;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 600 !important;
+}

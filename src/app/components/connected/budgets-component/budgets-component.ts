@@ -22,7 +22,7 @@ export class BudgetsComponent {
   budgetService = inject(BudgetService);
   readonly router = inject(Router);
   
-  displayedColumns: string[] = ['budgetId', 'date', 'project', 'client', 'vat', 'tasks'];
+  displayedColumns: string[] = ['budgetId', 'date', 'project', 'client', 'vat', 'tasks', 'delete'];
 
   ngOnInit() {
     this.budgetService.getBudgets();
