@@ -120,16 +120,16 @@
     "tasks": {
         "create_title": "Nueva Tarea / Servicio",
         "edit_title": "Editar Tarea",
-        "title_label": "Título del Trabajo",
+        "title_label": "Título del Tarea",
         "title_placeholder": "Ej: Limpieza de canalones vertical",
         "price": "Precio Base por Unidad",
         "description": "Descripción Detallada del Servicio",
-        "description_placeholder": "Describe en qué consiste este trabajo para que aparezca en la propuesta...",
+        "description_placeholder": "Describe en qué consiste esta tarea para que aparezca en el presupuesto...",
         "search_placeholder": "Buscar tareas o servicios...",
         "no_search_results": "No se han encontrado tareas para la búsqueda introducida",
         "empty": {
             "title": "Sin Tareas Guardadas",
-            "subtitle": "Crea plantillas de trabajos habituales para añadirlas rápidamente a tus presupuestos"
+            "subtitle": "Crea plantillas de tareas habituales para añadirlas rápidamente a tus presupuestos"
         },
         "actions": {
             "add": "Nueva Tarea",
@@ -138,7 +138,7 @@
     },
     "tabs": {
         "budgets": "Presupuestos",
-        "tasks": "Trabajos",
+        "tasks": "Tarea",
         "clients": "Clientes"
     },
     "validations": {
