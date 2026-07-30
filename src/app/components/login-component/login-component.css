@@ -63,17 +63,18 @@
   margin-bottom: 32px;
 }
 
+.brand-icon {
+  width: 100%;
+  height: 100%;
+}
+
 .brand-badge-large {
   width: 56px;
   height: 56px;
-  border-radius: 16px;
-  background: var(--primary-grad);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   margin-bottom: 16px;
-  box-shadow: var(--shadow-glow);
 }
 
 .brand-icon-large {

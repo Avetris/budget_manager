@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@jsverse/transloco';
+import { Company } from '@models/company';
 
 @Component({
   selector: 'app-tasks-component',
@@ -15,4 +16,5 @@ import { TranslocoModule } from '@jsverse/transloco';
 })
 export class TasksComponent {
 
+  @Input() company!: Company
 }

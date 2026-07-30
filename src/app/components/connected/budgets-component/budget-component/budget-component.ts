@@ -14,16 +14,16 @@ import { BudgetService } from '@services/budget-service';
 import { TranslocoModule } from '@jsverse/transloco';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {  FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, getCurrencySymbol } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { ConfigService } from '@services/config-service';
+import { UserService } from '@services/user-service';
 import { ClientService } from '@services/client-service';
 import { Client } from '@models/client';
-import { Config } from '@models/config';
+import { UserConfig } from '@models/user-config';
 
 @Component({
   selector: 'app-budget-component',
@@ -46,16 +46,16 @@ import { Config } from '@models/config';
   templateUrl: './budget-component.html',
   styleUrl: './budget-component.scss',
 })
-export class BudgetComponent implements OnInit{
+export class BudgetComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   readonly router = inject(Router)
   readonly route = inject(ActivatedRoute)
   readonly budgetService = inject(BudgetService)
-  readonly configService = inject(ConfigService)
+  readonly userService = inject(UserService)
   readonly clientService = inject(ClientService)
 
-  config: Config = {} as Config
-  
+  config: UserConfig = {} as UserConfig
+
   budgetId: string | null = null;
   budgetForm!: FormGroup;
   budget: Budget = {} as Budget
@@ -71,33 +71,30 @@ export class BudgetComponent implements OnInit{
   ];
 
   filteredTasks: Observable<any[]>[] = [];
-  
-  constructor(private fb: FormBuilder) {}
-  
+
+  constructor(private fb: FormBuilder) { }
+
   ngOnInit() {
     this.clientService.getClients().then(clients => {
       this.clients = clients
-    })
-    this.configService.getConfig().then(_ => {
-      this.config = this.configService.config()!
     })
     // Access route parameter
     this.budgetId = this.route.snapshot.paramMap.get('id');
     if (this.budgetId != "" && this.budgetId != null) {
       this.budgetService.getBudget(this.budgetId!).then(budget => {
-        if(budget) {
+        if (budget) {
           this.budget = budget
           this.initForm()
         } else {
           this.dialog.open(ErrorModal, {
-            data: { "title": "budgets.errors.exist.title", "message": "budgets.errors.exist.message"}
+            data: { "title": "budgets.errors.exist.title", "message": "budgets.errors.exist.message" }
           }).afterClosed().subscribe(() => {
             this.router.navigate(['/'])
           });
         }
       })
-    } else {      
-        this.initForm()
+    } else {
+      this.initForm()
     }
   }
 
@@ -124,11 +121,11 @@ export class BudgetComponent implements OnInit{
     this.addTask();
   }
 
-  calculateTaskSubtotal(index: number) : number {
+  calculateTaskSubtotal(index: number): number {
     return this.tasks.controls.at(index)?.get('quantity')?.value * this.tasks.at(index)?.get('price')?.value;
   }
 
-  calculateSubtotal() : number {
+  calculateSubtotal(): number {
     return this.tasks.controls.reduce((acc, control) => {
       const qty = control.get('quantity')?.value || 0;
       const price = control.get('price')?.value || 0;
@@ -136,7 +133,7 @@ export class BudgetComponent implements OnInit{
     }, 0);
   }
 
-  calculateTotal() : number {
+  calculateTotal(): number {
     const subtotal = this.calculateSubtotal();
     const vatPercent = this.budgetForm.get('vat')?.value || 0;
     return subtotal + (subtotal * (vatPercent / 100));
@@ -155,14 +152,14 @@ export class BudgetComponent implements OnInit{
   addTask() {
     const taskGroup = this.createTaskGroup();
     this.tasks.push(taskGroup);
-    
+
     const index = this.tasks.length - 1;
     this.manageAutocomplete(index);
   }
 
   manageAutocomplete(index: number) {
     const control = this.tasks.at(index).get('title');
-    
+
     if (control) {
       this.filteredTasks[index] = control.valueChanges.pipe(
         startWith(''),
@@ -174,7 +171,7 @@ export class BudgetComponent implements OnInit{
   private _filter(value: any): any[] {
     const filterValue = (typeof value === 'string' ? value : value?.title || '').toLowerCase();
     if (!filterValue) return this.commonTasks;
-    return this.commonTasks.filter(task => 
+    return this.commonTasks.filter(task =>
       task.title.toLowerCase().includes(filterValue)
     );
   }
@@ -191,7 +188,7 @@ export class BudgetComponent implements OnInit{
   displayTitle(task: any): string {
     return task && task.title ? task.title : (typeof task === 'string' ? task : '');
   }
-  
+
   removeTask(index: number) {
     if (this.tasks.length > 1) {
       this.tasks.removeAt(index);

@@ -1,4 +1,6 @@
 {
+    "title": "Gestor de Presupuestos",
+    "subtitle": "Espacio de trabajo financiero",
     "generic": {
         "accept": "Aceptar",
         "cancel": "Cancelar",
@@ -6,9 +8,14 @@
     },
     "login": {
         "title": "Iniciar Sesión",
+        "subtitle": "Inicia Sesión para acceder a tu gestor financiero",
         "user": "Usuario",
         "password": "Contraseña",
         "error": "Error usuario o contraseña incorrectos"
+    },
+    "logout": "Cerrar Sesión",
+    "loading": {
+        "main": "Cargando espacio de trabajo..."
     },
     "budgets": {
         "create": "Crear Factura",

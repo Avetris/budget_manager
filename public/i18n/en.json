@@ -1,4 +1,6 @@
 {
+    "title": "Budgets Manager",
+    "subtitle": "Financial Workspace",
     "generic": {
         "accept": "Accept",
         "cancel": "Cancel",
@@ -6,9 +8,14 @@
     },
     "login": {
         "title": "Login",
+        "subtitle": "Sign in to access your financial manager",
         "user": "User",
         "password": "Password",
         "error": "Error incorrect user or password"
+    },
+    "logout": "LogOut",
+    "loading": {
+        "main": "Loading workspace..."
     },
     "budgets": {
         "create": "Create Budget",
