@@ -1,7 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { AuthService } from './services/auth-service';
-import { TranslocoService } from '@jsverse/transloco';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',

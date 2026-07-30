@@ -1,0 +1,80 @@
+<div class="main-workspace-container">
+  <header class="app-header-toolbar">
+    <div class="brand-container">
+      <div class="brand-badge">
+        <mat-icon class="brand-icon">receipt_long</mat-icon>
+      </div>
+      <div class="brand-info">
+        @if (companyService.companies().length > 1) {
+        <mat-form-field appearance="outline" class="company-selector-field">
+          <mat-select [value]="companyService.activeCompany()?.id"
+            (selectionChange)="companyService.selectCompanyById($event.value)">
+            @for (comp of companyService.companies(); track comp.id) {
+            <mat-option [value]="comp.id">{{ comp.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        } @else {
+        <span class="brand-title">{{ companyService.activeCompany()?.name || 'BudgetsManager' }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button mat-icon-button class="header-icon-btn" aria-label="Notifications">
+        <mat-icon>notifications_none</mat-icon>
+      </button>
+      <button mat-icon-button class="header-icon-btn" aria-label="Settings" routerLink="/settings">
+        <mat-icon>settings</mat-icon>
+      </button>
+      <button class="user-avatar-badge" [matMenuTriggerFor]="menu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="logout()">{{ 'logout' | transloco }}</button>
+      </mat-menu>
+    </div>
+  </header>
+
+  <main class="content-body">
+    @if (loadingService.isLoading() && !companyService.activeCompany()) {
+    <div class="initial-loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>{{ 'loading.main' | transloco}}</p>
+    </div>
+    } @else {
+    <!-- Contenido principal con las pestañas -->
+    <mat-tab-group animationDuration="200ms" class="custom-tabs-group">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">description</mat-icon>
+          <span>{{ 'tabs.budgets' | transloco }}</span>
+        </ng-template>
+        <div class="tab-content-wrapper">
+          <app-budgets-component></app-budgets-component>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">check_circle_outline</mat-icon>
+          <span>{{ 'tabs.tasks' | transloco }}</span>
+        </ng-template>
+        <div class="tab-content-wrapper">
+          <app-tasks-component></app-tasks-component>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">people_outline</mat-icon>
+          <span>{{ 'tabs.clients' | transloco }}</span>
+        </ng-template>
+        <div class="tab-content-wrapper">
+          <app-clients-component></app-clients-component>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+    }
+  </main>
+</div>
