@@ -2,6 +2,7 @@
     "title": "Budgets Manager",
     "subtitle": "Financial Workspace",
     "generic": {
+        "actions": "Actions",
         "accept": "Accept",
         "cancel": "Cancel",
         "save": "Save Changes",
@@ -55,9 +56,29 @@
         }
     },
     "clients": {
-        "add": "Añadir Cliente",
-        "title": "Client Directory",
-        "subtitle": "Manage client profiles, contact information, and billing details securely."
+        "create_title": "New Client",
+        "edit_title": "Edit Client",
+        "type": "Client Type",
+        "particular": "Individual",
+        "company": "Company",
+        "full_name": "Full Name",
+        "company_name": "Business Name / Trade Name",
+        "nif": "Tax ID / ID Number",
+        "cif": "VAT Number / Tax ID",
+        "contact": "Contact",
+        "phone": "Phone",
+        "email": "Email Address",
+        "address": "Full Address (For Estimates)",
+        "search_placeholder": "Search clients...",
+        "no_search_results": "No clients found matching your search",
+        "empty": {
+            "title": "No Clients",
+            "subtitle": "You haven't added any clients yet"
+        },
+        "actions": {
+            "add": "New Client",
+            "create": "Create Client"
+        }
     },
     "company_config": {
         "title": "Company Settings",

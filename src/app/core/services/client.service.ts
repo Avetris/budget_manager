@@ -34,13 +34,11 @@ export class ClientService extends CommonService {
   }
 
   async loadClientsForCompany(companyId: string, forceRefresh = false): Promise<void> {
-    // 1. Si ya tenemos la empresa en caché y no forzamos recarga, la usamos (0 lecturas)
     if (!forceRefresh && this.clientsCache.has(companyId)) {
       this._clients.set(this.clientsCache.get(companyId) || []);
       return;
     }
     try {
-      // Colección: companies/{companyId}/clients
       const colRef = collection(this.firestore, this.getCollection(companyId));
       const snap = await getDocs(colRef);
 

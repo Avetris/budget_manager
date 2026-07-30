@@ -10,7 +10,6 @@
 <mat-dialog-content class="dialog-content">
     <form [formGroup]="form" id="clientForm" (ngSubmit)="onSave()" class="client-form">
 
-        <!-- Selector de Tipo: Particular vs Empresa -->
         <div class="type-selector-wrapper">
             <label class="form-label">{{ 'clients.type' | transloco }}</label>
             <mat-button-toggle-group formControlName="isCompany" aria-label="Tipo de cliente"
@@ -26,7 +25,6 @@
             </mat-button-toggle-group>
         </div>
 
-        <!-- Nombre / Razón Social -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>
                 {{ (form.value.isCompany ? 'clients.company_name' : 'clients.full_name') | transloco }}
@@ -38,7 +36,6 @@
             }
         </mat-form-field>
 
-        <!-- NIF / CIF y Teléfono en 2 columnas -->
         <div class="form-row">
             <mat-form-field appearance="outline">
                 <mat-label>{{ (form.value.isCompany ? 'clients.cif' : 'clients.nif') | transloco }}</mat-label>
@@ -54,7 +51,6 @@
             </mat-form-field>
         </div>
 
-        <!-- Email -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ 'clients.email' | transloco }}</mat-label>
             <input matInput formControlName="email" type="email" placeholder="cliente@email.com" />
@@ -63,7 +59,6 @@
             }
         </mat-form-field>
 
-        <!-- Dirección completa (Crucial para presupuestos) -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ 'clients.address' | transloco }}</mat-label>
             <textarea matInput formControlName="address" rows="2"

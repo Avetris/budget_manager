@@ -1,81 +1,96 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { addDoc, collectionData, doc, query, updateDoc, where } from '@angular/fire/firestore';
-import { collection, deleteDoc } from '@firebase/firestore';
-import { firstValueFrom } from 'rxjs';
+import { effect, inject, Injectable, signal } from '@angular/core';
+import { doc, updateDoc } from '@angular/fire/firestore';
+import { collection, getDocs, setDoc } from '@firebase/firestore';
 import { Task } from '../models/task.model';
-import { UserService } from './user.service';
 import { CommonService } from './common.service';
+import { CompanyService } from './company.service';
 import { Collections } from '@utils/const';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService extends CommonService {
-  userService = inject(UserService);
+  readonly companyService = inject(CompanyService)
 
-  _items = signal<Task[]>([]);
-  items = this._items.asReadonly();
+  private tasksCache = new Map<string, Task[]>();
 
-  _getCollection() {
-    return collection(this.firestore, Collections.Tasks);
-  }
+  private readonly _tasks = signal<Task[]>([]);
+  readonly tasks = this._tasks.asReadonly();
 
-  async getTasks(companyId?: string, force: boolean = false): Promise<Task[]> {
-    if (this._items().length > 0 && !force) {
-      return this.items();
-    }
-    const itemCollection = this._getCollection();
-
-    try {
-      let getQuery = query(itemCollection);
-      if (companyId && !this.userService.user()?.isAdmin) {
-        getQuery = query(itemCollection, where('companyId', '==', companyId));
+  constructor() {
+    super()
+    effect(async () => {
+      const activeCompany = this.companyService.activeCompany();
+      if (activeCompany?.id) {
+        this.loadingService.track(this.loadTasksForCompany(activeCompany.id));
+      } else {
+        this._tasks.set([]);
       }
-      const data = await firstValueFrom(collectionData(getQuery, { idField: 'id' })) as Task[];
-      this._items.set(data);
-    } catch (error) {
-      console.error("Error getting tasks:", error);
+    });
+  }
+
+  getCollection(companyId: string) {
+    return `${Collections.Company}/${companyId}/${Collections.Tasks}`;
+  }
+
+  async loadTasksForCompany(companyId: string, forceRefresh = false): Promise<void> {
+    if (!forceRefresh && this.tasksCache.has(companyId)) {
+      this._tasks.set(this.tasksCache.get(companyId) || []);
+      return;
     }
-    return this._items();
-  }
-
-  async getTask(id: string): Promise<Task | undefined> {
-    return this._items().find(item => item.id === id);
-  }
-
-  async addTask(newItem: Omit<Task, 'id'>) {
-    const itemCollection = this._getCollection();
 
     try {
-      const docRef = await addDoc(itemCollection, newItem);
-      const taskWithId: Task = { ...newItem, id: docRef.id };
-      this._items.update(current => [...current, taskWithId]);
-      return taskWithId;
-    } catch (error) {
-      console.error("Error adding task:", error);
-      throw error;
-    }
-  }
+      const colRef = collection(this.firestore, this.getCollection(companyId));
+      const snap = await getDocs(colRef);
 
-  async deleteTask(id: string) {
-    const itemCollection = this._getCollection();
-    try {
-      const itemRef = doc(itemCollection, id);
-      await deleteDoc(itemRef);
-      this._items.update(current => current.filter(item => item.id !== id));
+      const taskList = snap.docs.map(docSnap => ({
+        id: docSnap.id,
+        ...docSnap.data()
+      } as Task));
+
+      this.tasksCache.set(companyId, taskList);
+      this._tasks.set(taskList);
     } catch (error) {
-      console.error("Error deleting task:", error);
+      console.error('Error al cargar tareas:', error);
+      this._tasks.set([]);
     }
   }
 
-  async updateTask(id: string, changes: Partial<Task>) {
-    const itemCollection = this._getCollection();
-    try {
-      const itemRef = doc(itemCollection, id);
-      await updateDoc(itemRef, changes);
-      this._items.update(current =>
-        current.map(item => item.id === id ? { ...item, ...changes } : item)
-      );
-    } catch (error) {
-      console.error("Error updating task:", error);
+  async createTask(taskData: Omit<Task, 'id'>): Promise<Task> {
+    const activeCompanyId = this.companyService.activeCompany()?.id;
+    if (!activeCompanyId) throw new Error('No active company selected');
+
+    const colRef = collection(this.firestore, this.getCollection(activeCompanyId));
+    const newDocRef = doc(colRef);
+
+    const newTask: Task = {
+      id: newDocRef.id,
+      ...taskData,
+      companyId: activeCompanyId
+    };
+
+    await setDoc(newDocRef, newTask);
+
+    const currentList = this.tasksCache.get(activeCompanyId) || [];
+    const updatedList = [...currentList, newTask];
+
+    this.tasksCache.set(activeCompanyId, updatedList);
+    this._tasks.set(updatedList);
+
+    return newTask;
+  }
+
+  async updateTask(task: Task): Promise<void> {
+    if (!task.id || !task.companyId) return;
+
+    const docRef = doc(this.firestore, this.getCollection(task.companyId), task.id);
+    await updateDoc(docRef, { ...task });
+
+    const currentList = this.tasksCache.get(task.companyId) || [];
+    const updatedList = currentList.map(t => (t.id === task.id ? task : t));
+
+    this.tasksCache.set(task.companyId, updatedList);
+
+    if (task.companyId === this.companyService.activeCompany()?.id) {
+      this._tasks.set(updatedList);
     }
   }
 }

@@ -2,6 +2,7 @@
     "title": "Gestor de Presupuestos",
     "subtitle": "Espacio de trabajo financiero",
     "generic": {
+        "actions": "Acciones",
         "accept": "Aceptar",
         "cancel": "Cancelar",
         "save": "Guardar",
@@ -64,6 +65,7 @@
         "company_name": "Razón Social / Nombre Comercial",
         "nif": "NIF / DNI",
         "cif": "CIF / NIF",
+        "contact": "Contacto",
         "phone": "Teléfono",
         "email": "Correo Electrónico",
         "address": "Dirección Completa (Para Presupuesto)",
@@ -115,15 +117,24 @@
             "clause_placeholder": "Detalla los años de garantía ofrecidos..."
         }
     },
-    "task": {
-        "title": "Tarea",
-        "description": "Descripción",
-        "price": "Precio Unit.",
-        "quantity": "Cantidad",
-        "subtotal": "Subtotal",
-        "acr_quantity": "Cant.",
-        "total": "Total",
-        "title_tooltip": "Busca o escribe una tarea..."
+    "tasks": {
+        "create_title": "Nueva Tarea / Servicio",
+        "edit_title": "Editar Tarea",
+        "title_label": "Título del Trabajo",
+        "title_placeholder": "Ej: Limpieza de canalones vertical",
+        "price": "Precio Base por Unidad",
+        "description": "Descripción Detallada del Servicio",
+        "description_placeholder": "Describe en qué consiste este trabajo para que aparezca en la propuesta...",
+        "search_placeholder": "Buscar tareas o servicios...",
+        "no_search_results": "No se han encontrado tareas para la búsqueda introducida",
+        "empty": {
+            "title": "Sin Tareas Guardadas",
+            "subtitle": "Crea plantillas de trabajos habituales para añadirlas rápidamente a tus presupuestos"
+        },
+        "actions": {
+            "add": "Nueva Tarea",
+            "create": "Crear Tarea"
+        }
     },
     "tabs": {
         "budgets": "Presupuestos",

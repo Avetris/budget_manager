@@ -5,16 +5,15 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@jsverse/transloco';
 
-import { Client } from '@core/models/client.model';
-import { ClientService } from '@core/services/client.service';
 import { CompanyService } from '@core/services/company.service';
+import { TaskService } from '@core/services/task.service';
+import { Task } from '@core/models/task.model';
 
 @Component({
-    selector: 'app-client-dialog',
+    selector: 'app-task-dialog',
     standalone: true,
     imports: [
         CommonModule,
@@ -23,43 +22,36 @@ import { CompanyService } from '@core/services/company.service';
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
-        MatButtonToggleModule,
         MatIconModule,
         TranslocoModule
     ],
-    templateUrl: './client-dialog.component.html',
-    styleUrl: './client-dialog.component.scss'
+    templateUrl: './task-dialog.component.html',
+    styleUrl: './task-dialog.component.scss'
 })
-export class ClientDialogComponent implements OnInit {
+export class TaskDialogComponent implements OnInit {
     private fb = inject(FormBuilder).nonNullable;
-    private dialogRef = inject(MatDialogRef<ClientDialogComponent>);
-    private clientService = inject(ClientService);
+    private dialogRef = inject(MatDialogRef<TaskDialogComponent>);
+    private taskService = inject(TaskService);
     private companyService = inject(CompanyService);
 
-    public data = inject<Client | null>(MAT_DIALOG_DATA, { optional: true });
+    public data = inject<Task | null>(MAT_DIALOG_DATA, { optional: true });
 
     isEditing = false;
     isSaving = false;
 
     form = this.fb.group({
-        isCompany: [false],
-        name: ['', [Validators.required]],
-        nif: ['', [Validators.required]],
-        address: [''],
-        phone: [''],
-        email: ['', [Validators.email]]
+        title: ['', [Validators.required]],
+        description: ['', [Validators.required]],
+        price: [0, [Validators.required, Validators.min(0)]]
     });
 
     ngOnInit(): void {
         if (this.data) {
             this.isEditing = true;
             this.form.patchValue({
-                isCompany: this.data.isCompany ?? false,
-                name: this.data.name,
-                nif: this.data.nif,
-                address: this.data.address,
-                phone: this.data.phone ?? '',
-                email: this.data.email ?? ''
+                title: this.data.title,
+                description: this.data.description,
+                price: this.data.price
             });
         }
     }
@@ -81,31 +73,28 @@ export class ClientDialogComponent implements OnInit {
 
         try {
             if (this.isEditing && this.data?.id) {
-                // Actualizar cliente existente
-                const updatedClient: Client = {
+                const updatedTask: Task = {
                     ...this.data,
                     ...formValue,
                     companyId: activeCompanyId
                 };
-                await this.clientService.updateClient(updatedClient);
+                await this.taskService.updateTask(updatedTask);
+                this.dialogRef.close(updatedTask);
             } else {
-                // Crear nuevo cliente
-                const newClient: Omit<Client, 'id'> = {
+                const newTask = await this.taskService.createTask({
                     ...formValue,
                     companyId: activeCompanyId
-                };
-                await this.clientService.createClient(newClient);
+                });
+                this.dialogRef.close(newTask);
             }
-
-            this.dialogRef.close(true);
         } catch (error) {
-            console.error('Error saving client:', error);
+            console.error('Error saving task:', error);
         } finally {
             this.isSaving = false;
         }
     }
 
     onCancel(): void {
-        this.dialogRef.close(false);
+        this.dialogRef.close(null);
     }
 }

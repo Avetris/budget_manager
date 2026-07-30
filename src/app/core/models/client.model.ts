@@ -3,7 +3,7 @@ export interface Client {
     nif: string
     isCompany: boolean
     name: string
-    address: string
+    address?: string
     phone?: string
     email?: string
     companyId?: string

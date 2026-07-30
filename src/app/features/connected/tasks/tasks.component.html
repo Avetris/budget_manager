@@ -4,18 +4,80 @@
       <h2 class="dashboard-title">{{ 'tabs.tasks' | transloco }}</h2>
       <span class="results-badge">{{ 'generic.items' | transloco: {items: 0} }}</span>
     </div>
-    <button mat-raised-button color="primary" class="create-btn">
+    <button mat-raised-button color="primary" class="create-btn" (click)="openCreateTaskModal()">
       <mat-icon>add_task</mat-icon>
       <span>New Task</span>
     </button>
   </div>
 
+  @if (taskService.tasks().length > 0) {
+
+  <div class="filter-toolbar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-icon matPrefix class="search-icon">search</mat-icon>
+      <input matInput [placeholder]="'tasks.search_placeholder' | transloco" (input)="onSearchChange($event)" />
+    </mat-form-field>
+  </div>
+
+  <div class="table-card">
+    <table mat-table [dataSource]="filteredTasks()" class="custom-tasks-table">
+
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef> {{ 'tasks.title_label' | transloco }} </th>
+        <td mat-cell *matCellDef="let task" class="font-bold text-slate-800 task-title-cell">
+          {{ task.title }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef> {{ 'tasks.description' | transloco }} </th>
+        <td mat-cell *matCellDef="let task" class="description-cell">
+          {{ task.description }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef class="text-right"> {{ 'tasks.price' | transloco }} </th>
+        <td mat-cell *matCellDef="let task" class="text-right price-cell">
+          <span class="price-badge">
+            {{ task.price | currency:'EUR':'symbol':'1.2-2' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="text-right"> {{ 'generic.actions' | transloco }} </th>
+        <td mat-cell *matCellDef="let task" class="text-right">
+          <button mat-icon-button class="action-btn" [matTooltip]="'actions.edit' | transloco"
+            (click)="openEditTaskModal(task)">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="task-table-row"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
+          {{ 'tasks.no_search_results' | transloco }}
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  } @else {
   <div class="empty-state-card">
     <div class="empty-state-icon-box">
       <mat-icon class="empty-icon">task_alt</mat-icon>
     </div>
-    <h3 class="empty-state-title">Task & Service Catalog</h3>
-    <p class="empty-state-desc">Define standard catalog tasks, rates, and default descriptions to auto-complete budget
-      forms faster.</p>
+    <h3 class="empty-state-title">{{ 'tasks.empty.title' | transloco }}</h3>
+    <p class="empty-state-desc">{{ 'tasks.empty.subtitle' | transloco }}</p>
+
+    <button mat-raised-button color="primary" class="mt-4 create-btn" (click)="openCreateTaskModal()">
+      <mat-icon>add_task</mat-icon>
+      <span>New Task</span>
+    </button>
   </div>
+  }
 </div>
