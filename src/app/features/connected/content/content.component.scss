@@ -1,3 +1,50 @@
+/* Estilos para limpiar el mat-select e integrarlo en el header */
+:host ::ng-deep .header-company-select {
+  width: auto;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+
+  /* Quita el reservado inferior de mensajes de error/pistas */
+  .mat-mdc-form-field-subscript-wrapper,
+  .mat-mdc-form-field-bottom-align {
+    display: none !important;
+  }
+
+  /* Quita la caja gris por defecto y ajusta la altura al centro */
+  .mat-mdc-text-field-wrapper {
+    background-color: transparent !important;
+    padding: 0 8px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    border-radius: 8px;
+    transition: background-color var(--transition-fast);
+
+    &:hover {
+      background-color: var(--slate-100) !important;
+    }
+  }
+
+  /* Oculta la línea de foco/subrayado */
+  .mdc-line-ripple {
+    display: none !important;
+  }
+
+  .mat-mdc-select-trigger {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* Aplica la misma tipografía y color del título principal */
+  .mat-mdc-select-value {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: var(--slate-900) !important;
+  }
+}
+
 .main-workspace-container {
   min-height: 100vh;
   background-color: var(--slate-50);
@@ -24,7 +71,53 @@
 .brand-container {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
+}
+
+.header-company-select {
+  height: auto !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+
+  ::ng-deep {
+
+    .mat-mdc-text-field-wrapper {
+      background-color: transparent !important;
+      padding: 0 8px !important;
+      height: 36px !important;
+      display: flex !important;
+      align-items: center !important;
+      border-radius: 8px;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05) !important;
+      }
+    }
+
+    .mdc-line-ripple,
+    .mat-mdc-form-field-subscript-wrapper,
+    .mat-mdc-form-field-bottom-align {
+      display: none !important;
+    }
+
+    .mat-mdc-select-trigger {
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.25rem;
+    }
+
+    .mat-mdc-select-value {
+      font-size: 1.1rem !important;
+      font-weight: 600 !important;
+      color: #1e293b !important;
+    }
+
+    .mat-mdc-select-arrow-wrapper {
+      transform: translateY(0) !important;
+    }
+  }
 }
 
 .brand-badge {

@@ -4,20 +4,21 @@
       <div class="brand-badge">
         <mat-icon class="brand-icon">receipt_long</mat-icon>
       </div>
+      @if (companyService.companies().length > 1) {
+      <mat-form-field appearance="fill" class="header-company-select">
+        <mat-select [value]="companyService.activeCompany()?.id"
+          (selectionChange)="companyService.selectCompanyById($event.value)">
+          @for (comp of companyService.companies(); track comp.id) {
+          <mat-option [value]="comp.id">{{ comp.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      } @else {
       <div class="brand-info">
-        @if (companyService.companies().length > 1) {
-        <mat-form-field appearance="outline" class="company-selector-field">
-          <mat-select [value]="companyService.activeCompany()?.id"
-            (selectionChange)="companyService.selectCompanyById($event.value)">
-            @for (comp of companyService.companies(); track comp.id) {
-            <mat-option [value]="comp.id">{{ comp.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        } @else {
         <span class="brand-title">{{ companyService.activeCompany()?.name || 'BudgetsManager' }}</span>
-        }
+        <span class="brand-subtitle">Financial Workspace</span>
       </div>
+      }
     </div>
 
     <div class="header-actions">

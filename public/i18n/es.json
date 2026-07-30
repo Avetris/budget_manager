@@ -4,7 +4,9 @@
     "generic": {
         "accept": "Aceptar",
         "cancel": "Cancelar",
-        "save": "Guardar"
+        "save": "Guardar",
+        "close": "Cerrar",
+        "items": "{{items}} elementos"
     },
     "login": {
         "title": "Iniciar Sesión",
@@ -52,9 +54,16 @@
             "vat_total": "IVA Total"
         }
     },
+    "clients": {
+        "add": "Añadir Cliente",
+        "title": "Lista de Clientes",
+        "subtitle": "Gestiona los perfiles de los clientes, contactos y detalles financieros de forma segura."
+    },
     "company_config": {
         "title": "Configuración de la Empresa",
         "subtitle": "Gestiona la información legal, datos de contacto y plantillas para tus presupuestos",
+        "saved": "Configuración guardada correctamente",
+        "error": "Error al guardar los cambios",
         "info": {
             "title": "Datos de la Empresa",
             "subtitle": "Información fiscal y de contacto principal",

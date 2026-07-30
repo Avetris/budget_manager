@@ -12,7 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { CompanyService } from '@core/services/company.service';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-company-config',
@@ -38,6 +38,7 @@ export class CompanyConfigComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   readonly companyService = inject(CompanyService);
   readonly router = inject(Router)
+  readonly translocoService = inject(TranslocoService)
 
   readonly isSaving = signal<boolean>(false);
 
@@ -96,10 +97,10 @@ export class CompanyConfigComponent implements OnInit {
 
       await this.companyService.updateActiveCompany(updatedConfig);
 
-      this.snackBar.open('Configuración guardada correctamente', 'Cerrar', { duration: 3000 });
+      this.snackBar.open(this.translocoService.translate('company_config.saved'), this.translocoService.translate('generic.close'), { duration: 3000 });
     } catch (error) {
-      console.error('Error al guardar la configuración:', error);
-      this.snackBar.open('Error al guardar los cambios', 'Cerrar', { duration: 4000 });
+      console.error('Error saving setting:', error);
+      this.snackBar.open(this.translocoService.translate('company_config.error'), this.translocoService.translate('generic.close'), { duration: 4000 });
     } finally {
       this.isSaving.set(false);
     }

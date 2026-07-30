@@ -2,11 +2,11 @@
   <div class="dashboard-header-bar">
     <div class="dashboard-title-group">
       <h2 class="dashboard-title">{{ 'tabs.clients' | transloco }}</h2>
-      <span class="results-badge">0 items</span>
+      <span class="results-badge">{{ 'generic.items' | transloco: {items: 0} }}</span>
     </div>
     <button mat-raised-button color="primary" class="create-btn">
       <mat-icon>person_add</mat-icon>
-      <span>Add Client</span>
+      <span>{{ 'clients.add' | transloco }}</span>
     </button>
   </div>
 
@@ -14,7 +14,7 @@
     <div class="empty-state-icon-box">
       <mat-icon class="empty-icon">people_outline</mat-icon>
     </div>
-    <h3 class="empty-state-title">Client Directory</h3>
-    <p class="empty-state-desc">Manage client profiles, contact information, and billing details securely.</p>
+    <h3 class="empty-state-title">{{ 'clients.title' | transloco }}</h3>
+    <p class="empty-state-desc">{{ 'clients.subtitle' | transloco }}</p>
   </div>
 </div>

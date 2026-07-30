@@ -37,7 +37,7 @@ import { MatSelectModule } from '@angular/material/select';
     RouterModule
   ],
   templateUrl: './content.component.html',
-  styleUrl: './content.component.css',
+  styleUrl: './content.component.scss',
 })
 export class ContentComponent implements OnInit {
   authService = inject(AuthService)
