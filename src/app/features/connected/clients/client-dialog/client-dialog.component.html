@@ -1,0 +1,86 @@
+<div class="dialog-header">
+    <h2 mat-dialog-title>
+        {{ (isEditing ? 'clients.edit_title' : 'clients.create_title') | transloco }}
+    </h2>
+    <button mat-icon-button (click)="onCancel()" aria-label="Close">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" id="clientForm" (ngSubmit)="onSave()" class="client-form">
+
+        <!-- Selector de Tipo: Particular vs Empresa -->
+        <div class="type-selector-wrapper">
+            <label class="form-label">{{ 'clients.type' | transloco }}</label>
+            <mat-button-toggle-group formControlName="isCompany" aria-label="Tipo de cliente"
+                class="custom-toggle-group">
+                <mat-button-toggle [value]="false">
+                    <mat-icon>person</mat-icon>
+                    <span>{{ 'clients.particular' | transloco }}</span>
+                </mat-button-toggle>
+                <mat-button-toggle [value]="true">
+                    <mat-icon>business</mat-icon>
+                    <span>{{ 'clients.company' | transloco }}</span>
+                </mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+
+        <!-- Nombre / Razón Social -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>
+                {{ (form.value.isCompany ? 'clients.company_name' : 'clients.full_name') | transloco }}
+            </mat-label>
+            <input matInput formControlName="name"
+                [placeholder]="form.value.isCompany ? 'Ej: Construcciones S.L.' : 'Ej: Juan Pérez'" />
+            @if (form.get('name')?.hasError('required')) {
+            <mat-error>{{ 'validations.required' | transloco }}</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- NIF / CIF y Teléfono en 2 columnas -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>{{ (form.value.isCompany ? 'clients.cif' : 'clients.nif') | transloco }}</mat-label>
+                <input matInput formControlName="nif" placeholder="12345678X / B12345678" />
+                @if (form.get('nif')?.hasError('required')) {
+                <mat-error>{{ 'validations.required' | transloco }}</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'clients.phone' | transloco }}</mat-label>
+                <input matInput formControlName="phone" type="tel" placeholder="+34 600 000 000" />
+            </mat-form-field>
+        </div>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'clients.email' | transloco }}</mat-label>
+            <input matInput formControlName="email" type="email" placeholder="cliente@email.com" />
+            @if (form.get('email')?.hasError('email')) {
+            <mat-error>{{ 'validations.invalid_email' | transloco }}</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Dirección completa (Crucial para presupuestos) -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'clients.address' | transloco }}</mat-label>
+            <textarea matInput formControlName="address" rows="2"
+                placeholder="Calle, número, código postal y ciudad"></textarea>
+            @if (form.get('address')?.hasError('required')) {
+            <mat-error>{{ 'validations.required' | transloco }}</mat-error>
+            }
+        </mat-form-field>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button type="button" (click)="onCancel()" [disabled]="isSaving">
+        {{ 'generic.cancel' | transloco }}
+    </button>
+    <button mat-flat-button color="primary" type="submit" form="clientForm" [disabled]="form.invalid || isSaving">
+        {{ (isEditing ? 'generic.save' : 'clients.actions.create') | transloco }}
+    </button>
+</mat-dialog-actions>

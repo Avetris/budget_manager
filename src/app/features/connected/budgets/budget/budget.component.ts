@@ -75,9 +75,9 @@ export class BudgetComponent implements OnInit {
   constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
-    this.clientService.getClients().then(clients => {
-      this.clients = clients
-    })
+    /* this.clientService.getClients().then(clients => {
+       this.clients = clients
+     })*/
     // Access route parameter
     this.budgetId = this.route.snapshot.paramMap.get('id');
     if (this.budgetId != "" && this.budgetId != null) {

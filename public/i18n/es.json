@@ -55,9 +55,28 @@
         }
     },
     "clients": {
-        "add": "Añadir Cliente",
-        "title": "Lista de Clientes",
-        "subtitle": "Gestiona los perfiles de los clientes, contactos y detalles financieros de forma segura."
+        "create_title": "Nuevo Cliente",
+        "edit_title": "Editar Cliente",
+        "type": "Tipo de Cliente",
+        "particular": "Particular",
+        "company": "Empresa",
+        "full_name": "Nombre y Apellidos",
+        "company_name": "Razón Social / Nombre Comercial",
+        "nif": "NIF / DNI",
+        "cif": "CIF / NIF",
+        "phone": "Teléfono",
+        "email": "Correo Electrónico",
+        "address": "Dirección Completa (Para Presupuesto)",
+        "search_placeholder": "Buscar Cliente...",
+        "no_search_results": "No se han encontrado clientes para la busqueda introducida",
+        "empty": {
+            "title": "Sin Clientes",
+            "subtitle": "No has añadido todavía ningún cliente"
+        },
+        "actions": {
+            "add": "Nuevo Cliente",
+            "create": "Crear Cliente"
+        }
     },
     "company_config": {
         "title": "Configuración de la Empresa",
@@ -110,5 +129,9 @@
         "budgets": "Presupuestos",
         "tasks": "Trabajos",
         "clients": "Clientes"
+    },
+    "validations": {
+        "required": "Este campo es obligatorio",
+        "invalid_email": "Introduce un correo válido"
     }
 }

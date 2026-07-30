@@ -1,7 +1,8 @@
 export interface Task {
-    id: string
+    id?: string
     title: string
     description: string
     price: number
-    count: number 
+    count?: number
+    companyId?: string
 }

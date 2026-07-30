@@ -2,19 +2,114 @@
   <div class="dashboard-header-bar">
     <div class="dashboard-title-group">
       <h2 class="dashboard-title">{{ 'tabs.clients' | transloco }}</h2>
-      <span class="results-badge">{{ 'generic.items' | transloco: {items: 0} }}</span>
+      <span class="results-badge">
+        {{ 'generic.items' | transloco: { items: filteredClients().length } }}
+      </span>
     </div>
-    <button mat-raised-button color="primary" class="create-btn">
+    <button mat-raised-button color="primary" class="create-btn" (click)="openCreateClientModal()">
       <mat-icon>person_add</mat-icon>
-      <span>{{ 'clients.add' | transloco }}</span>
+      <span>{{ 'clients.actions.add' | transloco }}</span>
     </button>
   </div>
 
+  @if (clientService.clients().length > 0) {
+
+  <div class="filter-toolbar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-icon matPrefix class="search-icon">search</mat-icon>
+      <input matInput [placeholder]="'clients.search_placeholder' | transloco" (input)="onSearchChange($event)" />
+    </mat-form-field>
+  </div>
+
+  <div class="table-card">
+    <table mat-table [dataSource]="filteredClients()" class="custom-clients-table">
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef> {{ 'clients.type' | transloco }} </th>
+        <td mat-cell *matCellDef="let client">
+          <span class="type-badge" [class.is-company]="client.isCompany">
+            <mat-icon class="badge-icon">{{ client.isCompany ? 'business' : 'person' }}</mat-icon>
+            {{ (client.isCompany ? 'clients.company' : 'clients.particular') | transloco }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> {{ 'clients.full_name' | transloco }} </th>
+        <td mat-cell *matCellDef="let client" class="font-semibold text-slate-800">
+          {{ client.name }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nif">
+        <th mat-header-cell *matHeaderCellDef> {{ 'clients.nif' | transloco }} </th>
+        <td mat-cell *matCellDef="let client">
+          <code class="nif-code">{{ client.nif }}</code>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="contact">
+        <th mat-header-cell *matHeaderCellDef> {{ 'clients.contact' | transloco }} </th>
+        <td mat-cell *matCellDef="let client">
+          <div class="contact-info-cell">
+            @if (client.phone) {
+            <span class="contact-item">
+              <mat-icon class="mini-icon">phone</mat-icon>
+              {{ client.phone }}
+            </span>
+            }
+            @if (client.email) {
+            <span class="contact-item subtext">
+              <mat-icon class="mini-icon">email</mat-icon>
+              {{ client.email }}
+            </span>
+            }
+            @if (!client.phone && !client.email) {
+            <span class="text-slate-400">-</span>
+            }
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef> {{ 'clients.address' | transloco }} </th>
+        <td mat-cell *matCellDef="let client" class="address-cell">
+          {{ client.address }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="text-right"> {{ 'generic.actions' | transloco }} </th>
+        <td mat-cell *matCellDef="let client" class="text-right">
+          <button mat-icon-button class="action-btn" [matTooltip]="'actions.edit' | transloco"
+            (click)="openEditClientModal(client)">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="client-table-row"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
+          {{ 'clients.no_search_results' | transloco }}
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  } @else {
   <div class="empty-state-card">
     <div class="empty-state-icon-box">
       <mat-icon class="empty-icon">people_outline</mat-icon>
     </div>
-    <h3 class="empty-state-title">{{ 'clients.title' | transloco }}</h3>
-    <p class="empty-state-desc">{{ 'clients.subtitle' | transloco }}</p>
+    <h3 class="empty-state-title">{{ 'clients.empty.title' | transloco }}</h3>
+    <p class="empty-state-desc">{{ 'clients.empty.subtitle' | transloco }}</p>
+    <button mat-raised-button color="primary" class="mt-4 create-btn" (click)="openCreateClientModal()">
+      <mat-icon>person_add</mat-icon>
+      <span>{{ 'clients.actions.add' | transloco }}</span>
+    </button>
   </div>
+  }
 </div>

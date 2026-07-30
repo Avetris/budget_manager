@@ -1,84 +1,100 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { addDoc, collectionData, doc, query, updateDoc } from '@angular/fire/firestore';
-import { collection, deleteDoc } from '@firebase/firestore';
-import { firstValueFrom } from 'rxjs';
+import { effect, inject, Injectable, signal } from '@angular/core';
+import { doc, updateDoc } from '@angular/fire/firestore';
+import { collection, getDocs, setDoc } from '@firebase/firestore';
 import { Client } from '../models/client.model';
-import { UserService } from './user.service';
 import { CommonService } from './common.service';
+import { CompanyService } from './company.service';
+import { Collections } from '@utils/const';
 
 @Injectable({ providedIn: 'root' })
 export class ClientService extends CommonService {
-  userService = inject(UserService)
+  readonly companyService = inject(CompanyService)
 
-  _items = signal<Client[]>([])
+  private clientsCache = new Map<string, Client[]>();
 
-  items = this._items.asReadonly()
+  private readonly _clients = signal<Client[]>([]);
+  readonly clients = this._clients.asReadonly();
 
-  _getCollection() {
-    return collection(this.firestore, 'clients')
+  constructor() {
+    super()
+    // Reacciona automáticamente cada vez que activeCompany cambia en CompanyService
+    effect(async () => {
+      const activeCompany = this.companyService.activeCompany();
+
+      if (activeCompany?.id) {
+        this.loadingService.track(this.loadClientsForCompany(activeCompany.id));
+      } else {
+        this._clients.set([]);
+      }
+    });
   }
 
-  async getClients(): Promise<Client[]> {
-    if (this._items().length > 0) {
-      return this.items();
-    }
-    const itemCollection = this._getCollection()
+  getCollection(companyId: string) {
+    return `${Collections.Company}/${companyId}/${Collections.Clients}`;
+  }
 
+  async loadClientsForCompany(companyId: string, forceRefresh = false): Promise<void> {
+    // 1. Si ya tenemos la empresa en caché y no forzamos recarga, la usamos (0 lecturas)
+    if (!forceRefresh && this.clientsCache.has(companyId)) {
+      this._clients.set(this.clientsCache.get(companyId) || []);
+      return;
+    }
     try {
-      let getQuery = query(itemCollection)
-      const data = await firstValueFrom(collectionData(getQuery, { idField: 'id' })) as Client[];
-      this._items.set(data);
+      // Colección: companies/{companyId}/clients
+      const colRef = collection(this.firestore, this.getCollection(companyId));
+      const snap = await getDocs(colRef);
+
+      const clientList = snap.docs.map(docSnap => ({
+        id: docSnap.id,
+        ...docSnap.data()
+      } as Client));
+
+      this.clientsCache.set(companyId, clientList);
+      this._clients.set(clientList);
     } catch (error) {
-      console.error("Error getting clients:", error);
-    }
-    return this._items();
-  }
-
-  async getClient(id: string): Promise<Client | undefined> {
-    await this.getClients()
-    return this._items().find(item => item.id === id)
-  }
-
-  async addClient(newItem: Omit<Client, 'id'>) {
-    const itemCollection = this._getCollection();
-
-    try {
-      const docRef = await addDoc(itemCollection, newItem);
-
-      const productWithId: Client = { ...newItem, id: docRef.id };
-
-      this._items.update(current => [...current, productWithId]);
-
-      return productWithId;
-    } catch (error) {
-      console.error("Error adding client:", error);
-      throw error;
+      console.error('Error loading clients:', error);
+      this._clients.set([]);
     }
   }
 
-  async deleteClient(id: string) {
-    const itemCollection = this._getCollection()
-    try {
-      const itemRef = doc(itemCollection, id)
-      await deleteDoc(itemRef)
 
-      this._items.update(current => current.filter(item => item.id !== id));
-    } catch (error) {
-      console.error("error deleting client;", error)
+  async createClient(clientData: Omit<Client, 'id'>): Promise<void> {
+    const activeCompanyId = this.companyService.activeCompany()?.id;
+    if (!activeCompanyId) return;
+
+    // Generamos una referencia con ID automático
+    const colRef = collection(this.firestore, this.getCollection(activeCompanyId));
+    const newDocRef = doc(colRef);
+
+    const newClient: Client = {
+      id: newDocRef.id,
+      ...clientData,
+      companyId: activeCompanyId
+    };
+
+    await setDoc(newDocRef, newClient);
+
+    const currentList = this.clientsCache.get(activeCompanyId) || [];
+    const updatedList = [...currentList, newClient];
+
+    this.clientsCache.set(activeCompanyId, updatedList);
+    this._clients.set(updatedList);
+  }
+
+  async updateClient(client: Client): Promise<void> {
+    if (!client.id || !client.companyId) return;
+
+    const docRef = doc(this.firestore, this.getCollection(client.companyId), client.id);
+    await updateDoc(docRef, { ...client });
+
+    // Actualizamos en la caché correspondiente
+    const currentList = this.clientsCache.get(client.companyId) || [];
+    const updatedList = currentList.map(c => (c.id === client.id ? client : c));
+
+    this.clientsCache.set(client.companyId, updatedList);
+
+    if (client.companyId === this.companyService.activeCompany()?.id) {
+      this._clients.set(updatedList);
     }
   }
-  async updateClient(id: string, changes: Partial<Client>) {
-    const itemCollection = this._getCollection()
-
-    try {
-      const itemRef = doc(itemCollection, id)
-      await updateDoc(itemRef, changes);
-
-      this._items.update(current =>
-        current.map(item => item.id === id ? { ...item, ...changes } : item)
-      );
-    } catch (error) {
-      console.error("Error updating client:", error);
-    }
-  }
-} 
+}
