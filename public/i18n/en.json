@@ -4,7 +4,7 @@
     "generic": {
         "accept": "Accept",
         "cancel": "Cancel",
-        "save": "Save"
+        "save": "Save Changes"
     },
     "login": {
         "title": "Login",
@@ -50,6 +50,41 @@
             "total": "TOTAL",
             "save": "Save Budget",
             "vat_total": "Total VAT"
+        }
+    },
+    "company_config": {
+        "title": "Company Settings",
+        "subtitle": "Manage legal information, contact details, and templates for your estimates",
+        "info": {
+            "title": "Company Details",
+            "subtitle": "Tax details and primary contact information",
+            "name": "Trade Name / Business Name",
+            "name_placeholder": "e.g., Avetris Ltd.",
+            "nif": "Tax ID / VAT Number",
+            "phone": "Contact Phone",
+            "email": "Email Address",
+            "web": "Website",
+            "street": "Street & Number",
+            "city": "City & Zip Code"
+        },
+        "header": {
+            "title": "Header Lines (Services)",
+            "subtitle": "Descriptive lines appearing at the top of your estimates",
+            "line": "Line {{line}}",
+            "line_placeholder": "e.g., VERTICAL WORKS OF...",
+            "add": "Add line to header"
+        },
+        "legal": {
+            "title": "Terms & Conditions & GDPR",
+            "subtitle": "Legal text automatically attached to estimates",
+            "terms": "Terms and Conditions",
+            "terms_placeholder": "Write the service terms here..."
+        },
+        "garanty": {
+            "title": "Work Warranties",
+            "subtitle": "Warranty periods according to the Building Regulations Law (LOE)",
+            "clause": "Warranty Clause",
+            "clause_placeholder": "Detail the warranty years offered..."
         }
     },
     "task": {

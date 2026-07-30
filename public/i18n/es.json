@@ -52,6 +52,41 @@
             "vat_total": "IVA Total"
         }
     },
+    "company_config": {
+        "title": "Configuración de la Empresa",
+        "subtitle": "Gestiona la información legal, datos de contacto y plantillas para tus presupuestos",
+        "info": {
+            "title": "Datos de la Empresa",
+            "subtitle": "Información fiscal y de contacto principal",
+            "name": "Nombre Comercial / Razón Social",
+            "name_placeholder": "Ej: Avetris S.L.",
+            "nif": "NIF / CIF",
+            "phone": "Teléfono de Contacto",
+            "email": "Correo Electrónico",
+            "web": "Sitio Web",
+            "street": "Calle y Número",
+            "city": "Población y Código Postal"
+        },
+        "header": {
+            "title": "Líneas de Cabecera (Servicios)",
+            "subtitle": "Líneas descriptivas que aparecen en la parte superior de tus presupuestos",
+            "line": "Línea {{line}}",
+            "line_placeholder": "Ej: TRABAJOS VERTICALES DE...",
+            "add": "Añadir línea a la cabecera"
+        },
+        "legal": {
+            "title": "Condiciones Generales y LOPD",
+            "subtitle": "Texto legal que se adjunta automáticamente a los presupuestos",
+            "terms": "Términos y Condiciones",
+            "terms_placeholder": "Escribe aquí las condiciones del servicio..."
+        },
+        "garanty": {
+            "title": "Garantías de Obra",
+            "subtitle": "Plazos de garantía según la Ley de Ordenación de la Edificación (LOE)",
+            "clause": "Cláusula de Garantía",
+            "clause_placeholder": "Detalla los años de garantía ofrecidos..."
+        }
+    },
     "task": {
         "title": "Tarea",
         "description": "Descripción",

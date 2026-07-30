@@ -14,7 +14,7 @@ import { UserService } from '@core/services/user.service';
 import { CompanyService } from '@core/services/company.service';
 import { LoadingService } from '@core/services/loading.service';
 import { AuthService } from '@core/services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
@@ -33,7 +33,8 @@ import { MatSelectModule } from '@angular/material/select';
     TranslocoModule,
     BudgetsComponent,
     ClientsComponent,
-    TasksComponent
+    TasksComponent,
+    RouterModule
   ],
   templateUrl: './content.component.html',
   styleUrl: './content.component.css',
@@ -48,6 +49,9 @@ export class ContentComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  console() {
+    console.log("NETRA")
+  }
   async logout() {
     await this.authService.logout()
     this.router.navigateByUrl("/login")

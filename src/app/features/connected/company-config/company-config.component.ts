@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { CompanyService } from '@core/services/company.service';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-company-config',
@@ -26,7 +27,8 @@ import { CompanyService } from '@core/services/company.service';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    TranslocoModule
   ],
   templateUrl: './company-config.component.html',
   styleUrl: './company-config.component.scss'
@@ -35,6 +37,7 @@ export class CompanyConfigComponent implements OnInit {
   private fb = inject(FormBuilder).nonNullable;
   private snackBar = inject(MatSnackBar);
   readonly companyService = inject(CompanyService);
+  readonly router = inject(Router)
 
   readonly isSaving = signal<boolean>(false);
 
@@ -71,6 +74,8 @@ export class CompanyConfigComponent implements OnInit {
         this.headerArray.clear();
         currentCompany.header.forEach(line => this.addHeaderLine(line));
       }
+    } else {
+      this.router.navigateByUrl("/")
     }
   }
 
