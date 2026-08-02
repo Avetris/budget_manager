@@ -7,7 +7,8 @@
         "cancel": "Cancelar",
         "save": "Guardar",
         "close": "Cerrar",
-        "items": "{{items}} elementos"
+        "items": "{{items}} elementos",
+        "saving": "Guardando"
     },
     "login": {
         "title": "Iniciar Sesión",
@@ -21,39 +22,49 @@
         "main": "Cargando espacio de trabajo..."
     },
     "budgets": {
-        "create": "Crear Factura",
-        "table": {
-            "id": "Nº",
-            "date": "Fecha",
-            "project": "Proyecto",
-            "client": "Cliente",
-            "vat": "IVA",
-            "tasks": "Tareas"
+        "saving_and_uploading": "Guardando presupuesto y subiendo imágenes...",
+        "search_placeholder": "Buscar por Nº presupuesto o cliente...",
+        "no_search_results": "No se han encontrado presupuestos",
+        "breakdown_title": "Desglose de tareas del presupuesto",
+        "images_title": "Imágenes (Opcional)",
+        "status": {
+            "label": "Estado",
+            "draft": "Borrador",
+            "sent": "Enviado",
+            "accepted": "Aceptado",
+            "rejected": "Rechazado"
         },
-        "errors": {
-            "exist": {
-                "title": "Error obteniendo el presupuesto",
-                "message": "El presupuesto no existe"
-            }
+        "empty": {
+            "title": "Sin Presupuestos",
+            "subtitle": "Comienza creando tu primer presupuesto para enviarlo a tus clientes"
         },
-        "edit": {
-            "title_edit": "Editar Presupuesto",
-            "title_create": "Crear Presupuesto",
-            "subtitle": "Información general y tareas",
-            "basic_header": "Datos Básicos",
-            "code": "Código de Presupuesto",
-            "date": "Fecha de Emisión",
-            "project": "Nombre del Proyecto",
-            "client": "Seleccionar Cliente",
-            "tasks": "Tareas del Presupuesto (Servicios/Productos)",
-            "add_task": "Añadir nueva tarea",
-            "remove_task": "Eliminar tarea",
-            "vat": "IVA Aplicable (%)",
-            "subtotal": "Subtotal Presupuesto",
-            "total": "TOTAL",
-            "save": "Guardar Presupuesto",
-            "vat_total": "IVA Total"
-        }
+        "actions": {
+            "add_task": "Añadir Tarea",
+            "add_group": "Añadir Subgrupo",
+            "add": "Nuevo Presupuesto",
+            "create": "Crear Presupuesto",
+            "edit": "Editar Presupuesto",
+            "delete": "Eliminar Tarea",
+            "add_images": "Añadir Imágen"
+        },
+        "date": "Fecha",
+        "create_title": "Nuevo Presupuesto",
+        "edit_title": "Editar Presupuesto",
+        "number": "Nº Presupuesto",
+        "client": "Cliente",
+        "ungrouped_tasks": "Tareas Principales / Sueltas",
+        "select_from_catalog": "Cargar desde el Catálogo de Tareas",
+        "custom_task": "Escribir tarea personalizada",
+        "count": "Cantidad",
+        "save_to_catalog_hint": "Guardar esta tarea como plantilla en el catálogo general",
+        "groups_title": "Subgrupos / Capítulos (Opcional)",
+        "group_placeholder": "Nuevo Subgrupo",
+        "group_name": "Nombre del Subgrupo / Capítulo",
+        "add_task_to_group": "Añadir Tarea a este Subgrupo",
+        "vat_rate": "Tipo de IVA",
+        "subtotal": "Subtotal",
+        "vat_amount": "IVA",
+        "total": "Total Presupuesto"
     },
     "clients": {
         "create_title": "Nuevo Cliente",
@@ -77,7 +88,9 @@
         },
         "actions": {
             "add": "Nuevo Cliente",
-            "create": "Crear Cliente"
+            "create": "Crear Cliente",
+            "edit": "Editar Cliente",
+            "delete": "Eliminar Tarea"
         }
     },
     "company_config": {
@@ -123,6 +136,28 @@
         "title_label": "Título del Tarea",
         "title_placeholder": "Ej: Limpieza de canalones vertical",
         "price": "Precio Base por Unidad",
+        "unit": "Unidad",
+        "units": {
+            "ud": "Por Unidad",
+            "h": "Por Hora",
+            "m2": "Por Metro Cuadrado",
+            "m": "Por Metro Lineal",
+            "global": "Precio Cerrado / Global"
+        },
+        "units_single": {
+            "ud": "Unidad",
+            "h": "Hora",
+            "m2": "Metro Cuadrado",
+            "m": "Metro Lineal",
+            "global": "Total"
+        },
+        "units_short": {
+            "ud": "ud",
+            "h": "h",
+            "m2": "m2",
+            "m": "m",
+            "global": "total"
+        },
         "description": "Descripción Detallada del Servicio",
         "description_placeholder": "Describe en qué consiste esta tarea para que aparezca en el presupuesto...",
         "search_placeholder": "Buscar tareas o servicios...",
@@ -133,7 +168,9 @@
         },
         "actions": {
             "add": "Nueva Tarea",
-            "create": "Crear Tarea"
+            "create": "Crear Tarea",
+            "edit": "Editar Tarea",
+            "delete": "Eliminar Tarea"
         }
     },
     "tabs": {

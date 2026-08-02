@@ -2,7 +2,7 @@ import { effect, inject, Injectable, signal } from '@angular/core';
 import { doc, updateDoc } from '@angular/fire/firestore';
 import { collection, getDocs, setDoc } from '@firebase/firestore';
 import { Task } from '../models/task.model';
-import { CommonService } from './common.service';
+import { CommonService, OmittedId } from './common.service';
 import { CompanyService } from './company.service';
 import { Collections } from '@utils/const';
 
@@ -54,7 +54,7 @@ export class TaskService extends CommonService {
     }
   }
 
-  async createTask(taskData: Omit<Task, 'id'>): Promise<Task> {
+  async createTask(taskData: OmittedId<Task>): Promise<Task> {
     const activeCompanyId = this.companyService.activeCompany()?.id;
     if (!activeCompanyId) throw new Error('No active company selected');
 

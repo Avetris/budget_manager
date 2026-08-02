@@ -117,15 +117,39 @@
             "clause_placeholder": "Detail the warranty years offered..."
         }
     },
-    "task": {
-        "title": "Task",
-        "description": "Description",
-        "price": "Unit. Price",
-        "quantity": "Quantity",
-        "subtotal": "Subtotal",
-        "acr_quantity": "Qty.",
-        "total": "Total",
-        "title_tooltip": "Search or write a new task..."
+    "tasks": {
+        "create_title": "New Task / Service",
+        "edit_title": "Edit Task",
+        "title_label": "Task Title",
+        "title_placeholder": "E.g., Vertical gutter cleaning",
+        "price": "Base Price per Unit",
+        "unit": "Unit",
+        "units": {
+            "ud": "Per Unit",
+            "h": "Per Hour",
+            "m2": "Per Square Meter",
+            "m": "Per Linear Meter",
+            "global": "Fixed / Lump Sum Price"
+        },
+        "units_short": {
+            "ud": "unit",
+            "h": "h",
+            "m2": "sqm",
+            "m": "m",
+            "global": "total"
+        },
+        "description": "Detailed Service Description",
+        "description_placeholder": "Describe what this task consists of so it appears on the estimate...",
+        "search_placeholder": "Search tasks or services...",
+        "no_search_results": "No tasks found matching your search",
+        "empty": {
+            "title": "No Saved Tasks",
+            "subtitle": "Create templates of frequent tasks to quickly add them to your estimates"
+        },
+        "actions": {
+            "add": "New Task",
+            "create": "Create Task"
+        }
     },
     "tabs": {
         "budgets": "Budgets",

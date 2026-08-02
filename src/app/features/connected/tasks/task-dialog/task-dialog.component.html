@@ -32,6 +32,17 @@
             }
         </mat-form-field>
 
+        <mat-form-field appearance="outline" class="unit-field">
+            <mat-label>{{ 'tasks.unit' | transloco }}</mat-label>
+            <mat-select formControlName="unit">
+                <mat-option value="ud">{{ 'tasks.units.ud' | transloco }} (Ud.)</mat-option>
+                <mat-option value="h">{{ 'tasks.units.h' | transloco }} (h)</mat-option>
+                <mat-option value="m2">{{ 'tasks.units.m2' | transloco }} (m²)</mat-option>
+                <mat-option value="m">{{ 'tasks.units.m' | transloco }} (m)</mat-option>
+                <mat-option value="global">{{ 'tasks.units.global' | transloco }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
         <!-- Descripción detallada de la tarea -->
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ 'tasks.description' | transloco }}</mat-label>

@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { LoadingService } from '@core/services/loading.service';
 
 @Component({
   selector: 'app-tasks-component',
@@ -34,6 +35,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class TasksComponent {
   readonly dialog = inject(MatDialog);
   readonly taskService = inject(TaskService);
+  readonly loadingService = inject(LoadingService)
   companyService = inject(CompanyService)
 
   displayedColumns: string[] = ['title', 'description', 'price', 'actions'];

@@ -6,4 +6,7 @@ import { LoadingService } from './loading.service';
 export abstract class CommonService {
   firestore = inject(Firestore)
   loadingService = inject(LoadingService)
-} 
+}
+
+
+export type OmittedId<T> = Omit<T, 'id'>;

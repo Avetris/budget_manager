@@ -10,7 +10,8 @@ import { TranslocoModule } from '@jsverse/transloco';
 
 import { CompanyService } from '@core/services/company.service';
 import { TaskService } from '@core/services/task.service';
-import { Task } from '@core/models/task.model';
+import { Task, TaskUnit } from '@core/models/task.model';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
     selector: 'app-task-dialog',
@@ -23,6 +24,7 @@ import { Task } from '@core/models/task.model';
         MatInputModule,
         MatButtonModule,
         MatIconModule,
+        MatSelectModule,
         TranslocoModule
     ],
     templateUrl: './task-dialog.component.html',
@@ -42,7 +44,8 @@ export class TaskDialogComponent implements OnInit {
     form = this.fb.group({
         title: ['', [Validators.required]],
         description: ['', [Validators.required]],
-        price: [0, [Validators.required, Validators.min(0)]]
+        price: [0, [Validators.required, Validators.min(0)]],
+        unit: ['ud' as TaskUnit, [Validators.required]]
     });
 
     ngOnInit(): void {

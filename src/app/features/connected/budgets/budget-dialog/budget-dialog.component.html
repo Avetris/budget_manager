@@ -1,0 +1,303 @@
+@if (isSaving()) {
+<mat-progress-bar mode="indeterminate" class="dialog-progress-bar"></mat-progress-bar>
+}
+<div class="dialog-header">
+    <h2 mat-dialog-title>
+        {{ (isEditing ? 'budgets.edit_title' : 'budgets.create_title') | transloco }}
+    </h2>
+    <button mat-icon-button (click)="onCancel()" aria-label="Close">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content class="dialog-content">
+    @if (isSaving()) {
+    <div class="saving-overlay">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p class="saving-text">{{ 'budgets.saving_and_uploading' | transloco }}</p>
+    </div>
+    }
+    <form [formGroup]="form" id="budgetForm" (ngSubmit)="onSave()" class="budget-form">
+
+        <div class="form-row-2">
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'budgets.number' | transloco }}</mat-label>
+                <input matInput formControlName="number" readonly />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'budgets.client' | transloco }}</mat-label>
+                <mat-select formControlName="client">
+                    @for (client of clientService.clients(); track client.id) {
+                    <mat-option [value]="client">
+                        {{ client.name }} {{ client.nif ? '(' + client.nif + ')' : '' }}
+                    </mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'budgets.date' | transloco }}</mat-label>
+                <input matInput type="date" formControlName="date" />
+            </mat-form-field>
+        </div>
+
+        <div class="section-container">
+            <div class="section-header">
+                <h3>{{ 'budgets.ungrouped_tasks' | transloco }}</h3>
+                <button type="button" mat-stroked-button (click)="addUngroupedTask()">
+                    <mat-icon>add</mat-icon> {{ 'budgets.actions.add_task' | transloco }}
+                </button>
+            </div>
+
+            <div formArrayName="ungroupedTasks" class="tasks-list">
+                @for (taskGroup of ungroupedTasks.controls; track $index) {
+                <div [formGroupName]="$index" class="task-item-card">
+
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>{{ 'budgets.select_from_catalog' | transloco }}</mat-label>
+                        <mat-select (selectionChange)="onSelectTaskFromCatalog(taskGroup, $event.value)">
+                            <mat-option value="">-- {{ 'budgets.custom_task' | transloco }} --</mat-option>
+                            @for (t of taskService.tasks(); track t.id) {
+                            <mat-option [value]="t.id">{{ t.title }} ({{ t.price }}€)</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+
+                    <div class="form-row-2">
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'tasks.title_label' | transloco }}</mat-label>
+                            <input matInput formControlName="title" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'tasks.description' | transloco }}</mat-label>
+                            <input matInput formControlName="description" />
+                        </mat-form-field>
+                    </div>
+
+                    <div class="task-metrics-row">
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'budgets.count' | transloco }}</mat-label>
+                            <input matInput type="number" formControlName="count" min="1" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'tasks.price' | transloco }}</mat-label>
+                            <input matInput type="number" formControlName="price" step="0.01" />
+                            <span matSuffix>€</span>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'tasks.unit' | transloco }}</mat-label>
+                            <mat-select formControlName="unit">
+                                <mat-option value="ud">{{ 'tasks.units_single.ud' | transloco}}</mat-option>
+                                <mat-option value="h">{{ 'tasks.units_single.h' | transloco}}</mat-option>
+                                <mat-option value="m2">{{ 'tasks.units_single.m2' | transloco}}</mat-option>
+                                <mat-option value="m">{{ 'tasks.units_single.m' | transloco}}</mat-option>
+                                <mat-option value="global">{{ 'tasks.units_single.global' |
+                                    transloco}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <button type="button" mat-icon-button color="warn" (click)="removeUngroupedTask($index)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+
+                    @if (!taskGroup.get('taskId')?.value) {
+                    <mat-checkbox formControlName="saveToCatalog" class="save-catalog-checkbox">
+                        {{ 'budgets.save_to_catalog_hint' | transloco }}
+                    </mat-checkbox>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="section-container">
+            <div class="section-header">
+                <h3>{{ 'budgets.groups_title' | transloco }}</h3>
+                <button type="button" mat-stroked-button (click)="addGroup()">
+                    <mat-icon>create_new_folder</mat-icon> {{ 'budgets.actions.add_group' | transloco }}
+                </button>
+            </div>
+
+            <div formArrayName="groups" class="groups-list">
+                @for (groupControl of groups.controls; track $index; let groupIdx = $index) {
+                <mat-expansion-panel [formGroupName]="groupIdx" expanded class="group-panel">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title class="font-bold">
+                            {{ groupControl.get('name')?.value || ('budgets.group_placeholder' | transloco) }}
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="group-content">
+                        <div class="group-title-row">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>{{ 'budgets.group_name' | transloco }}</mat-label>
+                                <input matInput formControlName="name" placeholder="Ej: Planta Baja / Pintura" />
+                            </mat-form-field>
+
+                            <button type="button" mat-icon-button color="warn" (click)="removeGroup(groupIdx)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+
+                        <div formArrayName="tasks" class="tasks-list">
+                            @for (taskGroup of getGroupTasks(groupIdx).controls; track $index; let taskIdx = $index) {
+                            <div [formGroupName]="taskIdx" class="task-item-card inner-group">
+
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>{{ 'budgets.select_from_catalog' | transloco }}</mat-label>
+                                    <mat-select (selectionChange)="onSelectTaskFromCatalog(taskGroup, $event.value)">
+                                        <mat-option value="">-- {{ 'budgets.custom_task' | transloco }} --</mat-option>
+                                        @for (t of taskService.tasks(); track t.id) {
+                                        <mat-option [value]="t.id">{{ t.title }} ({{ t.price }}€)</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <div class="form-row-2">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{ 'tasks.title_label' | transloco }}</mat-label>
+                                        <input matInput formControlName="title" />
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{ 'tasks.description' | transloco }}</mat-label>
+                                        <input matInput formControlName="description" />
+                                    </mat-form-field>
+                                </div>
+
+                                <div class="task-metrics-row">
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{ 'budgets.count' | transloco }}</mat-label>
+                                        <input matInput type="number" formControlName="count" min="1" />
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{ 'tasks.price' | transloco }}</mat-label>
+                                        <input matInput type="number" formControlName="price" step="0.01" />
+                                        <span matSuffix>€</span>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>{{ 'tasks.unit' | transloco }}</mat-label>
+                                        <mat-select formControlName="unit">
+                                            <mat-option value="ud">{{ 'tasks.units_single.ud' | transloco}}</mat-option>
+                                            <mat-option value="h">{{ 'tasks.units_single.h' | transloco}}</mat-option>
+                                            <mat-option value="m2">{{ 'tasks.units_single.m2' | transloco}}</mat-option>
+                                            <mat-option value="m">{{ 'tasks.units_single.m' | transloco}}</mat-option>
+                                            <mat-option value="global">{{ 'tasks.units_single.global' |
+                                                transloco}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <button type="button" mat-icon-button color="warn"
+                                        (click)="removeTaskFromGroup(groupIdx, taskIdx)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+
+                                @if (!taskGroup.get('taskId')?.value) {
+                                <mat-checkbox formControlName="saveToCatalog" class="save-catalog-checkbox">
+                                    {{ 'budgets.save_to_catalog_hint' | transloco }}
+                                </mat-checkbox>
+                                }
+                            </div>
+                            }
+                        </div>
+
+                        <button type="button" mat-button class="mt-2" (click)="addTaskToGroup(groupIdx)">
+                            <mat-icon>add</mat-icon> {{ 'budgets.actions.add_task_to_group' | transloco }}
+                        </button>
+                    </div>
+                </mat-expansion-panel>
+                }
+            </div>
+        </div>
+
+        <div class="section-container">
+            <div class="section-header">
+                <h3>{{ 'budgets.images_title' | transloco }}</h3>
+                <input type="file" #fileInput (change)="onFileSelected($event)" multiple accept="image/*"
+                    class="hidden-file-input" />
+                <button type="button" mat-stroked-button (click)="fileInput.click()">
+                    <mat-icon>attach_file</mat-icon> {{ 'budgets.actions.add_images' | transloco }}
+                </button>
+            </div>
+
+            <div class="image-previews-grid">
+                <!-- Imágenes ya subidas a Storage (si se edita) -->
+                @for (url of existingImages(); track $index) {
+                <div class="image-preview-card">
+                    <img [src]="url" alt="Budget image" />
+                    <button type="button" mat-icon-button color="warn" class="remove-img-btn"
+                        (click)="removeExistingImage($index)">
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </div>
+                }
+
+                <!-- Previsualización de imágenes locales a subir -->
+                @for (preview of previewImageUrls(); track $index) {
+                <div class="image-preview-card local-new">
+                    <img [src]="preview" alt="Preview" />
+                    <button type="button" mat-icon-button color="warn" class="remove-img-btn"
+                        (click)="removeNewImage($index)">
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="totals-summary-card">
+            <div class="vat-selector-box">
+                <mat-form-field appearance="outline">
+                    <mat-label>{{ 'budgets.vat_rate' | transloco }}</mat-label>
+                    <mat-select formControlName="vatRate">
+                        @for (rate of vatRates; track rate) {
+                        <mat-option [value]="rate">{{ rate }}%</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="totals-breakdown">
+                <div class="total-row">
+                    <span>{{ 'budgets.subtotal' | transloco }} (Sin IVA):</span>
+                    <strong>{{ subtotal() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+                </div>
+                <div class="total-row">
+                    <span>{{ 'budgets.vat_amount' | transloco }} ({{ form.get('vatRate')?.value }}%):</span>
+                    <strong>{{ vatAmount() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+                </div>
+                <div class="total-row grand-total">
+                    <span>{{ 'budgets.total' | transloco }} (Con IVA):</span>
+                    <strong>{{ total() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button type="button" (click)="onCancel()" [disabled]="isSaving()">
+        {{ 'generic.cancel' | transloco }}
+    </button>
+
+    <button mat-flat-button color="primary" type="submit" form="budgetForm" [disabled]="form.invalid || isSaving()">
+
+        @if (isSaving()) {
+        <div class="btn-spinner-content">
+            <mat-spinner diameter="18"></mat-spinner>
+            <span>{{ 'generic.saving' | transloco }}...</span>
+        </div>
+        } @else {
+        <span>{{ (isEditing ? 'generic.save' : 'budgets.actions.create') | transloco }}</span>
+        }
+    </button>
+</mat-dialog-actions>

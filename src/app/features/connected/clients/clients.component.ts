@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
+import { LoadingService } from '@core/services/loading.service';
 
 @Component({
   selector: 'app-clients-component',
@@ -36,6 +37,7 @@ export class ClientsComponent {
   readonly dialog = inject(MatDialog);
   readonly clientService = inject(ClientService);
   readonly companyService = inject(CompanyService);
+  readonly loadingService = inject(LoadingService)
 
   displayedColumns: string[] = ['type', 'name', 'nif', 'contact', 'address', 'actions'];
 

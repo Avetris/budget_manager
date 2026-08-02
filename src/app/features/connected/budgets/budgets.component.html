@@ -1,138 +1,178 @@
-<div class="budgets-dashboard animate-fade-in">
-  <!-- KPI Metrics Grid -->
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-icon">
-        <mat-icon>receipt</mat-icon>
-      </div>
-      <div>
-        <div class="kpi-label">Total Budgets</div>
-        <div class="kpi-value">{{ budgetService.items().length }}</div>
-      </div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-icon" style="background: #e0f2fe; color: #0284c7;">
-        <mat-icon>business</mat-icon>
-      </div>
-      <div>
-        <div class="kpi-label">Active Clients</div>
-        <div class="kpi-value">{{ budgetService.items().length ? budgetService.items().length : 0 }}</div>
-      </div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-icon" style="background: #dcfce7; color: #16a34a;">
-        <mat-icon>folder_special</mat-icon>
-      </div>
-      <div>
-        <div class="kpi-label">Projects Managed</div>
-        <div class="kpi-value">{{ budgetService.items().length ? budgetService.items().length : 0 }}</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Header Action Bar -->
+<div class="placeholder-dashboard animate-fade-in">
+  <!-- Header Bar -->
   <div class="dashboard-header-bar">
     <div class="dashboard-title-group">
       <h2 class="dashboard-title">{{ 'tabs.budgets' | transloco }}</h2>
-      <span class="results-badge">{{ 'generic.items' | transloco: {items: budgetService.items().length} }}</span>
+      <span class="results-badge">
+        {{ 'generic.items' | transloco: { items: filteredBudgets().length } }}
+      </span>
     </div>
 
-    <div class="dashboard-actions">
-      <button mat-raised-button color="primary" (click)="goBudget()" class="create-btn">
-        <mat-icon>add</mat-icon>
-        <span>{{ 'budgets.create' | transloco }}</span>
-      </button>
-    </div>
+    <button mat-raised-button color="primary" class="create-btn" (click)="openCreateBudgetModal()">
+      <mat-icon>add</mat-icon>
+      <span>{{ 'budgets.actions.add' | transloco }}</span>
+    </button>
   </div>
 
-  <!-- Table Container -->
+  @if (loadingService.isLoading()) {
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+  }
+  @else {
+  @if (budgetService.budgets().length > 0) {
+
+  <!-- Filter Toolbar -->
+  <div class="filter-toolbar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-icon matPrefix class="search-icon">search</mat-icon>
+      <input matInput [placeholder]="'budgets.search_placeholder' | transloco" (input)="onSearchChange($event)" />
+    </mat-form-field>
+  </div>
+
+  <!-- Budgets Table -->
   <div class="table-card">
-    <table mat-table [dataSource]="budgetService.items()" class="mat-elevation-z0 custom-data-table">
-      <!-- ID Column -->
-      <ng-container matColumnDef="budgetId">
-        <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.id' | transloco }} </th>
-        <td mat-cell *matCellDef="let element">
-          <span class="id-badge">#{{ element.budgetId || element.id || 'N/A' }}</span>
-        </td>
-      </ng-container>
+    <table mat-table [dataSource]="filteredBudgets()" multiTemplateDataRows class="custom-budgets-table">
 
-      <!-- Date Column -->
-      <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.date' | transloco }} </th>
-        <td mat-cell *matCellDef="let element">
-          <span class="date-cell">
-            <mat-icon class="inline-icon">calendar_today</mat-icon>
-            {{ element.date }}
-          </span>
-        </td>
-      </ng-container>
-
-      <!-- Project Column -->
-      <ng-container matColumnDef="project">
-        <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.project' | transloco }} </th>
-        <td mat-cell *matCellDef="let element">
-          <span class="project-name">{{ element.project }}</span>
+      <!-- Number Column -->
+      <ng-container matColumnDef="number">
+        <th mat-header-cell *matHeaderCellDef> {{ 'budgets.number' | transloco }} </th>
+        <td mat-cell *matCellDef="let budget" class="font-bold text-slate-800">
+          {{ budget.number }}
         </td>
       </ng-container>
 
       <!-- Client Column -->
       <ng-container matColumnDef="client">
-        <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.client' | transloco }} </th>
-        <td mat-cell *matCellDef="let element">
-          <span class="client-name">{{ element.client?.name || '—' }}</span>
+        <th mat-header-cell *matHeaderCellDef> {{ 'budgets.client' | transloco }} </th>
+        <td mat-cell *matCellDef="let budget" class="client-cell">
+          {{ budget.client.name }}
         </td>
       </ng-container>
 
-      <!-- VAT Column -->
-      <ng-container matColumnDef="vat">
-        <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.vat' | transloco }} </th>
-        <td mat-cell *matCellDef="let element">
-          <span class="vat-tag">{{ element.client?.vat || 'N/A' }}</span>
+      <!-- Date Column -->
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> {{ 'budgets.date' | transloco }} </th>
+        <td mat-cell *matCellDef="let budget">
+          {{ budget.date | date:'dd/MM/yyyy' }}
         </td>
       </ng-container>
 
-      <!-- Tasks Count Column -->
-      <ng-container matColumnDef="tasks">
-        <th mat-header-cell *matHeaderCellDef> {{ 'budgets.table.tasks' | transloco }} </th>
-        <td mat-cell *matCellDef="let element">
-          <span class="tasks-count-chip">
-            <mat-icon class="inline-icon">task_alt</mat-icon>
-            {{ element.tasks ? element.tasks.length : 0 }} tasks
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> {{ 'budgets.status.label' | transloco }} </th>
+        <td mat-cell *matCellDef="let budget">
+          <span class="status-badge" [ngClass]="getStatusClass(budget.status)">
+            {{ 'budgets.status.' + budget.status | transloco }}
           </span>
         </td>
       </ng-container>
 
-      <!-- Delete Action Column -->
-      <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element" class="action-cell">
-          <button mat-icon-button color="warn"
-            (click)="$event.stopPropagation(); budgetService.deleteBudget(element.id!)" class="table-action-btn"
-            matTooltip="Delete">
-            <mat-icon>delete_outline</mat-icon>
+      <!-- Total Column -->
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef class="text-right"> {{ 'budgets.total' | transloco }} </th>
+        <td mat-cell *matCellDef="let budget" class="text-right price-cell">
+          <span class="total-badge">
+            {{ budget.total | currency:'EUR':'symbol':'1.2-2' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="text-right"> {{ 'generic.actions' | transloco }} </th>
+        <td mat-cell *matCellDef="let budget" class="text-right">
+          <button mat-icon-button class="action-btn" [matTooltip]="'budgets.actions.edit' | transloco"
+            (click)="openEditBudgetModal(budget, $event)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button class="action-btn" (click)="toggleExpand(budget); $event.stopPropagation()">
+            <mat-icon>{{ expandedBudget === budget ? 'expand_less' : 'expand_more' }}</mat-icon>
           </button>
         </td>
       </ng-container>
 
+      <!-- Expanded Detail Row (Desglose) -->
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let budget" [attr.colspan]="displayedColumns.length">
+          <div class="budget-detail-wrapper" [class.expanded]="budget === expandedBudget">
+
+            <div class="budget-detail-content">
+              <h4 class="detail-title">{{ 'budgets.breakdown_title' | transloco }}</h4>
+
+              <!-- Tareas Sueltas -->
+              @if (budget.ungroupedTasks && budget.ungroupedTasks.length > 0) {
+              <div class="detail-section">
+                <h5 class="section-subtitle">{{ 'budgets.ungrouped_tasks' | transloco }}</h5>
+                <ul class="task-preview-list">
+                  @for (t of budget.ungroupedTasks; track $index) {
+                  <li>
+                    <span class="task-name">{{ t.count }}x {{ t.title }}</span>
+                    <span class="task-subtotal">{{ (t.price * t.count) | currency:'EUR':'symbol':'1.2-2' }}</span>
+                  </li>
+                  }
+                </ul>
+              </div>
+              }
+
+              <!-- Grupos -->
+              @if (budget.groups && budget.groups.length > 0) {
+              @for (group of budget.groups; track $index) {
+              <div class="detail-section">
+                <h5 class="section-subtitle group-subtitle">{{ group.name }}</h5>
+                <ul class="task-preview-list">
+                  @for (t of group.tasks; track $index) {
+                  <li>
+                    <span class="task-name">{{ t.count }}x {{ t.title }}</span>
+                    <span class="task-subtotal">{{ (t.price * t.count) | currency:'EUR':'symbol':'1.2-2' }}</span>
+                  </li>
+                  }
+                </ul>
+              </div>
+              }
+              }
+
+              <!-- Resumen Económico -->
+              <div class="detail-totals-box">
+                <div><span>Subtotal:</span> <strong>{{ budget.subtotal | currency:'EUR':'symbol':'1.2-2' }}</strong>
+                </div>
+                <div><span>IVA ({{ budget.vatRate }}%):</span> <strong>{{ budget.vatAmount |
+                    currency:'EUR':'symbol':'1.2-2' }}</strong></div>
+                <div class="grand-total"><span>Total:</span> <strong>{{ budget.total | currency:'EUR':'symbol':'1.2-2'
+                    }}</strong></div>
+              </div>
+            </div>
+
+          </div>
+        </td>
+      </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goBudget(row.id)" class="clickable-row">
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="budget-table-row"
+        [class.expanded-row]="expandedBudget === row" (click)="toggleExpand(row)">
+      </tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
+          {{ 'budgets.no_search_results' | transloco }}
+        </td>
       </tr>
     </table>
-
-    @if (!budgetService.items() || budgetService.items().length === 0) {
-    <div class="empty-state-container">
-      <div class="empty-state-icon-box">
-        <mat-icon class="empty-icon">note_add</mat-icon>
-      </div>
-      <h3 class="empty-state-title">No budgets created yet</h3>
-      <p class="empty-state-desc">Get started by creating your first budget project using the button above.</p>
-      <button mat-flat-button color="primary" (click)="goBudget()" class="create-btn">
-        <mat-icon>add</mat-icon>
-        <span>Create Budget</span>
-      </button>
-    </div>
-    }
   </div>
+
+  } @else {
+  <!-- Empty State -->
+  <div class="empty-state-card">
+    <div class="empty-state-icon-box">
+      <mat-icon class="empty-icon">request_quote</mat-icon>
+    </div>
+    <h3 class="empty-state-title">{{ 'budgets.empty.title' | transloco }}</h3>
+    <p class="empty-state-desc">{{ 'budgets.empty.subtitle' | transloco }}</p>
+    <button mat-flat-button color="primary" class="mt-4" (click)="openCreateBudgetModal()">
+      {{ 'budgets.actions.add' | transloco }}
+    </button>
+  </div>
+  }
+  }
 </div>
