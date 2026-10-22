@@ -38,7 +38,7 @@
 
         <div class="form-row">
             <mat-form-field appearance="outline">
-                <mat-label>{{ (form.value.isCompany ? 'clients.cif' : 'clients.nif') | transloco }}</mat-label>
+                <mat-label>{{ 'clients.nif' | transloco }}</mat-label>
                 <input matInput formControlName="nif" placeholder="12345678X / B12345678" />
                 @if (form.get('nif')?.hasError('required')) {
                 <mat-error>{{ 'validations.required' | transloco }}</mat-error>

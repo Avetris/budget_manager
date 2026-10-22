@@ -20,6 +20,7 @@ import { CompanyService } from '@core/services/company.service';
 import { Client } from '@core/models/client.model';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-budget-dialog',
@@ -37,6 +38,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatExpansionModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     TranslocoModule
   ],
   templateUrl: './budget-dialog.component.html',
@@ -48,7 +50,7 @@ export class BudgetDialogComponent implements OnInit {
 
   readonly clientService = inject(ClientService);
   readonly taskService = inject(TaskService);
-  private readonly budgetService = inject(BudgetService);
+  readonly budgetService = inject(BudgetService);
   readonly companyService = inject(CompanyService);
   readonly storageService = inject(BudgetStorageService)
   readonly data = inject<Budget | null>(MAT_DIALOG_DATA, { optional: true });
@@ -175,6 +177,16 @@ export class BudgetDialogComponent implements OnInit {
     }
   }
 
+  refreshClient(event: MouseEvent) {
+    event.stopPropagation();
+    const client = this.clientService.clients().find(c => c.id == this.data!.client.id)
+    if (client) {
+      this.form.patchValue({
+        client: client,
+      });
+    }
+  }
+
   // --- MÉTODOS PARA GRUPOS ---
   addGroup(group?: BudgetGroup): void {
     const groupForm = this.fb.group({
@@ -205,7 +217,6 @@ export class BudgetDialogComponent implements OnInit {
     this.getGroupTasks(groupIndex).removeAt(taskIndex);
   }
 
-  // --- CÁLCULO DE TOTALES E IVA ---
   calculateTotals(): void {
     let rawSubtotal = 0;
 

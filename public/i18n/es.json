@@ -40,11 +40,13 @@
         },
         "actions": {
             "add_task": "Añadir Tarea",
+            "add_task_to_group": "Añadir Tarea al Grupo",
             "add_group": "Añadir Subgrupo",
             "add": "Nuevo Presupuesto",
             "create": "Crear Presupuesto",
             "edit": "Editar Presupuesto",
             "delete": "Eliminar Tarea",
+            "client_reset": "Actualizar datos de cliente",
             "add_images": "Añadir Imágen"
         },
         "date": "Fecha",
@@ -75,7 +77,6 @@
         "full_name": "Nombre y Apellidos",
         "company_name": "Razón Social / Nombre Comercial",
         "nif": "NIF / DNI",
-        "cif": "CIF / NIF",
         "contact": "Contacto",
         "phone": "Teléfono",
         "email": "Correo Electrónico",
@@ -90,7 +91,7 @@
             "add": "Nuevo Cliente",
             "create": "Crear Cliente",
             "edit": "Editar Cliente",
-            "delete": "Eliminar Tarea"
+            "delete": "Eliminar Cliente"
         }
     },
     "company_config": {
@@ -129,6 +130,26 @@
             "clause": "Cláusula de Garantía",
             "clause_placeholder": "Detalla los años de garantía ofrecidos..."
         }
+    },
+    "pdf": {
+        "num_budget": "Presupuesto Nº",
+        "page": "Página {{currentPage}} de {{pageCount}}",
+        "nif": "NIF",
+        "dni": "DNI",
+        "phone": "Tel",
+        "email": "Email",
+        "description": "Descripción",
+        "quantity": "Cant.",
+        "price": "Precio",
+        "total": "Total",
+        "subtotal": "Subtotal",
+        "ud": "ud",
+        "price_base": "Base Imponible",
+        "iva": "I.V.A ({{iva}}%)",
+        "price_total": "TOTAL",
+        "conditions": "CONDICIONES GENERALES",
+        "warranty": " 'GARANTÍA DE LOS TRABAJOS",
+        "annex": "ANEXO FOTOGRÁFICO"
     },
     "tasks": {
         "create_title": "Nueva Tarea / Servicio",
@@ -170,7 +191,8 @@
             "add": "Nueva Tarea",
             "create": "Crear Tarea",
             "edit": "Editar Tarea",
-            "delete": "Eliminar Tarea"
+            "delete": "Eliminar Tarea",
+            "save": "Guardar Tarea"
         }
     },
     "tabs": {
@@ -180,6 +202,7 @@
     },
     "validations": {
         "required": "Este campo es obligatorio",
-        "invalid_email": "Introduce un correo válido"
+        "invalid_email": "Introduce un correo válido",
+        "min_zero": "El valor mínimo es 0"
     }
 }

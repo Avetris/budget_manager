@@ -1,59 +1,72 @@
 {
-    "title": "Budgets Manager",
+    "title": "Budget Manager",
     "subtitle": "Financial Workspace",
     "generic": {
         "actions": "Actions",
         "accept": "Accept",
         "cancel": "Cancel",
-        "save": "Save Changes",
+        "save": "Save",
         "close": "Close",
-        "items": "{{items}} items"
+        "items": "{{items}} items",
+        "saving": "Saving"
     },
     "login": {
-        "title": "Login",
+        "title": "Sign In",
         "subtitle": "Sign in to access your financial manager",
-        "user": "User",
+        "user": "Username",
         "password": "Password",
-        "error": "Error incorrect user or password"
+        "error": "Incorrect username or password"
     },
-    "logout": "LogOut",
+    "logout": "Sign Out",
     "loading": {
         "main": "Loading workspace..."
     },
     "budgets": {
-        "create": "Create Budget",
-        "table": {
-            "id": "Nº",
-            "date": "Date",
-            "project": "Project",
-            "client": "Client",
-            "vat": "VAT",
-            "tasks": "Tasks"
+        "saving_and_uploading": "Saving budget and uploading images...",
+        "search_placeholder": "Search by budget number or client...",
+        "no_search_results": "No budgets found",
+        "breakdown_title": "Budget task breakdown",
+        "images_title": "Images (Optional)",
+        "status": {
+            "label": "Status",
+            "draft": "Draft",
+            "sent": "Sent",
+            "accepted": "Accepted",
+            "rejected": "Rejected"
         },
-        "errors": {
-            "exist": {
-                "title": "Error getting budgets",
-                "message": "The budget does not exist"
-            }
+        "empty": {
+            "title": "No Budgets",
+            "subtitle": "Start by creating your first budget to send to your clients"
         },
-        "edit": {
-            "title_edit": "Edit Budget",
-            "title_create": "Create Budget",
-            "subtitle": "General information and tasks",
-            "basic_header": "Basic Data",
-            "code": "Budget Code",
-            "date": "Emission Date",
-            "project": "Project Name",
-            "client": "Select Client",
-            "tasks": "Budget's tasks (Services/Products)",
-            "add_task": "Add new task",
-            "remove_task": "Remove task",
-            "vat": "Applicable VAT (%)",
-            "subtotal": "Budget Subtotal",
-            "total": "TOTAL",
-            "save": "Save Budget",
-            "vat_total": "Total VAT"
-        }
+        "actions": {
+            "add_task": "Add Task",
+            "add_task_to_group": "Add Task to Group",
+            "add_group": "Add Subgroup",
+            "add": "New Budget",
+            "create": "Create Budget",
+            "edit": "Edit Budget",
+            "delete": "Delete Task",
+            "client_reset": "Update client data",
+            "add_images": "Add Image"
+        },
+        "date": "Date",
+        "create_title": "New Budget",
+        "edit_title": "Edit Budget",
+        "number": "Budget No.",
+        "client": "Client",
+        "ungrouped_tasks": "Main / Standalone Tasks",
+        "select_from_catalog": "Load from Task Catalog",
+        "custom_task": "Write a custom task",
+        "count": "Quantity",
+        "save_to_catalog_hint": "Save this task as a template in the general catalog",
+        "groups_title": "Subgroups / Chapters (Optional)",
+        "group_placeholder": "New Subgroup",
+        "group_name": "Subgroup / Chapter Name",
+        "add_task_to_group": "Add Task to this Subgroup",
+        "vat_rate": "VAT Rate",
+        "subtotal": "Subtotal",
+        "vat_amount": "VAT",
+        "total": "Budget Total"
     },
     "clients": {
         "create_title": "New Client",
@@ -62,98 +75,134 @@
         "particular": "Individual",
         "company": "Company",
         "full_name": "Full Name",
-        "company_name": "Business Name / Trade Name",
+        "company_name": "Legal / Trade Name",
         "nif": "Tax ID / ID Number",
-        "cif": "VAT Number / Tax ID",
         "contact": "Contact",
         "phone": "Phone",
         "email": "Email Address",
-        "address": "Full Address (For Estimates)",
-        "search_placeholder": "Search clients...",
-        "no_search_results": "No clients found matching your search",
+        "address": "Full Address (For Budget)",
+        "search_placeholder": "Search Client...",
+        "no_search_results": "No clients found for the entered search",
         "empty": {
             "title": "No Clients",
             "subtitle": "You haven't added any clients yet"
         },
         "actions": {
             "add": "New Client",
-            "create": "Create Client"
+            "create": "Create Client",
+            "edit": "Edit Client",
+            "delete": "Delete Client"
         }
     },
     "company_config": {
         "title": "Company Settings",
-        "subtitle": "Manage legal information, contact details, and templates for your estimates",
-        "saved": "Settings saved succesfully",
+        "subtitle": "Manage legal information, contact details and templates for your budgets",
+        "saved": "Settings saved successfully",
         "error": "Error saving changes",
         "info": {
             "title": "Company Details",
-            "subtitle": "Tax details and primary contact information",
-            "name": "Trade Name / Business Name",
-            "name_placeholder": "e.g., Avetris Ltd.",
-            "nif": "Tax ID / VAT Number",
+            "subtitle": "Main tax and contact information",
+            "name": "Trade Name / Legal Name",
+            "name_placeholder": "E.g.: Avetris Ltd.",
+            "nif": "Tax ID / Company ID",
             "phone": "Contact Phone",
             "email": "Email Address",
             "web": "Website",
-            "street": "Street & Number",
-            "city": "City & Zip Code"
+            "street": "Street and Number",
+            "city": "City and Postal Code"
         },
         "header": {
             "title": "Header Lines (Services)",
-            "subtitle": "Descriptive lines appearing at the top of your estimates",
+            "subtitle": "Descriptive lines that appear at the top of your budgets",
             "line": "Line {{line}}",
-            "line_placeholder": "e.g., VERTICAL WORKS OF...",
-            "add": "Add line to header"
+            "line_placeholder": "E.g.: VERTICAL WORK OF...",
+            "add": "Add header line"
         },
         "legal": {
-            "title": "Terms & Conditions & GDPR",
-            "subtitle": "Legal text automatically attached to estimates",
+            "title": "General Terms & GDPR",
+            "subtitle": "Legal text automatically attached to budgets",
             "terms": "Terms and Conditions",
-            "terms_placeholder": "Write the service terms here..."
+            "terms_placeholder": "Write the service terms and conditions here..."
         },
         "garanty": {
             "title": "Work Warranties",
-            "subtitle": "Warranty periods according to the Building Regulations Law (LOE)",
+            "subtitle": "Warranty periods according to the Building Regulations Act (LOE)",
             "clause": "Warranty Clause",
             "clause_placeholder": "Detail the warranty years offered..."
         }
+    },
+    "pdf": {
+        "num_budget": "Budget No.",
+        "page": "Page {{currentPage}} of {{pageCount}}",
+        "nif": "Tax ID",
+        "dni": "ID",
+        "phone": "Tel",
+        "email": "Email",
+        "description": "Description",
+        "quantity": "Qty.",
+        "price": "Price",
+        "total": "Total",
+        "subtotal": "Subtotal",
+        "ud": "unit",
+        "price_base": "Taxable Base",
+        "iva": "V.A.T. ({{iva}}%)",
+        "price_total": "TOTAL",
+        "conditions": "GENERAL CONDITIONS",
+        "warranty": "WORK WARRANTY",
+        "annex": "PHOTOGRAPHIC ANNEX"
     },
     "tasks": {
         "create_title": "New Task / Service",
         "edit_title": "Edit Task",
         "title_label": "Task Title",
-        "title_placeholder": "E.g., Vertical gutter cleaning",
+        "title_placeholder": "E.g.: Vertical gutter cleaning",
         "price": "Base Price per Unit",
         "unit": "Unit",
         "units": {
             "ud": "Per Unit",
             "h": "Per Hour",
-            "m2": "Per Square Meter",
-            "m": "Per Linear Meter",
-            "global": "Fixed / Lump Sum Price"
+            "m2": "Per Square Metre",
+            "m": "Per Linear Metre",
+            "global": "Fixed / Global Price"
+        },
+        "units_single": {
+            "ud": "Unit",
+            "h": "Hour",
+            "m2": "Square Metre",
+            "m": "Linear Metre",
+            "global": "Total"
         },
         "units_short": {
             "ud": "unit",
             "h": "h",
-            "m2": "sqm",
+            "m2": "m2",
             "m": "m",
             "global": "total"
         },
         "description": "Detailed Service Description",
-        "description_placeholder": "Describe what this task consists of so it appears on the estimate...",
+        "description_placeholder": "Describe what this task involves so it appears in the budget...",
         "search_placeholder": "Search tasks or services...",
-        "no_search_results": "No tasks found matching your search",
+        "no_search_results": "No tasks found for the entered search",
         "empty": {
             "title": "No Saved Tasks",
-            "subtitle": "Create templates of frequent tasks to quickly add them to your estimates"
+            "subtitle": "Create templates of common tasks to add them quickly to your budgets"
         },
         "actions": {
             "add": "New Task",
-            "create": "Create Task"
+            "create": "Create Task",
+            "edit": "Edit Task",
+            "delete": "Delete Task",
+            "save": "Save Task"
         }
     },
     "tabs": {
         "budgets": "Budgets",
         "tasks": "Tasks",
         "clients": "Clients"
+    },
+    "validations": {
+        "required": "This field is required",
+        "invalid_email": "Please enter a valid email address",
+        "min_zero": "The minimum value is 0"
     }
 }
