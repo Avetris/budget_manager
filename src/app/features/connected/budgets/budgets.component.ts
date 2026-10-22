@@ -16,6 +16,8 @@ import { ClientService } from '@core/services/client.service';
 import { Budget, BudgetStatus } from '../../../core/models/budget.model';
 import { BudgetDialogComponent } from './budget-dialog/budget-dialog.component';
 import { LoadingService } from '@core/services/loading.service';
+import { GeneratorService } from '@core/services/generator.service';
+import { CompanyService } from '@core/services/company.service';
 
 @Component({
   selector: 'app-budgets-component',
@@ -42,6 +44,8 @@ export class BudgetsComponent {
   readonly loadingService = inject(LoadingService);
   readonly budgetService = inject(BudgetService);
   readonly clientService = inject(ClientService);
+  readonly companyService = inject(CompanyService);
+  readonly generatorService = inject(GeneratorService)
 
   displayedColumns: string[] = ['number', 'client', 'date', 'status', 'total', 'actions'];
   expandedBudget: Budget | null = null;
@@ -85,6 +89,11 @@ export class BudgetsComponent {
       data: budget,
       disableClose: true
     });
+  }
+
+  generatePdf(budget: Budget, event: MouseEvent) {
+    event.stopPropagation();
+    this.generatorService.generateBudgetPdf(budget, this.companyService.activeCompany()!)
   }
 
   getStatusClass(status: BudgetStatus): string {

@@ -75,6 +75,10 @@ export class BudgetDialogComponent implements OnInit {
     groups: this.fb.array<FormGroup>([])
   });
 
+  public clientComparisonFunction = function (option: Client, value: Client): boolean {
+    return option.id === value.id;
+  }
+
   get ungroupedTasks(): FormArray<FormGroup> {
     return this.form.get('ungroupedTasks') as FormArray<FormGroup>;
   }
@@ -97,6 +101,7 @@ export class BudgetDialogComponent implements OnInit {
         date: this.data.date,
         vatRate: this.data.vatRate,
       });
+
       this.data.ungroupedTasks.forEach((task) => {
         this.ungroupedTasks.push(this.buildTaskFormGroup(task));
       })
@@ -234,6 +239,8 @@ export class BudgetDialogComponent implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
+
+    this.calculateTotals()
 
     const activeCompanyName = this.companyService.activeCompany()?.name || this.companyService.activeCompany()?.id;
     if (!activeCompanyName) return;

@@ -86,6 +86,10 @@
             (click)="openEditBudgetModal(budget, $event)">
             <mat-icon>edit</mat-icon>
           </button>
+          <button mat-icon-button class="action-btn" [matTooltip]="'budgets.actions.edit' | transloco"
+            (click)="generatePdf(budget, $event)">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
           <button mat-icon-button class="action-btn" (click)="toggleExpand(budget); $event.stopPropagation()">
             <mat-icon>{{ expandedBudget === budget ? 'expand_less' : 'expand_more' }}</mat-icon>
           </button>

@@ -27,7 +27,7 @@
 
             <mat-form-field appearance="outline">
                 <mat-label>{{ 'budgets.client' | transloco }}</mat-label>
-                <mat-select formControlName="client">
+                <mat-select formControlName="client" [compareWith]="clientComparisonFunction">
                     @for (client of clientService.clients(); track client.id) {
                     <mat-option [value]="client">
                         {{ client.name }} {{ client.nif ? '(' + client.nif + ')' : '' }}
